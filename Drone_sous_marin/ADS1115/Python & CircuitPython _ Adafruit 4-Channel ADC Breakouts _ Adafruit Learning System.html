@@ -1,0 +1,969 @@
+<!DOCTYPE html>
+<!-- saved from url=(0080)https://learn.adafruit.com/adafruit-4-channel-adc-breakouts/python-circuitpython -->
+<html lang="en-US" class="js-ready"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><style type="text/css">.turbolinks-progress-bar {
+  position: fixed;
+  display: block;
+  top: 0;
+  left: 0;
+  height: 3px;
+  background: #0076ff;
+  z-index: 9999;
+  transition: width 300ms ease-out, opacity 150ms 150ms ease-in;
+  transform: translate3d(0, 0, 0);
+}</style>
+
+
+
+
+
+
+
+
+<link rel="stylesheet" media="screen" href="./Python &amp; CircuitPython _ Adafruit 4-Channel ADC Breakouts _ Adafruit Learning System_files/application-f9642b471c35fcfffe4a329ba9da5b254ead98cf76cf39bd84496e9119f60ab2.css" data-turbolinks-track="reload">
+<script type="text/javascript" src="./Python &amp; CircuitPython _ Adafruit 4-Channel ADC Breakouts _ Adafruit Learning System_files/308175db61"></script><script src="./Python &amp; CircuitPython _ Adafruit 4-Channel ADC Breakouts _ Adafruit Learning System_files/nr-1118.min.js.téléchargement"></script><script type="text/javascript" async="" src="./Python &amp; CircuitPython _ Adafruit 4-Channel ADC Breakouts _ Adafruit Learning System_files/ec.js.téléchargement"></script><script type="text/javascript" async="" src="./Python &amp; CircuitPython _ Adafruit 4-Channel ADC Breakouts _ Adafruit Learning System_files/analytics.js.téléchargement"></script><script src="./Python &amp; CircuitPython _ Adafruit 4-Channel ADC Breakouts _ Adafruit Learning System_files/js"></script>
+<script type="text/javascript">
+    window.dataLayer = window.dataLayer || [];
+
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+  </script>
+
+
+
+
+
+
+
+
+
+
+
+<script type="text/javascript">window.NREUM||(NREUM={});NREUM.info={"beacon":"bam.nr-data.net","errorBeacon":"bam.nr-data.net","licenseKey":"308175db61","applicationID":"54271218","transactionName":"cVZXRUFeWghRShtEVlVcSh5AWVkT","queueTime":0,"applicationTime":52,"agent":""}</script>
+<script type="text/javascript">window.NREUM||(NREUM={}),__nr_require=function(e,n,t){function r(t){if(!n[t]){var o=n[t]={exports:{}};e[t][0].call(o.exports,function(n){var o=e[t][1][n];return r(o||n)},o,o.exports)}return n[t].exports}if("function"==typeof __nr_require)return __nr_require;for(var o=0;o<t.length;o++)r(t[o]);return r}({1:[function(e,n,t){function r(){}function o(e,n,t){return function(){return i(e,[c.now()].concat(u(arguments)),n?null:this,t),n?void 0:this}}var i=e("handle"),a=e(3),u=e(4),f=e("ee").get("tracer"),c=e("loader"),s=NREUM;"undefined"==typeof window.newrelic&&(newrelic=s);var p=["setPageViewName","setCustomAttribute","setErrorHandler","finished","addToTrace","inlineHit","addRelease"],d="api-",l=d+"ixn-";a(p,function(e,n){s[n]=o(d+n,!0,"api")}),s.addPageAction=o(d+"addPageAction",!0),s.setCurrentRouteName=o(d+"routeName",!0),n.exports=newrelic,s.interaction=function(){return(new r).get()};var m=r.prototype={createTracer:function(e,n){var t={},r=this,o="function"==typeof n;return i(l+"tracer",[c.now(),e,t],r),function(){if(f.emit((o?"":"no-")+"fn-start",[c.now(),r,o],t),o)try{return n.apply(this,arguments)}catch(e){throw f.emit("fn-err",[arguments,this,e],t),e}finally{f.emit("fn-end",[c.now()],t)}}}};a("actionText,setName,setAttribute,save,ignore,onEnd,getContext,end,get".split(","),function(e,n){m[n]=o(l+n)}),newrelic.noticeError=function(e,n){"string"==typeof e&&(e=new Error(e)),i("err",[e,c.now(),!1,n])}},{}],2:[function(e,n,t){function r(e,n){if(!o)return!1;if(e!==o)return!1;if(!n)return!0;if(!i)return!1;for(var t=i.split("."),r=n.split("."),a=0;a<r.length;a++)if(r[a]!==t[a])return!1;return!0}var o=null,i=null,a=/Version\/(\S+)\s+Safari/;if(navigator.userAgent){var u=navigator.userAgent,f=u.match(a);f&&u.indexOf("Chrome")===-1&&u.indexOf("Chromium")===-1&&(o="Safari",i=f[1])}n.exports={agent:o,version:i,match:r}},{}],3:[function(e,n,t){function r(e,n){var t=[],r="",i=0;for(r in e)o.call(e,r)&&(t[i]=n(r,e[r]),i+=1);return t}var o=Object.prototype.hasOwnProperty;n.exports=r},{}],4:[function(e,n,t){function r(e,n,t){n||(n=0),"undefined"==typeof t&&(t=e?e.length:0);for(var r=-1,o=t-n||0,i=Array(o<0?0:o);++r<o;)i[r]=e[n+r];return i}n.exports=r},{}],5:[function(e,n,t){n.exports={exists:"undefined"!=typeof window.performance&&window.performance.timing&&"undefined"!=typeof window.performance.timing.navigationStart}},{}],ee:[function(e,n,t){function r(){}function o(e){function n(e){return e&&e instanceof r?e:e?f(e,u,i):i()}function t(t,r,o,i){if(!d.aborted||i){e&&e(t,r,o);for(var a=n(o),u=v(t),f=u.length,c=0;c<f;c++)u[c].apply(a,r);var p=s[y[t]];return p&&p.push([b,t,r,a]),a}}function l(e,n){h[e]=v(e).concat(n)}function m(e,n){var t=h[e];if(t)for(var r=0;r<t.length;r++)t[r]===n&&t.splice(r,1)}function v(e){return h[e]||[]}function g(e){return p[e]=p[e]||o(t)}function w(e,n){c(e,function(e,t){n=n||"feature",y[t]=n,n in s||(s[n]=[])})}var h={},y={},b={on:l,addEventListener:l,removeEventListener:m,emit:t,get:g,listeners:v,context:n,buffer:w,abort:a,aborted:!1};return b}function i(){return new r}function a(){(s.api||s.feature)&&(d.aborted=!0,s=d.backlog={})}var u="nr@context",f=e("gos"),c=e(3),s={},p={},d=n.exports=o();d.backlog=s},{}],gos:[function(e,n,t){function r(e,n,t){if(o.call(e,n))return e[n];var r=t();if(Object.defineProperty&&Object.keys)try{return Object.defineProperty(e,n,{value:r,writable:!0,enumerable:!1}),r}catch(i){}return e[n]=r,r}var o=Object.prototype.hasOwnProperty;n.exports=r},{}],handle:[function(e,n,t){function r(e,n,t,r){o.buffer([e],r),o.emit(e,n,t)}var o=e("ee").get("handle");n.exports=r,r.ee=o},{}],id:[function(e,n,t){function r(e){var n=typeof e;return!e||"object"!==n&&"function"!==n?-1:e===window?0:a(e,i,function(){return o++})}var o=1,i="nr@id",a=e("gos");n.exports=r},{}],loader:[function(e,n,t){function r(){if(!E++){var e=x.info=NREUM.info,n=l.getElementsByTagName("script")[0];if(setTimeout(s.abort,3e4),!(e&&e.licenseKey&&e.applicationID&&n))return s.abort();c(y,function(n,t){e[n]||(e[n]=t)}),f("mark",["onload",a()+x.offset],null,"api");var t=l.createElement("script");t.src="https://"+e.agent,n.parentNode.insertBefore(t,n)}}function o(){"complete"===l.readyState&&i()}function i(){f("mark",["domContent",a()+x.offset],null,"api")}function a(){return O.exists&&performance.now?Math.round(performance.now()):(u=Math.max((new Date).getTime(),u))-x.offset}var u=(new Date).getTime(),f=e("handle"),c=e(3),s=e("ee"),p=e(2),d=window,l=d.document,m="addEventListener",v="attachEvent",g=d.XMLHttpRequest,w=g&&g.prototype;NREUM.o={ST:setTimeout,SI:d.setImmediate,CT:clearTimeout,XHR:g,REQ:d.Request,EV:d.Event,PR:d.Promise,MO:d.MutationObserver};var h=""+location,y={beacon:"bam.nr-data.net",errorBeacon:"bam.nr-data.net",agent:"js-agent.newrelic.com/nr-1118.min.js"},b=g&&w&&w[m]&&!/CriOS/.test(navigator.userAgent),x=n.exports={offset:u,now:a,origin:h,features:{},xhrWrappable:b,userAgent:p};e(1),l[m]?(l[m]("DOMContentLoaded",i,!1),d[m]("load",r,!1)):(l[v]("onreadystatechange",o),d[v]("onload",r)),f("mark",["firstbyte",u],null,"api");var E=0,O=e(5)},{}]},{},["loader"]);</script>
+<!--[if lte IE 9]>
+    <script src="https://cdn.polyfill.io/v2/polyfill.min.js"></script>
+  <![endif]-->
+<script>
+    window.rails_env = 'production';
+  </script>
+<script src="./Python &amp; CircuitPython _ Adafruit 4-Channel ADC Breakouts _ Adafruit Learning System_files/application-89fc9701c85f6e1737ce.js.téléchargement" data-turbolinks-track="reload"></script>
+<script type="application/ld+json">
+    {
+      "@context": "http://schema.org",
+      "@type": "WebSite",
+      "url": "https://learn.adafruit.com/",
+      "potentialAction": {
+        "@type": "SearchAction",
+        "target": "https://learn.adafruit.com/search?q={search_term}",
+        "query-input": "required name=search_term"
+      }
+    }
+  </script>
+<style id="fit-vids-style">.fluid-width-video-wrapper{width:100%;position:relative;padding:0;}.fluid-width-video-wrapper iframe,.fluid-width-video-wrapper object,.fluid-width-video-wrapper embed {position:absolute;top:0;left:0;width:100%;height:100%;}</style><script type="text/javascript">window.NREUM||(NREUM={});NREUM.info={"beacon":"bam.nr-data.net","errorBeacon":"bam.nr-data.net","licenseKey":"308175db61","applicationID":"54271218","transactionName":"cVZXRUFeWghRShtEVlVcSh5AWVkT","queueTime":0,"applicationTime":47,"agent":""}</script><link rel="mask-icon" href="https://learn.adafruit.com/assets/adafruit_favicon-d77f206e6cc65b40101b6e5b8987f7c35cb6a283ea73c0adad50c37f7347c61a.svg" color="#000000"><link rel="shortcut icon" type="image/x-icon" href="https://learn.adafruit.com/assets/favicon-0c79bd4bc582e6d4cf3afe417bd1e28120527c09d92c08a6464690c5bf6b85f4.ico"><title>Python &amp; CircuitPython | Adafruit 4-Channel ADC Breakouts | Adafruit Learning System</title><meta name="csrf-param" content="authenticity_token"><meta name="csrf-token" content="qJnP0BbvryCFhW/FAE6NYSSQq0xLYFo6PW5/SvoZF7wIScxltbvQZGOqOCU7pFOBlDpHD/JTlL9HPe3n330NgQ=="><link rel="alternate" type="application/atom+xml" title="ATOM" href="https://learn.adafruit.com/feed"><link rel="alternate" type="application/rss+xml" title="RSS" href="https://learn.adafruit.com/feed.rss"><meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1"><meta name="turbolinks-cache-control" content="no-cache"><meta name="guide-title" content="Adafruit 4-Channel ADC Breakouts"><meta name="twitter:card" content="summary_large_image"><meta name="twitter:site" content="@adafruit"><meta name="twitter:title" content="Adafruit 4-Channel ADC Breakouts"><meta name="twitter:description" content="A guide to the ADS1115 and ADS1015 analog converters"><meta name="twitter:image:src" content="https://cdn-learn.adafruit.com/guides/images/000/000/145/medium800/ADC1115_LRG.jpg"><meta name="twitter:domain" content="https://learn.adafruit.com"><link rel="canonical" href="https://learn.adafruit.com/adafruit-4-channel-adc-breakouts/python-circuitpython"><meta http-equiv="X-UA-Compatible" content="IE=Edge"></head>
+<body class="application pages show">
+
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-PRPXBQ6"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+
+<div id="outer-wrapper">
+<div id="inner-wrapper">
+<div id="messaging-wrapper" data-load="https://www.adafruit.com/api/multi_message.php"></div>
+<header id="adafruit-header">
+<div id="small-header">
+<div class="first-row">
+<div class="row-content">
+<a id="small-header-menu-button" class="menu-link" href="https://learn.adafruit.com/adafruit-4-channel-adc-breakouts/python-circuitpython#small-header-nav">
+<i class="fa fa-bars"> </i>
+</a>
+<div class="small-header-logo">
+<a href="https://www.adafruit.com/">
+<img id="small-logo" height="50" width="50" alt="Adafruit Logo" title="Adafruit Logo" src="./Python &amp; CircuitPython _ Adafruit 4-Channel ADC Breakouts _ Adafruit Learning System_files/adafruit_logo_small.png">
+</a> </div>
+<a class="small-header-cart" href="https://www.adafruit.com/shopping_cart">
+<span class="small-cart-count">0</span>
+<i class="fa fa-shopping-cart"></i>
+</a> </div>
+</div>
+<div class="second-row">
+<div id="small-search-wrapper">
+<div id="small-search-inner-wrapper">
+<form action="https://learn.adafruit.com/search" method="get">
+<label for="mobile-search" style="display:none;">Search</label>
+<input id="mobile-search" type="text" name="q" placeholder="Search Adafruit">
+<i class="fa fa-search"></i>
+</form>
+</div>
+</div>
+</div>
+<nav id="small-header-nav">
+<div class="block">
+<ul>
+<li>
+<a href="https://www.adafruit.com/categories">SHOP</a>
+</li>
+<li>
+<a href="https://learn.adafruit.com/">LEARN</a>
+</li>
+<li>
+<a href="https://blog.adafruit.com/">BLOG</a>
+</li>
+<li>
+<a href="https://forums.adafruit.com/">FORUMS</a>
+</li>
+<li>
+<a href="https://www.youtube.com/adafruit">VIDEOS</a>
+</li>
+<li>
+<a href="https://io.adafruit.com/">IO</a>
+</li>
+<li>
+<a href="https://learn.adafruit.com/users/sign_in">SIGN IN</a>
+</li>
+<li>
+<a class="close-btn" id="small-nav-close-button" href="https://learn.adafruit.com/adafruit-4-channel-adc-breakouts/python-circuitpython#top">CLOSE MENU</a>
+</li>
+</ul>
+</div>
+</nav>
+</div>
+<div id="large-header">
+<div class="first-row">
+<div class="row-content">
+<ul class="application-links">
+<li><a href="https://www.adafruit.com/">Shop</a></li>
+<li class="selected"><a href="https://learn.adafruit.com/">Learn</a></li>
+<li><a href="https://blog.adafruit.com/">Blog</a></li>
+<li><a href="https://forums.adafruit.com/">Forums</a></li>
+<li><a href="https://www.youtube.com/adafruit">Videos</a></li>
+<li><a href="https://www.adabox.com/">Adabox</a></li>
+<li><a href="https://io.adafruit.com/">IO</a></li>
+</ul>
+<div id="account">
+<span class="sign-out"><a href="https://learn.adafruit.com/users/sign_in">Sign In</a></span>
+<div class="cart">
+<a href="https://www.adafruit.com/shopping_cart"><i class="fa fa-shopping-cart"></i> 0</a> </div>
+</div>
+</div>
+</div>
+<div class="second-row">
+<div class="row-content">
+<div class="left-content">
+<div id="logo">
+<a href="https://www.adafruit.com/">
+<img alt="Adafruit Logo" title="Adafruit Logo" src="./Python &amp; CircuitPython _ Adafruit 4-Channel ADC Breakouts _ Adafruit Learning System_files/adafruit_logo_small.png">
+</a> </div>
+<ul class="main-nav-links">
+<li class="dropdown with-overlay">
+<div class="dropdown-label">Explore &amp; Learn</div>
+<div class="dropdown-container">
+<div class="dropdown-content">
+<div class="flyouts">
+<div class="flyout">
+<div class="container">
+<div class="flyout-content row">
+<div class="column col-lg-6 col-md-6 col-sm-6">
+<div class="title categories">
+GUIDE CATEGORIES <br class="hidden-lg"><a href="https://learn.adafruit.com/">(SEE ALL 1773)</a>
+</div>
+<div class="row">
+<div class="col-lg-6 col-md-6 col-sm-6">
+<ul class="links categories">
+<li><a href="https://learn.adafruit.com/category/adabox">ADABOX (48)</a></li>
+<li><a href="https://learn.adafruit.com/category/adafruit-products">ADAFRUIT PRODUCTS (278)</a></li>
+<li><a href="https://learn.adafruit.com/category/arduino">ARDUINO COMPATIBLES (387)</a></li>
+<li><a href="https://learn.adafruit.com/category/breakout-boards">BREAKOUT BOARDS (138)</a></li>
+<li><a href="https://learn.adafruit.com/category/circuit-playground">CIRCUIT PLAYGROUND (237)</a></li>
+<li><a href="https://learn.adafruit.com/category/collins-lab">COLLIN'S LAB (8)</a></li>
+<li><a href="https://learn.adafruit.com/category/components">COMPONENTS (110)</a></li>
+<li><a href="https://learn.adafruit.com/category/community-support">COMMUNITY SUPPORT (23)</a></li>
+<li><a href="https://learn.adafruit.com/category/customer-projects">CUSTOMER &amp; PARTNER PROJECTS (31)</a></li>
+<li><a href="https://learn.adafruit.com/category/development-boards">DEVELOPMENT BOARDS (54)</a></li>
+<li><a href="https://learn.adafruit.com/category/educators">EDUCATORS (35)</a></li>
+<li><a href="https://learn.adafruit.com/category/el">EL WIRE/TAPE/PANEL (13)</a></li>
+<li><a href="https://learn.adafruit.com/category/feather">FEATHER (183)</a></li>
+<li><a href="https://learn.adafruit.com/category/hacks">HACKS (49)</a></li>
+<li><a href="https://learn.adafruit.com/category/internet-of-things-iot">INTERNET OF THINGS - IOT (168)</a></li>
+<li><a href="https://learn.adafruit.com/category/lcds-and-displays">LCDS &amp; DISPLAYS (186)</a></li>
+</ul>
+</div>
+<div class="col-lg-6 col-md-6 col-sm-6">
+<ul class="links categories">
+<li><a href="https://learn.adafruit.com/category/leds">LEDS (368)</a></li>
+<li><a href="https://learn.adafruit.com/category/maker-business">MAKER BUSINESS (34)</a></li>
+<li><a href="https://learn.adafruit.com/category/micro-bit">MICRO:BIT (11)</a></li>
+<li><a href="https://learn.adafruit.com/category/microcontrollers">MICROCONTROLLERS (330)</a></li>
+<li><a href="https://learn.adafruit.com/category/programming">PROGRAMMING (201)</a></li>
+<li><a href="https://learn.adafruit.com/category/projects">PROJECTS (216)</a></li>
+<li><a href="https://learn.adafruit.com/category/raspberry-pi">RASPBERRY PI (357)</a></li>
+<li><a href="https://learn.adafruit.com/category/robotics">ROBOTICS &amp; CNC (84)</a></li>
+<li><a href="https://learn.adafruit.com/category/sensors">SENSORS (359)</a></li>
+<li><a href="https://learn.adafruit.com/category/tools">TOOLS (64)</a></li>
+<li><a href="https://learn.adafruit.com/category/wearables">WEARABLES (232)</a></li>
+<li><a href="https://learn.adafruit.com/category/3d-printing">3D PRINTING (293)</a></li>
+<li><a href="https://learn.adafruit.com/category/crickit">CRICKIT (49)</a></li>
+<li><a href="https://learn.adafruit.com/category/makecode">MAKECODE (115)</a></li>
+<li><a href="https://learn.adafruit.com/category/trellis">TRELLIS (31)</a></li>
+</ul>
+</div>
+</div>
+</div>
+<div class="column col-lg-3 col-md-3 col-sm-3">
+<div class="title new">
+NEW GUIDES <br class="hidden-lg"><a href="https://learn.adafruit.com/guides/latest">(SEE ALL 106)</a>
+</div>
+<ul class="links new">
+<li>
+<a href="https://learn.adafruit.com/pyportal-case"><img src="./Python &amp; CircuitPython _ Adafruit 4-Channel ADC Breakouts _ Adafruit Learning System_files/hero-blue.jpg" alt="PyPortal Case"></a>
+<a href="https://learn.adafruit.com/pyportal-case" class="name">PYPORTAL CASE</a>
+<div class="clear"></div>
+</li>
+<li>
+<a href="https://learn.adafruit.com/crickit-exhibit-demo-board"><img src="./Python &amp; CircuitPython _ Adafruit 4-Channel ADC Breakouts _ Adafruit Learning System_files/makecode_servo_motor.2019-03-05_16_05_23.gif" alt="CRICKIT Exhibit Demo Board"></a>
+<a href="https://learn.adafruit.com/crickit-exhibit-demo-board" class="name">CRICKIT EXHIBIT DEMO BOARD</a>
+<div class="clear"></div>
+</li>
+<li>
+<a href="https://learn.adafruit.com/cpx-rocket-lamp"><img src="./Python &amp; CircuitPython _ Adafruit 4-Channel ADC Breakouts _ Adafruit Learning System_files/IMG_20190222_161348.jpg" alt="Circuit Playground Express Rocket Lamp"></a>
+<a href="https://learn.adafruit.com/cpx-rocket-lamp" class="name">CIRCUIT PLAYGROUND EXPRESS ROCKET LAMP</a>
+<div class="clear"></div>
+</li>
+<li>
+<a href="https://learn.adafruit.com/pyportal-twitter-follows-trophy"><img src="./Python &amp; CircuitPython _ Adafruit 4-Channel ADC Breakouts _ Adafruit Learning System_files/IMG_4338_2k.jpg" alt="PyPortal Twitter Follows Trophy"></a>
+<a href="https://learn.adafruit.com/pyportal-twitter-follows-trophy" class="name">PYPORTAL TWITTER FOLLOWS TROPHY</a>
+<div class="clear"></div>
+</li>
+</ul>
+</div>
+<div class="column col-lg-3 col-md-3 col-sm-3">
+<div class="title featured">
+FEATURED GUIDES <br class="hidden-lg"><a href="https://learn.adafruit.com/guides/featured">(SEE ALL 30)</a>
+</div>
+<ul class="links featured">
+<li>
+<a href="https://learn.adafruit.com/all-about-batteries"><img src="./Python &amp; CircuitPython _ Adafruit 4-Channel ADC Breakouts _ Adafruit Learning System_files/Batteries.jpg" alt="All About Batteries"></a>
+<a href="https://learn.adafruit.com/all-about-batteries" class="name">ALL ABOUT BATTERIES</a>
+<div class="clear"></div>
+</li>
+<li>
+<a href="https://learn.adafruit.com/crickit-powered-owl-robot"><img src="./Python &amp; CircuitPython _ Adafruit 4-Channel ADC Breakouts _ Adafruit Learning System_files/minerva_0217_2k.jpg" alt="Crickit Powered Minerva Owl Robot"></a>
+<a href="https://learn.adafruit.com/crickit-powered-owl-robot" class="name">CRICKIT POWERED MINERVA OWL ROBOT</a>
+<div class="clear"></div>
+</li>
+<li>
+<a href="https://learn.adafruit.com/circuitpython-on-raspberrypi-linux"><img src="./Python &amp; CircuitPython _ Adafruit 4-Channel ADC Breakouts _ Adafruit Learning System_files/blinkapi.gif" alt="CircuitPython on Linux and Raspberry Pi"></a>
+<a href="https://learn.adafruit.com/circuitpython-on-raspberrypi-linux" class="name">CIRCUITPYTHON ON LINUX AND RASPBERRY PI</a>
+<div class="clear"></div>
+</li>
+<li>
+<a href="https://learn.adafruit.com/hello-world-of-robotics-with-crickit"><img src="./Python &amp; CircuitPython _ Adafruit 4-Channel ADC Breakouts _ Adafruit Learning System_files/ezgif.com-video-to-gif.gif" alt="Hello World of Robotics with Crickit"></a>
+<a href="https://learn.adafruit.com/hello-world-of-robotics-with-crickit" class="name">HELLO WORLD OF ROBOTICS WITH CRICKIT</a>
+<div class="clear"></div>
+</li>
+</ul>
+</div>
+
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</li>
+</ul>
+</div>
+<div class="right-content">
+<div class="search-wrapper">
+<form action="https://learn.adafruit.com/search" method="get">
+<label for="search" style="display:none;">Search</label>
+<input id="search" type="text" name="q" autocomplete="off" data-page="" data-app-id="W9DMM4OTH0" data-app-key="e613bcda3453b9ef887e2724362f9e57" data-app-index="learn_guides_production" data-app-uri="https://learn.adafruit.com">
+<i class="fa fa-search"></i>
+<input type="submit" style="visibility: hidden; position: fixed;">
+</form>
+</div>
+</div>
+</div>
+</div>
+</div>
+</header>
+<div id="main-content">
+<div id="page-wrapper" class="">
+<div id="content-wrapper" class="container" data-page-id="10852" data-guide-id="145">
+<div class="row">
+<div class="sidebar-left-wrapper hidden-phone hidden-tablet col-lg-two-and-half col-md-3 col-sm-4 col-xs-12">
+<div class="sidebar-left-content" data-clampedwidth=".sidebar-left-wrapper" style="width: 255px;">
+<nav class="sidebar-left">
+<div class="title-bar">
+<div class="image-container">
+<img class="image-preview" data-error="/assets/missing%2Fmissing.png" src="./Python &amp; CircuitPython _ Adafruit 4-Channel ADC Breakouts _ Adafruit Learning System_files/ADC1115_LRG.jpg">
+</div>
+<div class="title">
+<h1><a href="https://learn.adafruit.com/adafruit-4-channel-adc-breakouts/overview">Adafruit 4-Channel ADC Breakouts</a></h1>
+<span class="tagline"><a href="https://learn.adafruit.com/adafruit-4-channel-adc-breakouts/overview">A guide to the ADS1115 and ADS1015 analog converters</a></span>
+</div>
+</div>
+<ul class="page-parent nav">
+<li class="parent ">
+<a class="sidebar-parent published" href="https://learn.adafruit.com/adafruit-4-channel-adc-breakouts/overview">Overview</a>
+<ul class="page-child nav">
+</ul>
+</li>
+<li class="parent ">
+<a class="sidebar-parent published" href="https://learn.adafruit.com/adafruit-4-channel-adc-breakouts/assembly-and-wiring">Assembly and Wiring</a>
+<ul class="page-child nav">
+</ul>
+</li>
+<li class="parent ">
+<a class="sidebar-parent published" href="https://learn.adafruit.com/adafruit-4-channel-adc-breakouts/signal-connections">Signal Connections</a>
+<ul class="page-child nav">
+</ul>
+</li>
+<li class="parent ">
+<a class="sidebar-parent published" href="https://learn.adafruit.com/adafruit-4-channel-adc-breakouts/arduino-code">Arduino Code</a>
+<ul class="page-child nav">
+</ul>
+</li>
+<li class="parent active">
+<a class="sidebar-parent published" href="https://learn.adafruit.com/adafruit-4-channel-adc-breakouts/python-circuitpython">Python &amp; CircuitPython</a>
+<ul class="page-child nav">
+<li class="">
+<a href="https://circuitpython.readthedocs.io/projects/ads1x15/en/latest/" class="published">Python Docs</a><i class="fa fa-external-link right"></i>
+</li>
+</ul>
+</li>
+<li class="parent ">
+<a class="sidebar-parent published" href="https://learn.adafruit.com/adafruit-4-channel-adc-breakouts/downloads">Downloads</a>
+<ul class="page-child nav">
+</ul>
+</li>
+<li class="single-page-spacer"></li>
+<li class="single-page-link ">
+<a href="https://learn.adafruit.com/adafruit-4-channel-adc-breakouts/featured_products">Featured Products</a>
+</li>
+<li class="single-page-link"><a href="https://learn.adafruit.com/adafruit-4-channel-adc-breakouts?view=all">Single Page</a></li>
+<li><a href="https://cdn-learn.adafruit.com/downloads/pdf/adafruit-4-channel-adc-breakouts.pdf?timestamp=1551874804">Download PDF</a></li>
+</ul>
+</nav>
+<header class="sidebar-meta hidden-xs">
+<h4>Contributors</h4>
+<div><a href="https://learn.adafruit.com/users/adafruit_support_bill">Bill Earl</a></div>
+<div><a href="https://learn.adafruit.com/users/tdicola">Tony DiCola</a></div>
+<div><a href="https://learn.adafruit.com/users/bpb">Brennen Bearnes</a></div>
+</header>
+<header class="sidebar-meta hidden-xs">
+<a class="feedback-link" title="Feedback? Corrections?" rel="nofollow" data-remote="true" data-method="get" href="https://learn.adafruit.com/pages/10852/settings_modal">
+Feedback? Corrections?
+</a> </header>
+</div>
+</div>
+<article class="col-lg-7 col-md-6 col-sm-8 col-xs-12">
+<div id="categories">
+<span class="category ">
+<a href="https://learn.adafruit.com/category/sensors">SENSORS</a>
+</span>
+<span id="guide-favorite">
+<a class="favorites-link category right red" title="" data-toggle="tooltip" data-placement="left" data-remote="true" rel="nofollow" data-method="post" href="https://learn.adafruit.com/guides/145/favorites.js" data-original-title="Favorite this guide?">
+<i class="fa fa-heart-o"></i>
+</a></span>
+</div>
+<div class="content">
+<div class="page-title-wrapper">
+<h1 class="headline">
+<span id="python-circuitpython">Python &amp; CircuitPython</span>
+</h1>
+<div class="author">by
+<a href="https://learn.adafruit.com/users/tdicola">
+<span class="name">Tony DiCola</span>
+</a> </div>
+</div>
+<div class="page-content">
+<div class="row-fluid build-text">
+<p>It's easy to use the ADS1115 and ADS1015 ADC with CircuitPython and the&nbsp;<a href="https://github.com/adafruit/Adafruit_CircuitPython_ADS1x15">Adafruit CircuitPython ADS1x15</a>&nbsp;module.&nbsp; This module allows you to easily write Python code that reads the analog input values.</p>
+<p>You can use this ADC with any CircuitPython microcontroller board or with a computer that has GPIO and Python <a href="https://learn.adafruit.com/circuitpython-on-raspberrypi-linux">thanks to Adafruit_Blinka, our CircuitPython-for-Python compatibility library</a>.</p>
+<h1>
+<a href="https://learn.adafruit.com/adafruit-4-channel-adc-breakouts/python-circuitpython#circuitpython-microcontroller-wiring-5-1" class="anchor-link"><span class="fa fa-link"></span></a><span id="circuitpython-microcontroller-wiring-5-1" class="anchor-link-target"></span><span id="circuitpython-microcontroller-wiring" class="anchor-link-target"></span>
+<span id="circuitpython-microcontroller-wiring-5-1" class="anchor-link-target"></span><span id="circuitpython-microcontroller-wiring" class="anchor-link-target"></span>CircuitPython Microcontroller Wiring</h1>
+<p>First wire up the ADC&nbsp;to your board exactly as shown on the previous pages for Arduino using an I2C interface. &nbsp;Here's an example of wiring a Feather M0 to the ADS1115&nbsp;with I2C:</p>
+</div>
+<table class="build-table">
+<tbody><tr class="build-row">
+<td class="side-images">
+<a href="https://learn.adafruit.com/adafruit-4-channel-adc-breakouts/python-circuitpython#step-2" class="anchor-link"><span class="fa fa-link"></span></a>
+<span id="step-2" class="anchor-link-target"></span>
+<ul>
+<li class="medium-side">
+<a class="large-side-image-link" href="https://learn.adafruit.com/assets/48280">
+<img class="48280-asset medium-side-image img-responsive" src="./Python &amp; CircuitPython _ Adafruit 4-Channel ADC Breakouts _ Adafruit Learning System_files/sensors_m0_ads1115.png" alt="sensors_m0_ads1115.png">
+</a></li>
+</ul>
+</td>
+<td class="side-text"><div class="text"><ul>
+<li>
+<strong>Board 3V</strong>&nbsp;to <strong>ADS1115 VDD -&nbsp;</strong>Remember the&nbsp;<strong>maximum input voltage</strong>&nbsp;to any ADC channel cannot exceed this VDD 3V value!</li>
+<li>
+<strong>Board GND</strong>&nbsp;to&nbsp;<strong>ADS1115 GND</strong>
+</li>
+<li>
+<strong>Board SCL</strong>&nbsp;to&nbsp;<strong>ADS1115 SCL</strong>
+</li>
+<li>
+<strong>Board SDA</strong>&nbsp;to&nbsp;<strong>ADS1115 SDA</strong>
+</li>
+</ul></div></td>
+</tr>
+</tbody></table>
+<div class="row-fluid build-text">
+<h1>
+<a href="https://learn.adafruit.com/adafruit-4-channel-adc-breakouts/python-circuitpython#python-computer-wiring-5-3" class="anchor-link"><span class="fa fa-link"></span></a><span id="python-computer-wiring-5-3" class="anchor-link-target"></span><span id="python-computer-wiring" class="anchor-link-target"></span>Python Computer Wiring</h1>
+</div>
+<div class="row-fluid build-text">
+<p>Since there's&nbsp;<em>dozens</em>&nbsp;of Linux computers/boards you can use we will show wiring for Raspberry Pi. For other platforms,&nbsp;<a href="https://learn.adafruit.com/circuitpython-on-raspberrypi-linux">please visit the guide for CircuitPython on Linux to see whether your platform is supported</a>.&nbsp;</p>
+<p>Here's the Raspberry Pi wired to the ADS1015 with I2C:</p>
+</div>
+<table class="build-table">
+<tbody><tr class="build-row">
+<td class="side-images">
+<a href="https://learn.adafruit.com/adafruit-4-channel-adc-breakouts/python-circuitpython#step-5" class="anchor-link"><span class="fa fa-link"></span></a>
+<span id="step-5" class="anchor-link-target"></span>
+<ul>
+<li class="medium-side">
+<a class="large-side-image-link" href="https://learn.adafruit.com/assets/58680">
+<img class="58680-asset medium-side-image img-responsive" src="./Python &amp; CircuitPython _ Adafruit 4-Channel ADC Breakouts _ Adafruit Learning System_files/sensors_raspi_ads1015_i2c_bb.png" alt="sensors_raspi_ads1015_i2c_bb.png">
+</a></li>
+</ul>
+</td>
+<td class="side-text"><div class="text"><ul>
+<li>
+<strong>Pi 3V</strong>&nbsp;to&nbsp;<strong>ADS1015 VDD -&nbsp;</strong>Remember the&nbsp;<strong>maximum input voltage</strong>&nbsp;to any ADC channel cannot exceed this VDD 3V value!</li>
+<li>
+<strong>Pi GND</strong>&nbsp;to&nbsp;<strong>ADS1015 GND</strong>
+</li>
+<li>
+<strong>Pi SCL</strong>&nbsp;to&nbsp;<strong>ADS1015 SCL</strong>
+</li>
+<li>
+<strong>Pi SDA</strong>&nbsp;to&nbsp;<strong>ADS1015 SDA</strong>
+</li>
+</ul></div></td>
+</tr>
+</tbody></table>
+<div class="row-fluid build-text">
+<h1>
+<a href="https://learn.adafruit.com/adafruit-4-channel-adc-breakouts/python-circuitpython#circuitpython-installation-of-ads1x15library-5-6" class="anchor-link"><span class="fa fa-link"></span></a><span id="circuitpython-installation-of-ads1x15library-5-6" class="anchor-link-target"></span><span id="circuitpython-installation-of-ads1x15library" class="anchor-link-target"></span>CircuitPython Installation of ADS1x15Library</h1>
+</div>
+<div class="row-fluid build-text">
+<p>Next you'll need to install the&nbsp;<a href="https://github.com/adafruit/Adafruit_CircuitPython_ADS1x15">Adafruit CircuitPython ADS1x15</a>&nbsp;library on your CircuitPython board.</p>
+<p>First make sure you are running the&nbsp;<a href="https://github.com/adafruit/circuitpython/releases">latest version of Adafruit CircuitPython</a>&nbsp;for your board.</p>
+<p>Next you'll need to install the necessary libraries&nbsp;to use the hardware--carefully follow the steps to find and install these libraries from&nbsp;<a href="https://github.com/adafruit/Adafruit_CircuitPython_Bundle">Adafruit's CircuitPython library bundle</a>.&nbsp; For example the Circuit Playground Express guide has&nbsp;<a href="https://learn.adafruit.com/adafruit-circuit-playground-express/installing-libraries">a great page on how to install the library bundle</a>&nbsp;for both express and non-express boards.</p>
+<p>Remember for non-express boards like the Trinket M0, Gemma M0, and Feather/Metro M0 basic you'll need to manually install the necessary libraries from the bundle:</p>
+<ul>
+<li><strong>adafruit_ads1x15</strong></li>
+<li><strong>adafruit_bus_device</strong></li>
+</ul>
+<p>You can also download the&nbsp;<strong>adafruit_ads1x15 </strong>folder&nbsp;from&nbsp;<a href="https://github.com/adafruit/Adafruit_CircuitPython_ADS1x15/releases">its releases page on Github</a>.</p>
+<p>Before continuing make sure your board's lib folder or root filesystem has the&nbsp;<strong>adafruit_ads1x15 </strong>and<strong> adafruit_bus_device</strong><strong>&nbsp;</strong>files and folders<strong>&nbsp;</strong>copied over.</p>
+<p>Next&nbsp;<a href="https://learn.adafruit.com/micropython-basics-how-to-load-micropython-on-a-board/serial-terminal">connect to the board's serial REPL&nbsp;</a>so you are at the CircuitPython&nbsp;<strong>&gt;&gt;&gt;</strong>&nbsp;prompt.</p>
+</div>
+<div class="row-fluid build-text">
+<h1>
+<a href="https://learn.adafruit.com/adafruit-4-channel-adc-breakouts/python-circuitpython#python-installation-of-ads1x15-library-5-8" class="anchor-link"><span class="fa fa-link"></span></a><span id="python-installation-of-ads1x15-library-5-8" class="anchor-link-target"></span><span id="python-installation-of-ads1x15-library" class="anchor-link-target"></span>Python Installation of ADS1x15 Library</h1>
+</div>
+<div class="row-fluid build-text">
+
+<p>You'll need to install the <a href="https://github.com/adafruit/Adafruit_Blinka">Adafruit_Blinka</a> library that provides the CircuitPython support in Python. This may also require enabling I2C on your platform and verifying you are running Python 3.&nbsp;<a href="https://learn.adafruit.com/circuitpython-on-raspberrypi-linux">Since each platform is a little different, and Linux changes often, please visit the CircuitPython on Linux guide to get your computer ready</a>!</p>
+<p>Once that's done, from your command line run the following command:</p>
+<ul>
+<li><code>sudo pip3 install adafruit-circuitpython-ads1x15</code></li>
+</ul>
+<p>If your default Python is version 3 you may need to run 'pip' instead. Just make sure you aren't trying to use CircuitPython on Python 2.x, it isn't supported!</p>
+</div>
+<div class="row-fluid build-text">
+<h1>
+<a href="https://learn.adafruit.com/adafruit-4-channel-adc-breakouts/python-circuitpython#circuitpython-and-python-usage-5-10" class="anchor-link"><span class="fa fa-link"></span></a><span id="circuitpython-and-python-usage-5-10" class="anchor-link-target"></span><span id="circuitpython-and-python-usage" class="anchor-link-target"></span>CircuitPython &amp; Python Usage</h1>
+<p>To demonstrate the usage of the ADC we will initialize it and read the ADC channel values interactively using the REPL. &nbsp;First&nbsp;run the following code to import the necessary modules and initialize the I2C bus:</p>
+</div>
+<div class="build-code code-element">
+<div class="download-code">
+<i class="fa fa-cloud-download"></i> Download:
+<a data-turbolinks="false" href="https://learn.adafruit.com/pages/10852/elements/2974182/download">
+file
+</a> <div class="code-copy-container">
+<a href="https://learn.adafruit.com/adafruit-4-channel-adc-breakouts/python-circuitpython#" class="code-copy-button hidden-xs">Copy Code</a>
+</div>
+</div>
+<pre class="code-text-only" style="display: none;">import board
+import busio
+i2c = busio.I2C(board.SCL, board.SDA)</pre>
+<pre class="prettyprint linenums prettyprinted" style=""><ol class="linenums"><li class="L0"><span class="kwd">import</span><span class="pln"> board</span></li><li class="L1"><span class="kwd">import</span><span class="pln"> busio</span></li><li class="L2"><span class="pln">i2c </span><span class="pun">=</span><span class="pln"> busio</span><span class="pun">.</span><span class="pln">I2C</span><span class="pun">(</span><span class="pln">board</span><span class="pun">.</span><span class="pln">SCL</span><span class="pun">,</span><span class="pln"> board</span><span class="pun">.</span><span class="pln">SDA</span><span class="pun">)</span></li></ol></pre>
+</div>
+<div class="row-fluid build-text">
+<p>Next, import the module for the board you are using. For the ADS1015, use:</p>
+</div>
+<div class="build-code code-element">
+<div class="download-code">
+<i class="fa fa-cloud-download"></i> Download:
+<a data-turbolinks="false" href="https://learn.adafruit.com/pages/10852/elements/3010960/download">
+file
+</a> <div class="code-copy-container">
+<a href="https://learn.adafruit.com/adafruit-4-channel-adc-breakouts/python-circuitpython#" class="code-copy-button hidden-xs">Copy Code</a>
+</div>
+</div>
+<pre class="code-text-only" style="display: none;">import adafruit_ads1x15.ads1015 as ADS</pre>
+<pre class="prettyprint linenums prettyprinted" style=""><ol class="linenums"><li class="L0"><span class="kwd">import</span><span class="pln"> adafruit_ads1x15</span><span class="pun">.</span><span class="pln">ads1015 </span><span class="kwd">as</span><span class="pln"> ADS</span></li></ol></pre>
+</div>
+<div class="row-fluid build-text">
+<p><strong>OR</strong>, for the ADS1115, use:</p>
+</div>
+<div class="build-code code-element">
+<div class="download-code">
+<i class="fa fa-cloud-download"></i> Download:
+ <a data-turbolinks="false" href="https://learn.adafruit.com/pages/10852/elements/3010961/download">
+file
+</a> <div class="code-copy-container">
+<a href="https://learn.adafruit.com/adafruit-4-channel-adc-breakouts/python-circuitpython#" class="code-copy-button hidden-xs">Copy Code</a>
+</div>
+</div>
+<pre class="code-text-only" style="display: none;">import adafruit_ads1x15.ads1115 as ADS</pre>
+<pre class="prettyprint linenums prettyprinted" style=""><ol class="linenums"><li class="L0"><span class="kwd">import</span><span class="pln"> adafruit_ads1x15</span><span class="pun">.</span><span class="pln">ads1115 </span><span class="kwd">as</span><span class="pln"> ADS</span></li></ol></pre>
+</div>
+<div class="row-fluid build-text">
+<p>Note that we are renaming each import to ADS for convenience.</p>
+<p>The final import needed is for the ADS1x15 library's version of AnalogIn:</p>
+</div>
+<div class="build-code code-element">
+<div class="download-code">
+<i class="fa fa-cloud-download"></i> Download:
+<a data-turbolinks="false" href="https://learn.adafruit.com/pages/10852/elements/3010963/download">
+file
+</a> <div class="code-copy-container">
+<a href="https://learn.adafruit.com/adafruit-4-channel-adc-breakouts/python-circuitpython#" class="code-copy-button hidden-xs">Copy Code</a>
+</div>
+</div>
+<pre class="code-text-only" style="display: none;">from adafruit_ads1x15.analog_in import AnalogIn</pre>
+<pre class="prettyprint linenums prettyprinted" style=""><ol class="linenums"><li class="L0"><span class="kwd">from</span><span class="pln"> adafruit_ads1x15</span><span class="pun">.</span><span class="pln">analog_in </span><span class="kwd">import</span><span class="pln"> </span><span class="typ">AnalogIn</span></li></ol></pre>
+</div>
+<div class="row-fluid build-text">
+<p>which provides behavior similar to the <a href="https://learn.adafruit.com/circuitpython-essentials/circuitpython-analog-in">core AnalogIn library</a>, but is specific to the ADS1x15 ADC's.</p>
+<p>OK, now we can actually create the ADC object. For the ADS1015, use:</p>
+</div>
+<div class="build-code code-element">
+<div class="download-code">
+<i class="fa fa-cloud-download"></i> Download:
+<a data-turbolinks="false" href="https://learn.adafruit.com/pages/10852/elements/3010965/download">
+file
+</a> <div class="code-copy-container">
+<a href="https://learn.adafruit.com/adafruit-4-channel-adc-breakouts/python-circuitpython#" class="code-copy-button hidden-xs">Copy Code</a>
+</div>
+</div>
+<pre class="code-text-only" style="display: none;">ads = ADS.ADS1015(i2c)</pre>
+<pre class="prettyprint linenums prettyprinted" style=""><ol class="linenums"><li class="L0"><span class="pln">ads </span><span class="pun">=</span><span class="pln"> ADS</span><span class="pun">.</span><span class="pln">ADS1015</span><span class="pun">(</span><span class="pln">i2c</span><span class="pun">)</span></li></ol></pre>
+</div>
+<div class="row-fluid build-text">
+<p><strong>OR</strong>, for the ADS1115, use:</p>
+</div>
+<div class="build-code code-element">
+<div class="download-code">
+<i class="fa fa-cloud-download"></i> Download:
+<a data-turbolinks="false" href="https://learn.adafruit.com/pages/10852/elements/3010967/download">
+file
+</a> <div class="code-copy-container">
+<a href="https://learn.adafruit.com/adafruit-4-channel-adc-breakouts/python-circuitpython#" class="code-copy-button hidden-xs">Copy Code</a>
+</div>
+</div>
+<pre class="code-text-only" style="display: none;">ads = ADS.ADS1115(i2c)</pre>
+<pre class="prettyprint linenums prettyprinted" style=""><ol class="linenums"><li class="L0"><span class="pln">ads </span><span class="pun">=</span><span class="pln"> ADS</span><span class="pun">.</span><span class="pln">ADS1115</span><span class="pun">(</span><span class="pln">i2c</span><span class="pun">)</span></li></ol></pre>
+</div>
+<div class="row-fluid build-text">
+<p>Now let's see how to get values from the board. You can use these boards in either single ended or differential mode. The usage for the two modes are slightly different, so we'll go over them separately.</p>
+
+</div>
+<div class="row-fluid build-text">
+<h2>
+<a href="https://learn.adafruit.com/adafruit-4-channel-adc-breakouts/python-circuitpython#single-ended-mode-5-23" class="anchor-link"><span class="fa fa-link"></span></a><span id="single-ended-mode-5-23" class="anchor-link-target"></span><span id="single-ended-mode" class="anchor-link-target"></span>Single Ended Mode</h2>
+<p>For single ended mode we use AnalogIn to create the analog input channel, providing the ADC object and the pin to which the signal is attached. Here, we use pin 0:</p>
+</div>
+<div class="build-code code-element">
+<div class="download-code">
+<i class="fa fa-cloud-download"></i> Download:
+<a data-turbolinks="false" href="https://learn.adafruit.com/pages/10852/elements/2974186/download">
+file
+</a> <div class="code-copy-container">
+<a href="https://learn.adafruit.com/adafruit-4-channel-adc-breakouts/python-circuitpython#" class="code-copy-button hidden-xs">Copy Code</a>
+</div>
+</div>
+<pre class="code-text-only" style="display: none;">chan = AnalogIn(ads, ADS.P0)</pre>
+<pre class="prettyprint linenums prettyprinted" style=""><ol class="linenums"><li class="L0"><span class="pln">chan </span><span class="pun">=</span><span class="pln"> </span><span class="typ">AnalogIn</span><span class="pun">(</span><span class="pln">ads</span><span class="pun">,</span><span class="pln"> ADS</span><span class="pun">.</span><span class="pln">P0</span><span class="pun">)</span></li></ol></pre>
+</div>
+<div class="row-fluid build-text">
+<p>To set up additional channels, use the same syntax but provide a different pin.</p>
+</div>
+<div class="row-fluid build-text">
+<p>Now you can read the raw value and voltage of the channel using either the the <strong>value</strong> or <strong>voltage</strong> property.</p>
+</div>
+<div class="build-code code-element">
+<div class="download-code">
+<i class="fa fa-cloud-download"></i> Download:
+<a data-turbolinks="false" href="https://learn.adafruit.com/pages/10852/elements/2974192/download">
+file
+</a> <div class="code-copy-container">
+<a href="https://learn.adafruit.com/adafruit-4-channel-adc-breakouts/python-circuitpython#" class="code-copy-button hidden-xs">Copy Code</a>
+</div>
+</div>
+<pre class="code-text-only" style="display: none;">print(chan.value, chan.voltage)</pre>
+<pre class="prettyprint linenums prettyprinted" style=""><ol class="linenums"><li class="L0"><span class="kwd">print</span><span class="pun">(</span><span class="pln">chan</span><span class="pun">.</span><span class="kwd">value</span><span class="pun">,</span><span class="pln"> chan</span><span class="pun">.</span><span class="pln">voltage</span><span class="pun">)</span></li></ol></pre>
+</div>
+<div class="row-fluid build-image">
+<a href="https://learn.adafruit.com/assets/66982">
+<img class="66982-asset img-responsive" srcset="https://cdn-learn.adafruit.com/assets/assets/000/066/982/medium260/sensors_se_screen.jpg?1543875955 260w,
+               https://cdn-learn.adafruit.com/assets/assets/000/066/982/medium640/sensors_se_screen.jpg?1543875955 640w,
+               https://cdn-learn.adafruit.com/assets/assets/000/066/982/medium800/sensors_se_screen.jpg?1543875955 800w,
+               https://cdn-learn.adafruit.com/assets/assets/000/066/982/large1024/sensors_se_screen.jpg?1543875955 1024w" sizes="(max-width: 768px) 100vw, (max-width: 1024px) 65vw, (max-width: 1365px) 47vw, 750px" src="./Python &amp; CircuitPython _ Adafruit 4-Channel ADC Breakouts _ Adafruit Learning System_files/sensors_se_screen.jpg" alt="sensors_se_screen.jpg">
+<span class="image-expand"><i class="fa fa-search-plus"></i></span>
+</a> </div>
+<div class="row-fluid build-text">
+
+<h2>
+<a href="https://learn.adafruit.com/adafruit-4-channel-adc-breakouts/python-circuitpython#differential-mode-5-29" class="anchor-link"><span class="fa fa-link"></span></a><span id="differential-mode-5-29" class="anchor-link-target"></span><span id="differential-mode" class="anchor-link-target"></span>Differential Mode</h2>
+<p>For differential mode, you provide two pins when setting up the ADC channel. The reading will be the difference between the two. Here, we use pin 0 and 1:</p>
+</div>
+<div class="build-code code-element">
+<div class="download-code">
+<i class="fa fa-cloud-download"></i> Download:
+<a data-turbolinks="false" href="https://learn.adafruit.com/pages/10852/elements/2974195/download">
+file
+</a> <div class="code-copy-container">
+<a href="https://learn.adafruit.com/adafruit-4-channel-adc-breakouts/python-circuitpython#" class="code-copy-button hidden-xs">Copy Code</a>
+</div>
+</div>
+<pre class="code-text-only" style="display: none;">chan = AnalogIn(ads, ADS.P0, ADS.P1)</pre>
+<pre class="prettyprint linenums prettyprinted" style=""><ol class="linenums"><li class="L0"><span class="pln">chan </span><span class="pun">=</span><span class="pln"> </span><span class="typ">AnalogIn</span><span class="pun">(</span><span class="pln">ads</span><span class="pun">,</span><span class="pln"> ADS</span><span class="pun">.</span><span class="pln">P0</span><span class="pun">,</span><span class="pln"> ADS</span><span class="pun">.</span><span class="pln">P1</span><span class="pun">)</span></li></ol></pre>
+</div>
+<div class="row-fluid build-text">
+<p>You can create more channels by doing this again with different pins. However, note that not all pin combinations are possible. See the datasheets for details.</p>
+<p>Once the channel is created, getting the readings is the same as before:</p>
+</div>
+<div class="build-code code-element">
+<div class="download-code">
+<i class="fa fa-cloud-download"></i> Download:
+<a data-turbolinks="false" href="https://learn.adafruit.com/pages/10852/elements/3010971/download">
+file
+</a> <div class="code-copy-container">
+<a href="https://learn.adafruit.com/adafruit-4-channel-adc-breakouts/python-circuitpython#" class="code-copy-button hidden-xs">Copy Code</a>
+</div>
+</div>
+<pre class="code-text-only" style="display: none;">print(chan.value, chan.voltage)</pre>
+<pre class="prettyprint linenums prettyprinted" style=""><ol class="linenums"><li class="L0"><span class="kwd">print</span><span class="pun">(</span><span class="pln">chan</span><span class="pun">.</span><span class="kwd">value</span><span class="pun">,</span><span class="pln"> chan</span><span class="pun">.</span><span class="pln">voltage</span><span class="pun">)</span></li></ol></pre>
+</div>
+<div class="row-fluid build-image">
+<a href="https://learn.adafruit.com/assets/66983">
+<img class="66983-asset img-responsive" srcset="https://cdn-learn.adafruit.com/assets/assets/000/066/983/medium260/sensors_dif_screen.jpg?1543875968 260w,
+               https://cdn-learn.adafruit.com/assets/assets/000/066/983/medium640/sensors_dif_screen.jpg?1543875968 640w,
+               https://cdn-learn.adafruit.com/assets/assets/000/066/983/medium800/sensors_dif_screen.jpg?1543875968 800w,
+               https://cdn-learn.adafruit.com/assets/assets/000/066/983/large1024/sensors_dif_screen.jpg?1543875968 1024w" sizes="(max-width: 768px) 100vw, (max-width: 1024px) 65vw, (max-width: 1365px) 47vw, 750px" src="./Python &amp; CircuitPython _ Adafruit 4-Channel ADC Breakouts _ Adafruit Learning System_files/sensors_dif_screen.jpg" alt="sensors_dif_screen.jpg">
+<span class="image-expand"><i class="fa fa-search-plus"></i></span>
+</a> </div>
+<div class="row-fluid build-text">
+<h2>
+<a href="https://learn.adafruit.com/adafruit-4-channel-adc-breakouts/python-circuitpython#gain-5-34" class="anchor-link"><span class="fa fa-link"></span></a><span id="gain-5-34" class="anchor-link-target"></span><span id="gain" class="anchor-link-target"></span>Gain</h2>
+<p>Both the ADS1015 and the ADS1115 have a Programmable Gain (PGA) that you can set to amplify the incoming signal before it reaches the ADC. The available settings and associated Full Scale (FS) voltage range are shown in Table 3 of the datasheet.</p>
+</div>
+<div class="row-fluid build-image">
+<a href="https://learn.adafruit.com/assets/70758">
+<img class="70758-asset img-responsive" srcset="https://cdn-learn.adafruit.com/assets/assets/000/070/758/medium260/sensors_ads1015_pga_range.jpg?1549409927 260w,
+               https://cdn-learn.adafruit.com/assets/assets/000/070/758/medium640/sensors_ads1015_pga_range.jpg?1549409927 640w,
+               https://cdn-learn.adafruit.com/assets/assets/000/070/758/medium800/sensors_ads1015_pga_range.jpg?1549409927 800w,
+               https://cdn-learn.adafruit.com/assets/assets/000/070/758/large1024/sensors_ads1015_pga_range.jpg?1549409927 1024w" sizes="(max-width: 768px) 100vw, (max-width: 1024px) 65vw, (max-width: 1365px) 47vw, 750px" src="./Python &amp; CircuitPython _ Adafruit 4-Channel ADC Breakouts _ Adafruit Learning System_files/sensors_ads1015_pga_range.jpg" alt="sensors_ads1015_pga_range.jpg">
+<span class="image-expand"><i class="fa fa-search-plus"></i></span>
+</a> </div>
+<div class="row-fluid build-text">
+<p>You set the gain to one of the values using the <code>gain</code> property, like this:</p>
+</div>
+<div class="build-code code-element">
+<div class="download-code">
+<i class="fa fa-cloud-download"></i> Download:
+<a data-turbolinks="false" href="https://learn.adafruit.com/pages/10852/elements/3018527/download">
+file
+</a> <div class="code-copy-container">
+<a href="https://learn.adafruit.com/adafruit-4-channel-adc-breakouts/python-circuitpython#" class="code-copy-button hidden-xs">Copy Code</a>
+</div>
+</div>
+<pre class="code-text-only" style="display: none;">ads.gain = 16</pre>
+<pre class="prettyprint linenums prettyprinted" style=""><ol class="linenums"><li class="L0"><span class="pln">ads</span><span class="pun">.</span><span class="pln">gain </span><span class="pun">=</span><span class="pln"> </span><span class="lit">16</span></li></ol></pre>
+</div>
+<div class="row-fluid build-text">
+<p>Note that setting <code>gain</code> will affect the raw ADC <code>value</code> but not the <code>voltage</code> (expect for variance due to noise). For example:</p>
+</div>
+<div class="build-code code-element">
+<div class="download-code">
+<i class="fa fa-cloud-download"></i> Download:
+<a data-turbolinks="false" href="https://learn.adafruit.com/pages/10852/elements/3018529/download">
+file
+</a> <div class="code-copy-container">
+<a href="https://learn.adafruit.com/adafruit-4-channel-adc-breakouts/python-circuitpython#" class="code-copy-button hidden-xs">Copy Code</a>
+</div>
+</div>
+<pre class="code-text-only" style="display: none;">&gt;&gt;&gt; ads.gain
+1
+&gt;&gt;&gt; chan.value, chan.voltage
+(84, 0.168082)
+&gt;&gt;&gt; ads.gain = 16
+&gt;&gt;&gt; ads.gain
+16
+&gt;&gt;&gt; chan.value, chan.voltage
+(1335, 0.167081)
+&gt;&gt;&gt; </pre>
+<pre class="prettyprint linenums prettyprinted" style=""><ol class="linenums"><li class="L0"><span class="pun">&gt;&gt;&gt;</span><span class="pln"> ads</span><span class="pun">.</span><span class="pln">gain</span></li><li class="L1"><span class="lit">1</span></li><li class="L2"><span class="pun">&gt;&gt;&gt;</span><span class="pln"> chan</span><span class="pun">.</span><span class="kwd">value</span><span class="pun">,</span><span class="pln"> chan</span><span class="pun">.</span><span class="pln">voltage</span></li><li class="L3"><span class="pun">(</span><span class="lit">84</span><span class="pun">,</span><span class="pln"> </span><span class="lit">0.168082</span><span class="pun">)</span></li><li class="L4"><span class="pun">&gt;&gt;&gt;</span><span class="pln"> ads</span><span class="pun">.</span><span class="pln">gain </span><span class="pun">=</span><span class="pln"> </span><span class="lit">16</span></li><li class="L5"><span class="pun">&gt;&gt;&gt;</span><span class="pln"> ads</span><span class="pun">.</span><span class="pln">gain</span></li><li class="L6"><span class="lit">16</span></li><li class="L7"><span class="pun">&gt;&gt;&gt;</span><span class="pln"> chan</span><span class="pun">.</span><span class="kwd">value</span><span class="pun">,</span><span class="pln"> chan</span><span class="pun">.</span><span class="pln">voltage</span></li><li class="L8"><span class="pun">(</span><span class="lit">1335</span><span class="pun">,</span><span class="pln"> </span><span class="lit">0.167081</span><span class="pun">)</span></li><li class="L9"><span class="pun">&gt;&gt;&gt;</span><span class="pln"> </span></li></ol></pre>
+</div>
+<div class="row-fluid build-text">
+<p>The <code>value</code> changed from 84 to 1335, which is pretty close to 84 x 16 = 1344. However, the <code>voltage</code> returned in both cases is still the actual input voltage of ~0.168 V.</p>
+</div>
+<div class="row-fluid build-text">
+<h2>
+<a href="https://learn.adafruit.com/adafruit-4-channel-adc-breakouts/python-circuitpython#more-info-5-41" class="anchor-link"><span class="fa fa-link"></span></a><span id="more-info-5-41" class="anchor-link-target"></span><span id="more-info" class="anchor-link-target"></span>More Info</h2>
+<p>The above examples cover the basic setup and usage using default settings. For more details, see the <a href="https://circuitpython.readthedocs.io/projects/ads1x15/en/latest/">documentation</a>.</p>
+</div>
+<div class="page-navigation">
+<a class="previous-page" href="https://learn.adafruit.com/adafruit-4-channel-adc-breakouts/arduino-code">
+<i class="fa fa-chevron-left"></i>ARDUINO CODE
+</a> <a class="next-page" href="https://learn.adafruit.com/adafruit-4-channel-adc-breakouts/downloads">
+DOWNLOADS<i class="fa fa-chevron-right"></i>
+</a> <div class="clear"></div>
+</div>
+<span class="page-last-updated">
+This guide was first published on Nov 29, 2012. It was last
+updated on Nov 29, 2012.
+</span>
+<span class="page-last-updated">
+This page (Python &amp; CircuitPython) was last updated on Feb 05, 2019.
+</span>
+</div>
+</div>
+</article>
+<div class="col-lg-two-and-half col-md-3 hidden-sm hidden-xs">
+<header class="sidebar-right">
+<div class="sidebar-right-content">
+<div class="product-wrapper">
+<a href="https://www.adafruit.com/product/1085">
+<div class="product-image">
+<img src="./Python &amp; CircuitPython _ Adafruit 4-Channel ADC Breakouts _ Adafruit Learning System_files/1085-02.jpg" alt="" height="233" class="img-responsive" data-error="/assets/missing%2Fmissing.png">
+</div>
+<div class="product-details">
+<div class="product-title">ADS1115 16-Bit ADC - 4 Channel with Programmable Gain Amplifier</div>
+<span class="product-price">$14.95</span>
+</div>
+</a> <div class="product-purchase-link">
+<a id="1085-product" class="product-buy btn-primary " data-pid="1085" data-qty="1" data-name="ADS1115 16-Bit ADC - 4 Channel with Programmable Gain Amplifier" href="https://www.adafruit.com/product/1085">Add to Cart</a>
+</div>
+</div>
+<div class="product-wrapper">
+<a href="https://www.adafruit.com/product/1083">
+<div class="product-image">
+<img src="./Python &amp; CircuitPython _ Adafruit 4-Channel ADC Breakouts _ Adafruit Learning System_files/1083-00.jpg" alt="" height="233" class="img-responsive" data-error="/assets/missing%2Fmissing.png">
+</div>
+<div class="product-details">
+<div class="product-title">ADS1015 12-Bit ADC - 4 Channel with Programmable Gain Amplifier</div>
+<span class="product-price">$9.95</span>
+</div>
+</a> <div class="product-purchase-link">
+<a id="1083-product" class="product-buy btn-primary " data-pid="1083" data-qty="1" data-name="ADS1015 12-Bit ADC - 4 Channel with Programmable Gain Amplifier" href="https://www.adafruit.com/product/1083">Add to Cart</a>
+</div>
+</div>
+<div class="product-wrapper">
+<a href="https://www.adafruit.com/product/914">
+<div class="product-image">
+<img src="./Python &amp; CircuitPython _ Adafruit 4-Channel ADC Breakouts _ Adafruit Learning System_files/914-00.jpg" alt="" height="233" class="img-responsive" data-error="/assets/missing%2Fmissing.png">
+</div>
+<div class="product-details">
+<div class="product-title">Adafruit Assembled Pi Cobbler Breakout + Cable for Raspberry Pi</div>
+<span class="product-price">$6.50</span>
+</div>
+</a> <div class="product-purchase-link">
+<a id="914-product" class="product-buy btn-primary " data-pid="914" data-qty="1" data-name="Adafruit Assembled Pi Cobbler Breakout + Cable for Raspberry Pi" href="https://www.adafruit.com/product/914">Add to Cart</a>
+</div>
+</div>
+<div class="product-wrapper">
+<a href="https://www.adafruit.com/product/50">
+<div class="product-image">
+<img src="./Python &amp; CircuitPython _ Adafruit 4-Channel ADC Breakouts _ Adafruit Learning System_files/50-09.jpg" alt="" height="233" class="img-responsive" data-error="/assets/missing%2Fmissing.png">
+</div>
+<div class="product-details">
+<div class="product-title">Adafruit METRO 328 Fully Assembled - Arduino IDE compatible</div>
+<span class="product-price">$17.50</span>
+</div>
+</a> <div class="product-purchase-link">
+<a id="50-product" class="product-buy btn-primary " data-pid="50" data-qty="1" data-name="Adafruit METRO 328 Fully Assembled - Arduino IDE compatible" href="https://www.adafruit.com/product/50">Add to Cart</a>
+</div>
+</div>
+<div class="product-wrapper">
+<a href="https://www.adafruit.com/product/239">
+<div class="product-image">
+<img src="./Python &amp; CircuitPython _ Adafruit 4-Channel ADC Breakouts _ Adafruit Learning System_files/239-05.jpg" alt="" height="233" class="img-responsive" data-error="/assets/missing%2Fmissing.png">
+</div>
+<div class="product-details">
+<div class="product-title">Full sized breadboard</div>
+<span class="product-price">$5.95</span>
+</div>
+</a> <div class="product-purchase-link">
+<a id="239-product" class="product-buy btn-primary " data-pid="239" data-qty="1" data-name="Full sized breadboard" href="https://www.adafruit.com/product/239">Add to Cart</a>
+</div>
+</div>
+<div class="clear"></div>
+</div>
+</header>
+</div>
+</div>
+</div>
+<div class="related-guides-wrapper container">
+<div class="guide-group border">
+<div class="header">
+<h3>Related Guides</h3>
+</div>
+<div class="guide-preview">
+<div class="image-container">
+<a href="https://learn.adafruit.com/send-raspberry-pi-data-to-cosm">
+<img class="image-preview" data-error="/assets/missing%2Fmissing.png" src="./Python &amp; CircuitPython _ Adafruit 4-Channel ADC Breakouts _ Adafruit Learning System_files/cosm-pi-mashup.jpg">
+<div class="tagline">
+Save and Graph Analog Temperature Data
+</div>
+</a> </div>
+<div class="title">
+<a href="https://learn.adafruit.com/send-raspberry-pi-data-to-cosm">
+Send Raspberry Pi Data to COSM
+</a> </div>
+<div class="author">by
+<a href="https://learn.adafruit.com/users/mikeysklar">
+<span class="name">Michael Sklar</span>
+</a> </div>
+</div>
+<div class="guide-preview">
+<div class="image-container">
+<a href="https://learn.adafruit.com/adafruit-arduino-lesson-4-eight-leds">
+<img class="image-preview" data-error="/assets/missing%2Fmissing.png" src="./Python &amp; CircuitPython _ Adafruit 4-Channel ADC Breakouts _ Adafruit Learning System_files/breadboard.jpg">
+<div class="tagline">
+Learn Arduino, Lesson 4. Eight LEDs and a Shift Register
+</div>
+</a> </div>
+<div class="title">
+<a href="https://learn.adafruit.com/adafruit-arduino-lesson-4-eight-leds">
+Arduino Lesson 4. Eight LEDs and a Shift Register
+</a> </div>
+<div class="author">by
+<a href="https://learn.adafruit.com/users/simonmonk">
+<span class="name">Simon Monk</span>
+</a> </div>
+</div>
+<div class="guide-preview">
+<div class="image-container">
+<a href="https://learn.adafruit.com/making-adabot-part-2">
+<img class="image-preview" data-error="/assets/missing%2Fmissing.png" src="./Python &amp; CircuitPython _ Adafruit 4-Channel ADC Breakouts _ Adafruit Learning System_files/IMG_1145.jpg">
+<div class="tagline">
+Make your bot move, blink, and smile!
+</div>
+</a> </div>
+<div class="title">
+<a href="https://learn.adafruit.com/making-adabot-part-2">
+Making Adabot: Part 2
+</a> </div>
+<div class="author">by
+<a href="https://learn.adafruit.com/users/rjwinscot">
+<span class="name">Rick Winscot</span>
+</a> </div>
+</div>
+<div class="guide-preview">
+<div class="image-container">
+<a href="https://learn.adafruit.com/bluetooth-motorized-camera-slider">
+<img class="image-preview" data-error="/assets/missing%2Fmissing.png" src="./Python &amp; CircuitPython _ Adafruit 4-Channel ADC Breakouts _ Adafruit Learning System_files/hero-slide-02.jpg">
+<div class="tagline">
+Take epic timelapses with a DIY camera slider
+</div>
+</a> </div>
+<div class="title">
+<a href="https://learn.adafruit.com/bluetooth-motorized-camera-slider">
+Bluetooth Controlled Motorized Camera Slider
+</a> </div>
+<div class="author">by
+<a href="https://learn.adafruit.com/users/pixil3d">
+<span class="name">Ruiz Brothers</span>
+</a> </div>
+</div>
+</div>
+</div>
+<div class="footer-spacer"></div>
+</div>
+<div class="modal fade" id="notify-modal">
+<div class="modal-dialog">
+<div class="modal-content">
+<div class="modal-header">
+<a href="https://learn.adafruit.com/adafruit-4-channel-adc-breakouts/python-circuitpython#" class="close" data-dismiss="modal">×</a>
+<h5>OUT OF STOCK NOTIFICATION</h5>
+</div>
+<div class="modal-body">
+<p class="notify-modal-form-header"></p>
+<div class="notify-modal-products"></div>
+<form id="notify-modal-form" name="back_in_stock_notification">
+<p class="notify-modal-form-notice"></p>
+<div class="notify-modal-break"></div>
+<div class="form-group">
+<label class="inputLabel" for="name">YOUR NAME</label>
+<input type="text" size="25" maxlength="64" name="name" value="">
+</div>
+<div class="form-group">
+<label class="inputLabel" for="email">YOUR EMAIL</label>
+<input type="email" size="25" maxlength="96" name="email" value="">
+</div>
+<input type="text" name="daigo" style="display:none;">
+<input type="hidden" name="notify_me" value="true">
+</form>
+<div id="notify-modal-success" style="display:none">
+<p>You have been successfully subscribed to the Notification List for this product and will therefore receive an e-mail from us when it is back in stock!</p>
+<p>For security reasons, an e-mail has been sent to you acknowledging your subscription. Please remember that this subscription will not result in you receiving any e-mail from us about anything other than the restocking of this item.</p>
+<p>If, for any reason, you would like to unsubscribe from the Notification List for this product you will find details of how to do so in the e-mail that has just been sent to you!</p>
+</div>
+</div>
+<div class="modal-footer">
+<a href="https://learn.adafruit.com/adafruit-4-channel-adc-breakouts/python-circuitpython#" id="close-notify" style="display: none" data-dismiss="modal" data-target="#notify-modal">CLOSE</a>
+<a href="https://learn.adafruit.com/adafruit-4-channel-adc-breakouts/python-circuitpython#" id="submit-notify" rel="nofollow" class="blue-button">NOTIFY ME</a>
+</div>
+</div>
+</div>
+</div>
+<div id="remote-modal"></div>
+</div>
+<footer id="adafruit-footer">
+<div id="footer-content">
+<div class="row">
+<div class=" col-lg-6 col-md-6 col-sm-4 col-xs-12">
+<nav>
+<ul>
+<li><a href="https://www.adafruit.com/contact_us">CONTACT</a></li>
+<li><a href="https://www.adafruit.com/support">SUPPORT</a>
+</li><li><a href="https://www.adafruit.com/distributors">DISTRIBUTORS</a></li>
+<li><a href="https://www.adafruit.com/educators">EDUCATORS</a></li>
+<li><a href="https://jobs.adafruit.com/">JOBS</a></li>
+<li><a href="https://www.adafruit.com/faq">FAQ</a></li>
+<li><a href="https://www.adafruit.com/shippinginfo/">SHIPPING &amp; RETURNS</a></li>
+<li><a href="https://www.adafruit.com/terms_of_service/">TERMS OF SERVICE</a></li>
+<li><a href="https://www.adafruit.com/privacy">PRIVACY &amp; LEGAL</a></li>
+<li><a href="https://www.adafruit.com/about">ABOUT US</a></li>
+</ul>
+</nav>
+<div id="footer-copyright">
+<a href="http://nytm.org/made-in-nyc/">ENGINEERED IN NYC</a> <span>Adafruit&nbsp;®</span>
+</div>
+</div>
+<div class="col-lg-6 col-md-6 col-sm-8 hidden-xs">
+<div id="footer-quote" class="">
+"This is not the age of pamphleteers. It is the age of engineers. The spark-gap is mightier than the pen"
+<span class="quote-author">- <a href="http://en.wikipedia.org/wiki/Lancelot_Hogben">Lancelot Hogben</a></span>
+</div>
+</div>
+<div id="footer-seals">
+<img class="img-responsive" src="./Python &amp; CircuitPython _ Adafruit 4-Channel ADC Breakouts _ Adafruit Learning System_files/seals_2x.jpg">
+</div>
+</div>
+</div>
+</footer>
+</div>
+</div>
+
+
+</body></html>
