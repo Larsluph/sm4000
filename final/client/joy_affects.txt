@@ -1,11 +1,7 @@
 hat[0] = y
 axes[0] = x
 axes[1] = z
-axes[2] = slider = pwr
-
-buttons[4] = reset light to 1000
-buttons[9] = + light
-buttons[10] = - light
+axes[2] = lights
 
 buttons[11] = toggle_pwr
 buttons[12] = turn_off

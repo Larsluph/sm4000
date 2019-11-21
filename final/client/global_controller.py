@@ -10,7 +10,7 @@ import keyboard
 import pygame
 import pygame.joystick
 
-os.system('title "sm4000 client controller"')
+os.system('title sm4000 client controller')
 
 ############
 ## CLASSs ##
@@ -19,7 +19,6 @@ os.system('title "sm4000 client controller"')
 class vars:
     def __init__(self):
         self.running = True
-        self.pwr = 0
         self.dir = {
             "powered" : False,
             "left" : 0,
@@ -28,18 +27,19 @@ class vars:
             "light_pow" : False,
             "lights" : 0
         }
+        self.pwr = dict()
         self.pos = 100
-        self.threshold = .3
-        self.light_step = 100
+        self.threshold = .2
+        self.light_step = self.pos
 
-        latest = dict()
+        self.latest = dict()
   
-    def key_vars():
+    def key_vars(self):
         pass
   
     def joy_vars(self):
-        axes = tuple()
-        buttons = tuple()
+        self.axes = tuple()
+        self.buttons = tuple()
   
     def print_recap(self):
         pass
@@ -60,66 +60,66 @@ def check_joy(joy):
     sep='\n')
     time.sleep(1)
 
-def forward():
-    dir["left"] += +pos
-    dir["right"] += +pos
-    send()
+def forward(data):
+    data.dir["left"] += +data.pos
+    data.dir["right"] += +data.pos
+    send(data)
 
-def backward():
-    dir["left"] += -pos
-    dir["right"] += -pos
-    send()
+def backward(data):
+    data.dir["left"] += -data.pos
+    data.dir["right"] += -data.pos
+    send(data)
 
-def turn_left():
-    dir["left"] += +pos
-    dir["right"] += -pos
-    send()
+def turn_left(data):
+    data.dir["left"] += +data.pos
+    data.dir["right"] += -data.pos
+    send(data)
 
-def turn_right():
-    dir["left"] += -pos
-    dir["right"] += +pos
-    send()
+def turn_right(data):
+    data.dir["left"] += -data.pos
+    data.dir["right"] += +data.pos
+    send(data)
 
-# def left():
+# def left(data):
 #     pass
 
-# def right():
+# def right(data):
 #     pass
 
-def up():
-    dir["y"] += +pos
-    send()
+def up(data):
+    data.dir["y"] += +data.pos
+    send(data)
 
-def down():
-    dir["y"] += -pos
-    send()
+def down(data):
+    data.dir["y"] += -data.pos
+    send(data)
 
-def stop():
-    dir["left"] = 0
-    dir["right"] = 0
-    dir["y"] = 0
-    send()
+def stop(data):
+    data.dir["left"] = 0
+    data.dir["right"] = 0
+    data.dir["y"] = 0
+    send(data)
 
-def light_mgmt(operator,reset):
+def light_mgmt(data,operator,reset):
     if not(reset):
         if operator == "+":
-            dir["lights"] += light_step
+            data.dir["lights"] += data.light_step
         else:
-            dir["lights"] -= light_step
+            data.dir["lights"] -= data.light_step
     else:
-        dir["light_pow"] = not(dir["light_pow"])
-    send()
+        data.dir["light_pow"] = not(data.dir["light_pow"])
+    send(data)
 
-def toggle_pwr():
-    dir['powered'] = not(dir['powered'])
-    send()
+def toggle_pwr(data):
+    data.dir['powered'] = not(data.dir['powered'])
+    send(data)
 
-def send(debug=False):
-    cmd = str(dir)
-    cmd += " " * (100-len(cmd))
+def send(data,debug=False):
+    cmd = str(data.dir)
+    cmd += " " * (128-len(cmd))
 
     if debug:
-        print(dir,pos)
+        print(data.dir,data.pos)
         print("/"+cmd+"/")
     else:
         print(cmd)
@@ -151,7 +151,7 @@ try:
     joy.init()
     check_joy(joy)
 
-    joytest = True if input("use keyboard ? (y/n)/n") == "n" else False
+    joytest = True if input("use keyboard ? (y/n)\n") == "n" else False
 except:
     print(sys.exc_info())
     joytest = False
@@ -163,7 +163,7 @@ if joytest:
     data.joy_vars()
     print("\njoystick ready")
     print("Waiting for instructions...")
-    while running:
+    while data.running:
         pygame.event.get()
         data.axes = (
             joy.get_axis(0),
@@ -188,100 +188,95 @@ if joytest:
             joy.get_button(11)
         )
 
-        data.pwr = [
-            int(abs(axes[0] - 1) * 20) / 10,
-            int(abs(axes[1] - 1) * 20) / 10
-        ]
+        data.pwr = {
+            "x": int( abs( round(data.axes[0],2) ) * 5),
+            "y": int( abs( round(data.axes[1],2) ) * 5),
+            "lights": int(abs(data.axes[2] - 1) * 5)
+        }
 
         # top
-        if (-threshold < axes[0] < +threshold) and (axes[1] > +threshold):
-            data.dir["left"] = (+pos) * pwr[0]
-            data.dir["right"] = (+pos) * pwr[1]
+        if (-data.threshold < data.axes[0] < +data.threshold) and (data.axes[1] > +data.threshold):
+            data.dir["left"] = (+data.pos) * data.pwr["y"]
+            data.dir["right"] = (+data.pos) * data.pwr["y"]
 
         # top right
-        elif (axes[0] > +threshold) and (axes[1] > +threshold):
-            dir["left"] = (+pos * 1.5) * pwr[0]
-            dir["right"] = (+pos * .5) * pwr[1]
+        elif (data.axes[0] > +data.threshold) and (data.axes[1] > +data.threshold):
+            data.dir["left"] = (+data.pos * 1.5) * data.pwr["x"]
+            data.dir["right"] = (+data.pos * .5) * data.pwr["x"]
 
         # right
-        elif (axes[0] > +threshold) and (-threshold < axes[1] < +threshold):
-            dir["left"] = (-pos) * pwr[0]
-            dir["right"] = (+pos) * pwr[1]
+        elif (data.axes[0] > +data.threshold) and (-data.threshold < data.axes[1] < +data.threshold):
+            data.dir["left"] = (-data.pos) * data.pwr["x"]
+            data.dir["right"] = (+data.pos) * data.pwr["x"]
 
         # bottom right
-        elif (axes[0] > +threshold) and (axes[1] < -threshold):
-            dir["left"] = (-pos * 1.5) * pwr[0]
-            dir["right"] = (-pos * .5) * pwr[1]
+        elif (data.axes[0] > +data.threshold) and (data.axes[1] < -data.threshold):
+            data.dir["left"] = (-data.pos * 1.5) * data.pwr["x"]
+            data.dir["right"] = (-data.pos * .5) * data.pwr["x"]
 
         # bottom
-        elif (-threshold < axes[0] < +threshold) and (axes[1] < -threshold):
-            dir["left"] = (-pos) * pwr[0]
-            dir["right"] = (-pos) * pwr[1]
+        elif (-data.threshold < data.axes[0] < +data.threshold) and (data.axes[1] < -data.threshold):
+            data.dir["left"] = (-data.pos) * data.pwr["y"]
+            data.dir["right"] = (-data.pos) * data.pwr["y"]
 
         # bottom left
-        elif (axes[0] < -threshold) and (axes[1] < -threshold):
-            dir["left"] = (-pos * .5) * pwr[0]
-            dir["right"] = (-pos * 1.5) * pwr[1]
+        elif (data.axes[0] < -data.threshold) and (data.axes[1] < -data.threshold):
+            data.dir["left"] = (-data.pos * .5) * data.pwr["x"]
+            data.dir["right"] = (-data.pos * 1.5) * data.pwr["x"]
 
         # left
-        elif (axes[0] < -threshold) and (-threshold < axes[1] < +threshold):
-            dir["left"] = (+pos) * pwr[0]
-            dir["right"] = (-pos) * pwr[1]
+        elif (data.axes[0] < -data.threshold) and (-data.threshold < data.axes[1] < +data.threshold):
+            data.dir["left"] = (+data.pos) * data.pwr["x"]
+            data.dir["right"] = (-data.pos) * data.pwr["x"]
 
         # top left
-        elif (axes[0] < -threshold) and (axes[1] > +threshold):
-            dir["left"] = (+pos * .5) * pwr[0]
-            dir["right"] = (+pos * 1.5) * pwr[1]
+        elif (data.axes[0] < -data.threshold) and (data.axes[1] > +data.threshold):
+            data.dir["left"] = (+data.pos * .5) * data.pwr["x"]
+            data.dir["right"] = (+data.pos * 1.5) * data.pwr["x"]
 
-        if axes[4][1] == +1:
-            dir["y"] = +pos
+        if data.axes[4][1] == +1:
+            data.dir["y"] = +data.pos
 
-        elif axes[4][1] == -1:
-            dir["y"] = -pos
+        elif data.axes[4][1] == -1:
+            data.dir["y"] = -data.pos
 
-        elif (-threshold < axes[0] < +threshold) and (-threshold < axes[1] < +threshold) and (axes[4][1] == 0):
-            dir["left"] = 0
-            dir["right"] = 0
-            dir["y"] = 0
+        elif (-data.threshold < data.axes[0] < +data.threshold) and (-data.threshold < data.axes[1] < +data.threshold) and (data.axes[4][1] == 0):
+            data.dir["left"] = 0
+            data.dir["right"] = 0
+            data.dir["y"] = 0
 
-        if buttons[9] == 1:
-            dir["lights"] += light_step
-            time.sleep(0.5)
-        
-        elif buttons[10] == 1:
-            dir["lights"] -= light_step
+        if data.buttons[4] == 1:
+            data.dir["light_pow"] = not(data.dir["light_pow"])
             time.sleep(0.5)
 
-        elif buttons[4] == 1:
-            dir["light_pow"] = not(dir["light_pow"])
+        elif data.buttons[11] == 1:
+            data.dir['powered'] = not(data.dir['powered'])
             time.sleep(0.5)
 
-        elif buttons[11] == 1:
-            dir['powered'] = not(dir['powered'])
-            time.sleep(0.5)
-
-        elif buttons[12] == 1:
+        elif data.buttons[12] == 1:
             print("stopping transmission...")
-            dir["powered"] = False
-            running = False
+            data.dir["powered"] = False
+            data.running = False
 
-        if latest != dir:
-            latest = dir.copy()
-            send()
+        data.dir["lights"] = data.light_step * data.pwr["lights"]
+
+        if data.latest != data.dir:
+            data.latest = data.dir.copy()
+            send(data)
 else:
     data.key_vars()
     """ key_control """
-    keyboard.add_hotkey('z',forward)
-    keyboard.add_hotkey('s',backward)
-    keyboard.add_hotkey('q',turn_left)
-    keyboard.add_hotkey('d',turn_right)
-    keyboard.add_hotkey('shift',up)
-    keyboard.add_hotkey('ctrl',down)
-    keyboard.add_hotkey('space',stop)
-    keyboard.add_hotkey('enter',toggle_pwr)
-    keyboard.add_hotkey('*',light_mgmt,args=["+",False])
-    keyboard.add_hotkey('ù',light_mgmt,args=["-",False])
-    keyboard.add_hotkey('$',light_mgmt,args=[0,True])
+    keyboard.add_hotkey('z',forward,args=[data])
+    keyboard.add_hotkey('s',backward,args=[data])
+    keyboard.add_hotkey('q',turn_left,args=[data])
+    keyboard.add_hotkey('d',turn_right,args=[data])
+    keyboard.add_hotkey('shift',up,args=[data])
+    keyboard.add_hotkey('ctrl',down,args=[data])
+    keyboard.add_hotkey('space',stop,args=[data])
+    keyboard.add_hotkey('enter',toggle_pwr,args=[data])
+    keyboard.add_hotkey('*',light_mgmt,args=[data,"+",False])
+    keyboard.add_hotkey('ù',light_mgmt,args=[data,"-",False])
+    keyboard.add_hotkey('$',light_mgmt,args=[data,0,True])
 
     print("\nkeyboard ready")
     print("Waiting for instructions...")
