@@ -12,6 +12,38 @@ import pygame.joystick
 
 os.system('title "sm4000 client controller"')
 
+############
+## CLASSs ##
+############
+
+class vars:
+    def __init__(self):
+        self.running = True
+        self.pwr = 0
+        self.dir = {
+            "powered" : False,
+            "left" : 0,
+            "right" : 0,
+            "y" : 0,
+            "light_pow" : False,
+            "lights" : 0
+        }
+        self.pos = 100
+        self.threshold = .3
+        self.light_step = 100
+
+        latest = dict()
+  
+    def key_vars():
+        pass
+  
+    def joy_vars(self):
+        axes = tuple()
+        buttons = tuple()
+  
+    def print_recap(self):
+        pass
+
 ###########
 ## FUNCs ##
 ###########
@@ -84,7 +116,7 @@ def toggle_pwr():
 
 def send(debug=False):
     cmd = str(dir)
-    cmd += " " * (80-len(cmd))
+    cmd += " " * (100-len(cmd))
 
     if debug:
         print(dir,pos)
@@ -119,44 +151,28 @@ try:
     joy.init()
     check_joy(joy)
 
-    joytest = True if input("use keyboard ? (y/n)") == "n" else False
+    joytest = True if input("use keyboard ? (y/n)/n") == "n" else False
 except:
     print(sys.exc_info())
     joytest = False
-
-running = True
-pwr = 0
-dir = {
-    "powered" : False,
-    "left" : 0,
-    "right" : 0,
-    "y" : 0,
-    "light_pow" : False,
-    "lights" : 0
-}
-pos = 100
-threshold = .6
-light_step = 100
-
-axes = tuple()
-buttons = tuple()
-
-latest = dict()
+    
+data = vars()
 
 if joytest:
     """ joy_control """
+    data.joy_vars()
     print("\njoystick ready")
     print("Waiting for instructions...")
     while running:
         pygame.event.get()
-        axes = (
+        data.axes = (
             joy.get_axis(0),
             -joy.get_axis(1),
             joy.get_axis(2),
             joy.get_axis(3),
             joy.get_hat(0)
         )
-        buttons = (
+        data.buttons = (
             None,
             joy.get_button(0),
             joy.get_button(1),
@@ -172,53 +188,56 @@ if joytest:
             joy.get_button(11)
         )
 
-        pwr = int(abs(axes[2] - 1) * 20) / 10
+        data.pwr = [
+            int(abs(axes[0] - 1) * 20) / 10,
+            int(abs(axes[1] - 1) * 20) / 10
+        ]
 
         # top
         if (-threshold < axes[0] < +threshold) and (axes[1] > +threshold):
-            dir["left"] = (+pos) * pwr
-            dir["right"] = (+pos) * pwr
+            data.dir["left"] = (+pos) * pwr[0]
+            data.dir["right"] = (+pos) * pwr[1]
 
         # top right
         elif (axes[0] > +threshold) and (axes[1] > +threshold):
-            dir["left"] = (+pos * 1.5) * pwr
-            dir["right"] = (+pos * .5) * pwr
+            dir["left"] = (+pos * 1.5) * pwr[0]
+            dir["right"] = (+pos * .5) * pwr[1]
 
         # right
         elif (axes[0] > +threshold) and (-threshold < axes[1] < +threshold):
-            dir["left"] = (-pos) * pwr
-            dir["right"] = (+pos) * pwr
+            dir["left"] = (-pos) * pwr[0]
+            dir["right"] = (+pos) * pwr[1]
 
         # bottom right
         elif (axes[0] > +threshold) and (axes[1] < -threshold):
-            dir["left"] = (-pos * 1.5) * pwr
-            dir["right"] = (-pos * .5) * pwr
+            dir["left"] = (-pos * 1.5) * pwr[0]
+            dir["right"] = (-pos * .5) * pwr[1]
 
         # bottom
         elif (-threshold < axes[0] < +threshold) and (axes[1] < -threshold):
-            dir["left"] = (-pos) * pwr
-            dir["right"] = (-pos) * pwr
+            dir["left"] = (-pos) * pwr[0]
+            dir["right"] = (-pos) * pwr[1]
 
         # bottom left
         elif (axes[0] < -threshold) and (axes[1] < -threshold):
-            dir["left"] = (-pos * .5) * pwr
-            dir["right"] = (-pos * 1.5) * pwr
+            dir["left"] = (-pos * .5) * pwr[0]
+            dir["right"] = (-pos * 1.5) * pwr[1]
 
         # left
         elif (axes[0] < -threshold) and (-threshold < axes[1] < +threshold):
-            dir["left"] = (+pos) * pwr
-            dir["right"] = (-pos) * pwr
+            dir["left"] = (+pos) * pwr[0]
+            dir["right"] = (-pos) * pwr[1]
 
         # top left
         elif (axes[0] < -threshold) and (axes[1] > +threshold):
-            dir["left"] = (+pos * .5) * pwr
-            dir["right"] = (+pos * 1.5) * pwr
+            dir["left"] = (+pos * .5) * pwr[0]
+            dir["right"] = (+pos * 1.5) * pwr[1]
 
         if axes[4][1] == +1:
-            dir["y"] = (+pos) * pwr
+            dir["y"] = +pos
 
         elif axes[4][1] == -1:
-            dir["y"] = (-pos) * pwr
+            dir["y"] = -pos
 
         elif (-threshold < axes[0] < +threshold) and (-threshold < axes[1] < +threshold) and (axes[4][1] == 0):
             dir["left"] = 0
@@ -250,6 +269,7 @@ if joytest:
             latest = dir.copy()
             send()
 else:
+    data.key_vars()
     """ key_control """
     keyboard.add_hotkey('z',forward)
     keyboard.add_hotkey('s',backward)
