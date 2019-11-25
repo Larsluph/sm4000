@@ -38,6 +38,8 @@ class vars:
         pass
   
     def joy_vars(self):
+        self.boosted = True
+
         self.axes = tuple()
         self.buttons = tuple()
   
@@ -194,58 +196,67 @@ if joytest:
             "lights": int(abs(data.axes[2] - 1) * 5)
         }
 
+        if not(data.boosted):
+            for x in ["x","y"]:
+                data.pwr[x] /= 2.5
+
         # top
-        if (-data.threshold < data.axes[0] < +data.threshold) and (data.axes[1] > +data.threshold):
-            data.dir["left"] = (+data.pos) * data.pwr["y"]
-            data.dir["right"] = (+data.pos) * data.pwr["y"]
+        if data.buttons[1] == 0:
+            if (-data.threshold < data.axes[0] < +data.threshold) and (data.axes[1] > +data.threshold):
+                data.dir["left"] = (+data.pos) * data.pwr["y"]
+                data.dir["right"] = (+data.pos) * data.pwr["y"]
 
-        # top right
-        elif (data.axes[0] > +data.threshold) and (data.axes[1] > +data.threshold):
-            data.dir["left"] = (+data.pos * 1.5) * data.pwr["x"]
-            data.dir["right"] = (+data.pos * .5) * data.pwr["x"]
+            # top right
+            elif (data.axes[0] > +data.threshold) and (data.axes[1] > +data.threshold):
+                data.dir["left"] = (+data.pos * 1.5) * data.pwr["x"]
+                data.dir["right"] = (+data.pos * .5) * data.pwr["x"]
 
-        # right
-        elif (data.axes[0] > +data.threshold) and (-data.threshold < data.axes[1] < +data.threshold):
-            data.dir["left"] = (-data.pos) * data.pwr["x"]
-            data.dir["right"] = (+data.pos) * data.pwr["x"]
+            # right
+            elif (data.axes[0] > +data.threshold) and (-data.threshold < data.axes[1] < +data.threshold):
+                data.dir["left"] = (-data.pos) * data.pwr["x"]
+                data.dir["right"] = (+data.pos) * data.pwr["x"]
 
-        # bottom right
-        elif (data.axes[0] > +data.threshold) and (data.axes[1] < -data.threshold):
-            data.dir["left"] = (-data.pos * 1.5) * data.pwr["x"]
-            data.dir["right"] = (-data.pos * .5) * data.pwr["x"]
+            # bottom right
+            elif (data.axes[0] > +data.threshold) and (data.axes[1] < -data.threshold):
+                data.dir["left"] = (-data.pos * 1.5) * data.pwr["x"]
+                data.dir["right"] = (-data.pos * .5) * data.pwr["x"]
 
-        # bottom
-        elif (-data.threshold < data.axes[0] < +data.threshold) and (data.axes[1] < -data.threshold):
-            data.dir["left"] = (-data.pos) * data.pwr["y"]
-            data.dir["right"] = (-data.pos) * data.pwr["y"]
+            # bottom
+            elif (-data.threshold < data.axes[0] < +data.threshold) and (data.axes[1] < -data.threshold):
+                data.dir["left"] = (-data.pos) * data.pwr["y"]
+                data.dir["right"] = (-data.pos) * data.pwr["y"]
 
-        # bottom left
-        elif (data.axes[0] < -data.threshold) and (data.axes[1] < -data.threshold):
-            data.dir["left"] = (-data.pos * .5) * data.pwr["x"]
-            data.dir["right"] = (-data.pos * 1.5) * data.pwr["x"]
+            # bottom left
+            elif (data.axes[0] < -data.threshold) and (data.axes[1] < -data.threshold):
+                data.dir["left"] = (-data.pos * .5) * data.pwr["x"]
+                data.dir["right"] = (-data.pos * 1.5) * data.pwr["x"]
 
-        # left
-        elif (data.axes[0] < -data.threshold) and (-data.threshold < data.axes[1] < +data.threshold):
-            data.dir["left"] = (+data.pos) * data.pwr["x"]
-            data.dir["right"] = (-data.pos) * data.pwr["x"]
+            # left
+            elif (data.axes[0] < -data.threshold) and (-data.threshold < data.axes[1] < +data.threshold):
+                data.dir["left"] = (+data.pos) * data.pwr["x"]
+                data.dir["right"] = (-data.pos) * data.pwr["x"]
 
-        # top left
-        elif (data.axes[0] < -data.threshold) and (data.axes[1] > +data.threshold):
-            data.dir["left"] = (+data.pos * .5) * data.pwr["x"]
-            data.dir["right"] = (+data.pos * 1.5) * data.pwr["x"]
+            # top left
+            elif (data.axes[0] < -data.threshold) and (data.axes[1] > +data.threshold):
+                data.dir["left"] = (+data.pos * .5) * data.pwr["x"]
+                data.dir["right"] = (+data.pos * 1.5) * data.pwr["x"]
 
-        if data.axes[4][1] == +1:
-            data.dir["y"] = +data.pos
+            if data.axes[4][1] == +1:
+                data.dir["y"] = +data.pos
 
-        elif data.axes[4][1] == -1:
-            data.dir["y"] = -data.pos
+            elif data.axes[4][1] == -1:
+                data.dir["y"] = -data.pos
 
-        elif (-data.threshold < data.axes[0] < +data.threshold) and (-data.threshold < data.axes[1] < +data.threshold) and (data.axes[4][1] == 0):
-            data.dir["left"] = 0
-            data.dir["right"] = 0
-            data.dir["y"] = 0
+            elif (-data.threshold < data.axes[0] < +data.threshold) and (-data.threshold < data.axes[1] < +data.threshold) and (data.axes[4][1] == 0):
+                data.dir["left"] = 0
+                data.dir["right"] = 0
+                data.dir["y"] = 0
 
-        if data.buttons[4] == 1:
+        if data.buttons[2] == 1:
+            data.boosted = not(data.boosted)
+            time.sleep(0.5)
+
+        elif data.buttons[4] == 1:
             data.dir["light_pow"] = not(data.dir["light_pow"])
             time.sleep(0.5)
 
