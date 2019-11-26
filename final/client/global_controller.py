@@ -42,9 +42,6 @@ class vars:
 
         self.axes = tuple()
         self.buttons = tuple()
-  
-    def print_recap(self):
-        pass
 
 ###########
 ## FUNCs ##
@@ -124,7 +121,7 @@ def send(data):
         client.send(cmd.encode("Utf8"))
 
     os.system("cls")
-    for x in data.dir:
+    for x in data.dir.keys():
         print(f"{x} : {data.dir[x]}")
 
 ##################
