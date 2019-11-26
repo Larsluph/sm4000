@@ -116,18 +116,16 @@ def toggle_pwr(data):
     data.dir['powered'] = not(data.dir['powered'])
     send(data)
 
-def send(data,debug=False):
+def send(data):
     cmd = str(data.dir)
-    cmd += " " * (128-len(cmd))
-
-    if debug:
-        print(data.dir,data.pos)
-        print("/"+cmd+"/")
-    else:
-        print(cmd)
+    cmd += " " * (128-len(cmd))        
 
     if server_check:
         client.send(cmd.encode("Utf8"))
+
+    os.system("cls")
+    for x in data.dir:
+        print(f"{x} : {data.dir[x]}")
 
 ##################
 ## MAIN PROGRAM ##
@@ -299,6 +297,7 @@ else:
 if server_check:
     client.send("'exit'".encode("Utf8"))
     client.close()
+
 print("END OF PROGRAM")
 time.sleep(0.5)
 
