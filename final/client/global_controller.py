@@ -121,7 +121,7 @@ def send(data):
         client.send(cmd.encode("Utf8"))
 
     os.system("cls")
-    for x in data.dir.keys():
+    for x in list(data.dir):
         print(f"{x} : {data.dir[x]}")
 
 ##################
