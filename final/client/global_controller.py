@@ -31,14 +31,14 @@ class vars:
         self.pos = 100
         self.threshold = .2
         self.light_step = self.pos
-
-        self.latest = dict()
   
     def key_vars(self):
         pass
   
     def joy_vars(self):
         self.boosted = True
+
+        self.latest = dict()
 
         self.axes = tuple()
         self.buttons = tuple()
