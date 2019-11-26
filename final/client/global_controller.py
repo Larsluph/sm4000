@@ -33,15 +33,35 @@ class vars:
         self.light_step = self.pos
   
     def key_vars(self):
-        pass
+        self.key_init = True
   
     def joy_vars(self):
+        self.joy_init = True
+
         self.boosted = True
 
         self.latest = dict()
 
         self.axes = tuple()
         self.buttons = tuple()
+
+    def print_recap(self,aux=None):
+        os.system("cls")
+        print("dir :")
+        for x in list(data.dir):
+            print(f"  {x} : {data.dir[x]}")
+        print("pwr :")
+        for x in list(data.pwr):
+            print(f"  {x} : {data.pwr[x]}")
+        
+        if aux != None:
+            pass
+
+        if self.key_init:
+            pass
+
+        if self.joy_init:
+            pass
 
 ###########
 ## FUNCs ##
@@ -119,10 +139,6 @@ def send(data):
 
     if server_check:
         client.send(cmd.encode("Utf8"))
-
-    os.system("cls")
-    for x in list(data.dir):
-        print(f"{x} : {data.dir[x]}")
 
 ##################
 ## MAIN PROGRAM ##
