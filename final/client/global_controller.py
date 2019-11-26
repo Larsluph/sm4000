@@ -45,23 +45,26 @@ class vars:
         self.axes = tuple()
         self.buttons = tuple()
 
-    def print_recap(self,aux=None):
+    def print_recap(self):
         os.system("cls")
         print("dir :")
-        for x in list(data.dir):
-            print(f"  {x} : {data.dir[x]}")
+        for x in list(self.dir):
+            print(f"  {x} : {self.dir[x]}")
         print("pwr :")
-        for x in list(data.pwr):
-            print(f"  {x} : {data.pwr[x]}")
-        
-        if aux != None:
-            pass
+        for x in list(self.pwr):
+            print(f"  {x} : {self.pwr[x]}")
 
         if self.key_init:
             pass
 
         if self.joy_init:
-            pass
+            print(f"boosted : {self.boosted}")
+            print(f"axes :")
+            for axe in self.axes:
+                print(axe)
+            print(f"buttons :")
+            for button in self.buttons:
+                print(button)
 
 ###########
 ## FUNCs ##
@@ -144,6 +147,8 @@ def send(data):
 ## MAIN PROGRAM ##
 ##################
 
+data = vars()
+
 try:
     ip = ("192.168.137.2",50001)
 
@@ -160,17 +165,15 @@ except:
 try:
     pygame.init()
     pygame.joystick.init()
-    joy = pygame.joystick.Joystick(0)
-    joy.init()
-    check_joy(joy)
+    data.joy = pygame.joystick.Joystick(0)
+    data.joy.init()
+    check_joy(data.joy)
 
     joytest = True if input("use keyboard ? (y/n)\n") == "n" else False
 except:
     print(sys.exc_info())
     joytest = False
     
-data = vars()
-
 if joytest:
     """ joy_control """
     data.joy_vars()
