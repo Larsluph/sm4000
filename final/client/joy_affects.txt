@@ -3,6 +3,9 @@ axes[0] = x
 axes[1] = z
 axes[2] = lights
 
+buttons[ 1] = blocker (hold)
+buttons[ 2] = toggle_booster
+buttons[ 4] = toggle_lights
 buttons[11] = toggle_pwr
 buttons[12] = turn_off
 
