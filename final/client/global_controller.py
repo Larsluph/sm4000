@@ -4,6 +4,7 @@
 import os
 import socket
 import sys
+import threading
 import time
 
 import keyboard
@@ -33,11 +34,9 @@ class vars:
         self.light_step = self.pos
   
     def key_vars(self):
-        self.key_init = True
+        pass
   
     def joy_vars(self):
-        self.joy_init = True
-
         self.boosted = True
 
         self.latest = dict()
@@ -50,6 +49,7 @@ class vars:
         print("dir :")
         for x in list(self.dir):
             print(f"  {x} : {self.dir[x]}")
+
         print("pwr :")
         for x in list(self.pwr):
             print(f"  {x} : {self.pwr[x]}")
@@ -59,12 +59,14 @@ class vars:
 
         if self.joy_init:
             print(f"boosted : {self.boosted}")
+
             print(f"axes :")
             for axe in self.axes:
-                print(axe)
+                print(f"  {axe}")
+
             print(f"buttons :")
             for button in self.buttons:
-                print(button)
+                print(f"  {button}")
 
 ###########
 ## FUNCs ##
@@ -142,6 +144,10 @@ def send(data):
 
     if server_check:
         client.send(cmd.encode("Utf8"))
+
+    t = threading.Thread(target=data.print_recap)
+    # t.start() 1x max
+    # t.run()
 
 ##################
 ## MAIN PROGRAM ##
