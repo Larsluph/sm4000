@@ -39,17 +39,17 @@ class vars:
         self.joy_init = True
 
         self.boosted = True
-
         self.latest = dict()
-
         self.axes = tuple()
         self.buttons = tuple()
 
     def print_recap(self):
         os.system("cls")
+
         print("dir :")
         for x in list(self.dir):
             print(f"  {x} : {self.dir[x]}")
+
         print("pwr :")
         for x in list(self.pwr):
             print(f"  {x} : {self.pwr[x]}")
@@ -61,10 +61,10 @@ class vars:
             print(f"boosted : {self.boosted}")
             print(f"axes :")
             for axe in self.axes:
-                print(axe)
+                print(f"  {axe}")
             print(f"buttons :")
             for button in self.buttons:
-                print(button)
+                print(f"  {button}")
 
 ###########
 ## FUNCs ##
