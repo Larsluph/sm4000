@@ -146,6 +146,8 @@ def send(data):
     if server_check:
         client.send(cmd.encode("Utf8"))
 
+    data.t.join()
+
 ##################
 ## MAIN PROGRAM ##
 ##################
