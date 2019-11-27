@@ -4,6 +4,7 @@
 import os
 import socket
 import sys
+import threading
 import time
 
 import keyboard
@@ -33,19 +34,18 @@ class vars:
         self.light_step = self.pos
   
     def key_vars(self):
-        self.key_init = True
+        pass
   
     def joy_vars(self):
-        self.joy_init = True
-
         self.boosted = True
-        self.latest = dict()
+
+        self.latest = self.dir.copy()
+
         self.axes = tuple()
         self.buttons = tuple()
 
     def print_recap(self):
         os.system("cls")
-
         print("dir :")
         for x in list(self.dir):
             print(f"  {x} : {self.dir[x]}")
@@ -59,9 +59,11 @@ class vars:
 
         if self.joy_init:
             print(f"boosted : {self.boosted}")
+
             print(f"axes :")
             for axe in self.axes:
                 print(f"  {axe}")
+
             print(f"buttons :")
             for button in self.buttons:
                 print(f"  {button}")
@@ -137,17 +139,21 @@ def toggle_pwr(data):
     send(data)
 
 def send(data):
+    data.t.run()
     cmd = str(data.dir)
-    cmd += " " * (128-len(cmd))        
+    cmd += " " * (128-len(cmd))
 
     if server_check:
         client.send(cmd.encode("Utf8"))
+
+    data.t.join()
 
 ##################
 ## MAIN PROGRAM ##
 ##################
 
 data = vars()
+data.t = threading.Thread(target=data.print_recap)
 
 try:
     ip = ("192.168.137.2",50001)
@@ -179,6 +185,7 @@ if joytest:
     data.joy_vars()
     print("\njoystick ready")
     print("Waiting for instructions...")
+    data.t.start()
     while data.running:
         pygame.event.get()
         data.axes = (
@@ -287,7 +294,7 @@ if joytest:
 
         if data.latest != data.dir:
             data.latest = data.dir.copy()
-            send(data)
+            send(data,t)
 else:
     data.key_vars()
     """ key_control """
