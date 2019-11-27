@@ -39,7 +39,7 @@ class vars:
     def joy_vars(self):
         self.boosted = True
 
-        self.latest = dict()
+        self.latest = self.dir.copy()
 
         self.axes = tuple()
         self.buttons = tuple()
@@ -139,21 +139,19 @@ def toggle_pwr(data):
     send(data)
 
 def send(data):
+    data.t.run()
     cmd = str(data.dir)
-    cmd += " " * (128-len(cmd))        
+    cmd += " " * (128-len(cmd))
 
     if server_check:
         client.send(cmd.encode("Utf8"))
-
-    t = threading.Thread(target=data.print_recap)
-    # t.start() 1x max
-    # t.run()
 
 ##################
 ## MAIN PROGRAM ##
 ##################
 
 data = vars()
+data.t = threading.Thread(target=data.print_recap)
 
 try:
     ip = ("192.168.137.2",50001)
@@ -185,6 +183,7 @@ if joytest:
     data.joy_vars()
     print("\njoystick ready")
     print("Waiting for instructions...")
+    data.t.start()
     while data.running:
         pygame.event.get()
         data.axes = (
@@ -293,7 +292,7 @@ if joytest:
 
         if data.latest != data.dir:
             data.latest = data.dir.copy()
-            send(data)
+            send(data,t)
 else:
     data.key_vars()
     """ key_control """
