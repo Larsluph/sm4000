@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 #-*- coding:utf-8 -*-
-import cv2, numpy, time
+import cv2, numpy, time, sys
 
-vid_path = input('absolute path of mjpeg file : ')
+vid_path = sys.argv[1]
 vid_file = open(vid_path,mode='rb')
 # fps = int(input('enter fps : '))
 fps = 25
