@@ -17,7 +17,28 @@ os.system('title sm4000 client controller')
 ## CLASSs ##
 ############
 
-class vars:
+class TextPrint:
+    def __init__(self):
+        self.reset()
+        self.font = pygame.font.Font(None, 20)
+
+    def print(self, screen, textString):
+        textBitmap = self.font.render(textString, True, YELLOW)
+        screen.blit(textBitmap, [self.x, self.y])
+        self.y += self.line_height
+
+    def reset(self):
+        self.x = 10
+        self.y = 10
+        self.line_height = 15
+
+    def indent(self):
+        self.x += 10
+
+    def unindent(self):
+        self.x -= 10
+
+class Vars:
     def __init__(self):
         self.running = True
         self.dir = {
@@ -35,12 +56,16 @@ class vars:
 
         self.key_init = False
         self.joy_init = False
-  
+
     def key_vars(self):
         self.key_init = True
   
     def joy_vars(self):
         self.joy_init = True
+        self.joy = pygame.joystick.Joystick(0)
+        self.joy.init()
+        check_joy(self.joy)
+
         self.boosted = True
 
         self.latest = self.dir.copy()
@@ -48,35 +73,12 @@ class vars:
         self.axes = tuple()
         self.buttons = tuple()
 
-    def print_recap(self):
-        os.system("cls")
-        print("dir :")
-        for x in list(self.dir):
-            print(f"  {x} : {self.dir[x]}")
-
-        # print("pwr :")
-        # for x in list(self.pwr):
-        #     print(f"  {x} : {self.pwr[x]}")
-
-        if self.key_init:
-            pass
-
-        if self.joy_init:
-            print(f"boosted : {self.boosted}")
-
-            # print(f"axes :")
-            # for axe in range(1,len(self.axes)):
-            #     print(f"  {axe} : {self.axes[axe]}")
-
-            # print(f"buttons :")
-            # print("  ",end="")
-            # for button in self.buttons:
-            #     print(f"{button}",end=" ")
-            # print()
-
 ###########
 ## FUNCs ##
 ###########
+
+def print_recap(data):
+    pass
 
 def check_joy(joy):
     pygame.event.get()
@@ -145,21 +147,23 @@ def toggle_pwr(data):
     send(data)
 
 def send(data):
-    data.t = threading.Thread(target=data.print_recap, name="thread-recap")
-    data.t.start()
+    # data.t = threading.Thread(target=print_recap, name="thread-recap")
+    # data.t.start()
     cmd = str(data.dir)
     cmd += " " * (128-len(cmd))
 
     if server_check:
         client.send(cmd.encode("Utf8"))
 
-    data.t.join()
+    print(data.dir)
+
+    # data.t.join()
 
 ##################
 ## MAIN PROGRAM ##
 ##################
 
-data = vars()
+data = Vars()
 
 try:
     ip = ("192.168.137.2",50001)
@@ -174,23 +178,20 @@ except:
     print("ignoring...")
     server_check = False
 
-try:
-    pygame.init()
-    pygame.joystick.init()
-    data.joy = pygame.joystick.Joystick(0)
-    data.joy.init()
-    check_joy(data.joy)
+pygame.init()
+pygame.joystick.init()
 
+if pygame.joystick.get_count() != 0:
+    data.joy_vars()
     joytest = True if input("use keyboard ? (y/n)\n") == "n" else False
-except:
-    print(sys.exc_info())
+else:
     joytest = False
-    
+
 if joytest:
     """ joy_control """
-    data.joy_vars()
     print("\njoystick ready")
     print("Waiting for instructions...")
+
     while data.running:
         pygame.event.get()
         data.axes = (
