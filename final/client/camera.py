@@ -42,9 +42,7 @@ while len(bytes) != 0:
         vid_file.flush()
         cv2.imshow('Image from piCamera', image)
         if cv2.waitKey(1) & 0xFF == ord('q'):
-            break
-
-client_socket.send("stop".encode("Utf8"))
+            client_socket.send("stop".encode("Utf8"))
 
 cv2.destroyAllWindows()
 vid_file.close()
