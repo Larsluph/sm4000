@@ -32,11 +32,15 @@ class vars:
         self.pos = 100
         self.threshold = .2
         self.light_step = self.pos
+
+        self.key_init = False
+        self.joy_init = False
   
     def key_vars(self):
-        pass
+        self.key_init = True
   
     def joy_vars(self):
+        self.joy_init = True
         self.boosted = True
 
         self.latest = self.dir.copy()
@@ -50,9 +54,9 @@ class vars:
         for x in list(self.dir):
             print(f"  {x} : {self.dir[x]}")
 
-        print("pwr :")
-        for x in list(self.pwr):
-            print(f"  {x} : {self.pwr[x]}")
+        # print("pwr :")
+        # for x in list(self.pwr):
+        #     print(f"  {x} : {self.pwr[x]}")
 
         if self.key_init:
             pass
@@ -60,13 +64,15 @@ class vars:
         if self.joy_init:
             print(f"boosted : {self.boosted}")
 
-            print(f"axes :")
-            for axe in self.axes:
-                print(f"  {axe}")
+            # print(f"axes :")
+            # for axe in range(1,len(self.axes)):
+            #     print(f"  {axe} : {self.axes[axe]}")
 
-            print(f"buttons :")
-            for button in self.buttons:
-                print(f"  {button}")
+            # print(f"buttons :")
+            # print("  ",end="")
+            # for button in self.buttons:
+            #     print(f"{button}",end=" ")
+            # print()
 
 ###########
 ## FUNCs ##
@@ -139,7 +145,8 @@ def toggle_pwr(data):
     send(data)
 
 def send(data):
-    data.t.run()
+    data.t = threading.Thread(target=data.print_recap, name="thread-recap")
+    data.t.start()
     cmd = str(data.dir)
     cmd += " " * (128-len(cmd))
 
@@ -153,7 +160,6 @@ def send(data):
 ##################
 
 data = vars()
-data.t = threading.Thread(target=data.print_recap)
 
 try:
     ip = ("192.168.137.2",50001)
@@ -185,30 +191,29 @@ if joytest:
     data.joy_vars()
     print("\njoystick ready")
     print("Waiting for instructions...")
-    data.t.start()
     while data.running:
         pygame.event.get()
         data.axes = (
-            joy.get_axis(0),
-            -joy.get_axis(1),
-            joy.get_axis(2),
-            joy.get_axis(3),
-            joy.get_hat(0)
+            data.joy.get_axis(0),
+            -data.joy.get_axis(1),
+            data.joy.get_axis(2),
+            data.joy.get_axis(3),
+            data.joy.get_hat(0)
         )
         data.buttons = (
             None,
-            joy.get_button(0),
-            joy.get_button(1),
-            joy.get_button(2),
-            joy.get_button(3),
-            joy.get_button(4),
-            joy.get_button(5),
-            joy.get_button(6),
-            joy.get_button(7),
-            joy.get_button(8),
-            joy.get_button(9),
-            joy.get_button(10),
-            joy.get_button(11)
+            data.joy.get_button(0),
+            data.joy.get_button(1),
+            data.joy.get_button(2),
+            data.joy.get_button(3),
+            data.joy.get_button(4),
+            data.joy.get_button(5),
+            data.joy.get_button(6),
+            data.joy.get_button(7),
+            data.joy.get_button(8),
+            data.joy.get_button(9),
+            data.joy.get_button(10),
+            data.joy.get_button(11)
         )
 
         data.pwr = {
@@ -294,7 +299,7 @@ if joytest:
 
         if data.latest != data.dir:
             data.latest = data.dir.copy()
-            send(data,t)
+            send(data)
 else:
     data.key_vars()
     """ key_control """

@@ -35,5 +35,3 @@ print(frame_counter,"frames")
 cv2.destroyAllWindows()
 vid_file.close()
 print('END')
-
-# I:\sm4000\final\test.mjpeg
