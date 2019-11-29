@@ -17,6 +17,27 @@ os.system('title sm4000 client controller')
 ## CLASSs ##
 ############
 
+class TextPrint:
+    def __init__(self):
+        self.reset()
+        self.font = pygame.font.Font(None, 20)
+
+    def print(self, screen, textString, color=(255,255,0)):
+        textBitmap = self.font.render(textString, True, color)
+        screen.blit(textBitmap, [self.x, self.y])
+        self.y += self.line_height
+
+    def reset(self):
+        self.x = 10
+        self.y = 10
+        self.line_height = 15
+
+    def indent(self):
+        self.x += 10
+
+    def unindent(self):
+        self.x -= 10
+
 class Vars:
     def __init__(self):
         self.running = True
@@ -55,6 +76,84 @@ class Vars:
 ###########
 ## FUNCs ##
 ###########
+
+def print_recap(data, screen, textPrint):
+    fg_color = ( 255, 255,   0) # yellow
+    bg_color = (   0,   0,   0) # black
+
+    # -------- Main Program Loop -----------
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            data.running = False
+
+    data.axes = (
+        data.joy.get_axis(0),
+        -data.joy.get_axis(1),
+        data.joy.get_axis(2),
+        data.joy.get_axis(3),
+        data.joy.get_hat(0)
+    )
+
+    data.buttons = (
+        None,
+        data.joy.get_button(0),
+        data.joy.get_button(1),
+        data.joy.get_button(2),
+        data.joy.get_button(3),
+        data.joy.get_button(4),
+        data.joy.get_button(5),
+        data.joy.get_button(6),
+        data.joy.get_button(7),
+        data.joy.get_button(8),
+        data.joy.get_button(9),
+        data.joy.get_button(10),
+        data.joy.get_button(11)
+    )
+
+    data.pwr = {
+        "x": int( abs( round(data.axes[0],2) ) * 5),
+        "y": int( abs( round(data.axes[1],2) ) * 5),
+        "lights": int(abs(data.axes[2] - 1) * 5)
+    }
+
+    # DRAWING STEP
+    # First, clear the screen to white. Don't put other drawing commands
+    # above this, or they will be erased with this command.
+    screen.fill(bg_color)
+    textPrint.reset()
+
+    textPrint.print(screen, f"axes:", fg_color)
+    textPrint.indent()
+    for i in range(len(data.axes)):
+        textPrint.print(screen, f"Axe {i} : {data.axes[i]}", fg_color)
+    textPrint.unindent()
+
+    textPrint.print(screen, f"buttons:", fg_color)
+    textPrint.indent()
+    for button in data.buttons[1:]:
+        textPrint.print(screen, f"{button}", fg_color)
+    textPrint.unindent()
+
+    textPrint.print(screen, f"dir:", fg_color)
+    textPrint.indent()
+    for x in data.dir:
+        textPrint.print(screen, f"{x} : {data.dir[x]}", fg_color)
+    textPrint.unindent()
+
+    textPrint.print(screen, f"pwr:", fg_color)
+    textPrint.indent()
+    for x in data.pwr:
+        textPrint.print(screen, f"{x} : {data.pwr[x]}", fg_color)
+    textPrint.unindent()
+
+    textPrint.print(screen, f"boosted:", fg_color)
+    textPrint.unindent()
+
+    # ALL CODE TO DRAW SHOULD GO ABOVE THIS COMMENT
+
+    # Go ahead and update the screen with what we've drawn.
+    pygame.display.flip()
+
 def check_joy(joy):
     pygame.event.get()
     print(
@@ -121,14 +220,15 @@ def toggle_pwr(data):
     data.dir['powered'] = not(data.dir['powered'])
     send(data)
 
-def send(data):
+def send(data, screen, textPrint):
     cmd = str(data.dir)
     cmd += " " * (128-len(cmd))
 
     if server_check:
         client.send(cmd.encode("Utf8"))
 
-    print(data.dir)
+    # print(data.dir)
+    print_recap(data, screen, textPrint)
 
 ##################
 ## MAIN PROGRAM ##
@@ -136,7 +236,7 @@ def send(data):
 
 data = Vars()
 
-try:
+if input("check network : (y/n)") == "y":
     ip = ("192.168.137.2",50001)
 
     print("Connecting to %s..."%(":".join(map(str,ip))))
@@ -144,8 +244,7 @@ try:
     client.connect(ip)
     print("Connected!")
     server_check = True
-except:
-    print("unable to connect to host")
+else:
     print("ignoring...")
     server_check = False
 
@@ -162,6 +261,13 @@ if joytest:
     """ joy_control """
     print("\njoystick ready")
     print("Waiting for instructions...")
+
+    size = [500, 700]
+    screen = pygame.display.set_mode(size)
+    pygame.display.set_caption("sm4000 controller recap")
+
+    # Get ready to print
+    textPrint = TextPrint()
 
     while data.running:
         pygame.event.get()
@@ -271,7 +377,7 @@ if joytest:
 
         if data.latest != data.dir:
             data.latest = data.dir.copy()
-            send(data)
+            send(data, screen, textPrint)
 else:
     data.key_vars()
     """ key_control """
@@ -298,6 +404,7 @@ if server_check:
     client.send("'exit'".encode("Utf8"))
     client.close()
 
+pygame.quit()
 print("END OF PROGRAM")
 time.sleep(0.5)
 

@@ -54,6 +54,7 @@ class Vars:
     def joy_vars(self):
         self.joy_init = True
         self.joy = pygame.joystick.Joystick(0)
+        self.joy.init()
 
         self.boosted = True
 
@@ -81,11 +82,57 @@ def print_recap(data):
 
     # -------- Main Program Loop -----------
     while data.running:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                data.running = False
+
+        data.axes = (
+            data.joy.get_axis(0),
+            -data.joy.get_axis(1),
+            data.joy.get_axis(2),
+            data.joy.get_axis(3),
+            data.joy.get_hat(0)
+        )
+
+        data.buttons = (
+            None,
+            data.joy.get_button(0),
+            data.joy.get_button(1),
+            data.joy.get_button(2),
+            data.joy.get_button(3),
+            data.joy.get_button(4),
+            data.joy.get_button(5),
+            data.joy.get_button(6),
+            data.joy.get_button(7),
+            data.joy.get_button(8),
+            data.joy.get_button(9),
+            data.joy.get_button(10),
+            data.joy.get_button(11)
+        )
+
+        data.pwr = {
+            "x": int( abs( round(data.axes[0],2) ) * 5),
+            "y": int( abs( round(data.axes[1],2) ) * 5),
+            "lights": int(abs(data.axes[2] - 1) * 5)
+        }
+
         # DRAWING STEP
         # First, clear the screen to white. Don't put other drawing commands
         # above this, or they will be erased with this command.
         screen.fill(bg_color)
         textPrint.reset()
+
+        textPrint.print(screen, f"axes:", fg_color)
+        textPrint.indent()
+        for i in range(len(data.axes)):
+            textPrint.print(screen, f"Axe {i} : {data.axes[i]}", fg_color)
+        textPrint.unindent()
+
+        textPrint.print(screen, f"buttons:", fg_color)
+        textPrint.indent()
+        for button in data.buttons[1:]:
+            textPrint.print(screen, f"{button}", fg_color)
+        textPrint.unindent()
 
         textPrint.print(screen, f"dir:", fg_color)
         textPrint.indent()
@@ -116,4 +163,5 @@ pygame.init()
 pygame.joystick.init()
 
 data = Vars()
+data.joy_vars()
 print_recap(data)
