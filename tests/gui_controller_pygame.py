@@ -53,14 +53,14 @@ class Vars:
   
     def joy_vars(self):
         self.joy_init = True
-        self.joy = None
+        self.joy = pygame.joystick.Joystick(0)
 
         self.boosted = True
 
         self.latest = self.dir.copy()
 
-        self.axes = tuple()
-        self.buttons = tuple()
+        self.axes = (0.0,0.0,0.0,0.0)
+        self.buttons = (None,0,0,0,0,0,0,0,0,0,0,0,0)
 
 #################
 
