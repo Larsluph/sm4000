@@ -87,57 +87,17 @@ def print_recap(data):
         screen.fill(bg_color)
         textPrint.reset()
 
-        # Get count of joysticks
-        joystick_count = pygame.joystick.get_count()
-
-        textPrint.print(screen, "Number of joysticks: {}".format(joystick_count), fg_color )
+        textPrint.print(screen, f"dir:", fg_color)
         textPrint.indent()
+        for x in data.dir:
+            textPrint.print(screen, f"{x} : {data.dir[x]}", fg_color)
+        textPrint.unindent()
 
-        # For each joystick:
-        for i in range(joystick_count):
-            joystick = pygame.joystick.Joystick(i)
-            joystick.init()
-
-            textPrint.print(screen, "Joystick {}".format(i), fg_color )
-            textPrint.indent()
-
-            # Get the name from the OS for the controller/joystick
-            name = joystick.get_name()
-            textPrint.print(screen, "Joystick name: {}".format(name), fg_color )
-
-            # Usually axis run in pairs, up/down for one, and left/right for
-            # the other.
-            axes = joystick.get_numaxes()
-            textPrint.print(screen, "Number of axes: {}".format(axes), fg_color )
-            textPrint.indent()
-
-            for i in range( axes ):
-                axis = joystick.get_axis( i )
-                textPrint.print(screen, "Axis {} value: {:>6.3f}".format(i, axis), fg_color )
-            textPrint.unindent()
-
-            buttons = joystick.get_numbuttons()
-            textPrint.print(screen, "Number of buttons: {}".format(buttons), fg_color )
-            textPrint.indent()
-
-            for i in range( buttons ):
-                button = joystick.get_button( i )
-                textPrint.print(screen, "Button {:>2} value: {}".format(i,button), fg_color )
-            textPrint.unindent()
-
-            # Hat switch. All or nothing for direction, not like joysticks.
-            # Value comes back in an array.
-            hats = joystick.get_numhats()
-            textPrint.print(screen, "Number of hats: {}".format(hats), fg_color )
-            textPrint.indent()
-
-            for i in range( hats ):
-                hat = joystick.get_hat( i )
-                textPrint.print(screen, "Hat {} value: {}".format(i, str(hat)), fg_color )
-            textPrint.unindent()
-
-            textPrint.unindent()
-
+        textPrint.print(screen, f"pwr:", fg_color)
+        textPrint.indent()
+        for x in data.pwr:
+            textPrint.print(screen, f"{x} : {data.pwr[x]}", fg_color)
+        textPrint.unindent()
 
         # ALL CODE TO DRAW SHOULD GO ABOVE THIS COMMENT
 
@@ -152,6 +112,8 @@ def print_recap(data):
     # on exit if running from IDLE.
     pygame.quit()
 
-data = Vars()
+pygame.init()
+pygame.joystick.init()
 
+data = Vars()
 print_recap(data)
