@@ -4,7 +4,6 @@
 import os
 import socket
 import sys
-import threading
 import time
 
 import keyboard
@@ -78,13 +77,13 @@ def backward(data):
     send(data)
 
 def turn_left(data):
-    data.dir["left"] += +data.pos
-    data.dir["right"] += -data.pos
+    data.dir["left"] += -data.pos
+    data.dir["right"] += +data.pos
     send(data)
 
 def turn_right(data):
-    data.dir["left"] += -data.pos
-    data.dir["right"] += +data.pos
+    data.dir["left"] += +data.pos
+    data.dir["right"] += -data.pos
     send(data)
 
 # def left(data):
@@ -211,8 +210,8 @@ if joytest:
 
             # right
             elif (data.axes[0] > +data.threshold) and (-data.threshold < data.axes[1] < +data.threshold):
-                data.dir["left"] = (-data.pos) * data.pwr["x"]
-                data.dir["right"] = (+data.pos) * data.pwr["x"]
+                data.dir["left"] = (+data.pos) * data.pwr["x"]
+                data.dir["right"] = (-data.pos) * data.pwr["x"]
 
             # bottom right
             elif (data.axes[0] > +data.threshold) and (data.axes[1] < -data.threshold):
@@ -231,8 +230,8 @@ if joytest:
 
             # left
             elif (data.axes[0] < -data.threshold) and (-data.threshold < data.axes[1] < +data.threshold):
-                data.dir["left"] = (+data.pos) * data.pwr["x"]
-                data.dir["right"] = (-data.pos) * data.pwr["x"]
+                data.dir["left"] = (-data.pos) * data.pwr["x"]
+                data.dir["right"] = (+data.pos) * data.pwr["x"]
 
             # top left
             elif (data.axes[0] < -data.threshold) and (data.axes[1] > +data.threshold):
