@@ -2,6 +2,7 @@
 #-*- coding:utf-8 -*-
 import os
 import pathlib
+import keyboard
 import socket
 import time
 
@@ -27,25 +28,25 @@ print("Connected")
 stream = client_socket.makefile('rb')
 
 vidname = time.strftime('sm4000_camera_output_%Y-%m-%d_%H-%M-%S.mjpeg')
-vid_file = open(vidname,mode='wb')
+with open(vidname,mode='wb') as vid_file:
+    status = ""
+    bytes = bytes(1) # Define a bytes object
+    while not(status in ["stop"]):
+        bytes += stream.read(4096)
+        a = bytes.find(b'\xff\xd8')
+        b = bytes.find(b'\xff\xd9')
+        if a!=-1 and b!=-1:
+            image_bytes = bytes[a:b + 2]
+            bytes = bytes[b + 2:]
+            image = cv2.imdecode(numpy.fromstring(image_bytes, dtype=numpy.uint8), 1)
+            vid_file.write(image_bytes)
+            vid_file.flush()
+            cv2.imshow('Image from piCamera', image)
+            if cv2.waitKey(1) & 0xFF == ord('q'):
+                status = "stop"
 
-bytes = bytes(1) # Define a bytes object
-while len(bytes) != 0:
-    bytes += stream.read(1024)
-    a = bytes.find(b'\xff\xd8')
-    b = bytes.find(b'\xff\xd9')
-    if a!=-1 and b!=-1:
-        image_bytes = bytes[a:b + 2]
-        bytes = bytes[b + 2:]
-        image = cv2.imdecode(numpy.fromstring(image_bytes, dtype=numpy.uint8), 1)
-        vid_file.write(image_bytes)
-        vid_file.flush()
-        cv2.imshow('Image from piCamera', image)
-        if cv2.waitKey(1) & 0xFF == ord('q'):
-            client_socket.send("stop".encode("Utf8"))
-
+client_socket.send(status.encode("Utf8"))
 cv2.destroyAllWindows()
-vid_file.close()
 stream.close()
 client_socket.close()
 print('client socket closed')
