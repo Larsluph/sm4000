@@ -45,7 +45,7 @@ with open(vidname,mode='wb') as vid_file:
             if cv2.waitKey(1) & 0xFF == ord('q'):
                 status = "stop"
 
-client_socket.send(status.encode("Utf8"))
+client_socket.send(status.encode())
 cv2.destroyAllWindows()
 stream.close()
 client_socket.close()
