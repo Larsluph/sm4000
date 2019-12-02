@@ -6,9 +6,8 @@ import socket
 import sys
 import time
 
-import serial
-
 import module_servos as servo
+import serial
 
 ####################
 ####### FUNCs ######

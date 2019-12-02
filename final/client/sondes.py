@@ -1,54 +1,46 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import socket, os
+import os
+import socket
 
 os.system("title client_sondes")
 
-def main():
-    connected = False
-    while not(connected):
+client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+
+try:
+    ip = ("192.168.137.2",50003)
+
+    print("Connecting to %s..."%(":".join(map(str,ip))))
+    client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    client.connect(ip)
+    print("Connected!")
+    server_check = True
+except:
+    print("unable to connect to host")
+    print("ignoring...")
+    server_check = False
+
+stream = client_socket.makefile('rb')
+
+try:
+    os.system("mkdir sm4000_received_data\\probes_data")
+except:
+    pass
+
+vidname = time.strftime('probes_data_%Y-%m-%d_%H-%M-%S.txt')
+with open("sm4000_received_data\\camera_data\\"+vidname,mode='w') as output_file:
+    while True:
         try:
-            print('Connecting...')
-            ip = ('192.168.137.2', 50003)
-            client_socket = socket.socket()
-            client_socket.connect(ip)
-            stream = client_socket.makefile('rb')
-            print('connection with server established')
-            connected = True
+            data = stream.readline().decode()
+            print(data)
+            output_file.write(data)
+            output_file.flush()
         except:
-            print("can't established connection")
+            print("can't read incoming data")
 
-    print('waiting incoming data')
+stream.close()
+client_socket.close()
+print("socket closed\nDisconnected")
 
-    running = True
-    with open(time.strftime('C:\\sm4000_received_data\\probes_data_%d-%m-%Y_%H-%M-%S.txt'),mode='x') as output:
-        while running:
-            try:
-                data = stream.readline()
-                data = data.decode('Utf8')
-                data = data.split(',')
-
-                if len(data) == 0:
-                    running = False
-                else:
-                    print(data)
-                    print(data,file=output,flush=True)
-
-            except:
-                print("can't read incoming data")
-                running = False
-
-    try:
-        stream.close()
-        print('stream closed')
-    except:
-        print("can't close stream")
-    try:
-        client_socket.close()
-        print('client socket closed')
-    except:
-        print("can't close client socket")
-
-if __name__ == '__main__':
-    main()
+raise SystemExit

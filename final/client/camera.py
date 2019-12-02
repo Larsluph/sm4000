@@ -2,12 +2,13 @@
 #-*- coding:utf-8 -*-
 import os
 import pathlib
-import keyboard
 import socket
 import time
 
-import cv2
+import keyboard
 import numpy
+
+import cv2
 
 ##For a stream coming from an url :
 ##import urllib
@@ -28,12 +29,12 @@ print("Connected")
 stream = client_socket.makefile('rb')
 
 try:
-    os.system("mkdir camera_output")
+    os.system("mkdir sm4000_received_data\\camera_data")
 except:
     pass
 
-vidname = time.strftime('camera_output\\sm4000_camera_output_%Y-%m-%d_%H-%M-%S.mjpeg')
-with open(vidname,mode='wb') as vid_file:
+vidname = time.strftime('camera_output_%Y-%m-%d_%H-%M-%S.mjpeg')
+with open("sm4000_received_data\\camera_data\\"+vidname,mode='wb') as vid_file:
     status = ""
     bytes = bytes(1) # Define a bytes object
     while not(status in ["stop"]):
