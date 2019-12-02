@@ -27,7 +27,12 @@ print("Connected")
 
 stream = client_socket.makefile('rb')
 
-vidname = time.strftime('sm4000_camera_output_%Y-%m-%d_%H-%M-%S.mjpeg')
+try:
+    os.system("mkdir camera_output")
+except:
+    pass
+
+vidname = time.strftime('camera_output\\sm4000_camera_output_%Y-%m-%d_%H-%M-%S.mjpeg')
 with open(vidname,mode='wb') as vid_file:
     status = ""
     bytes = bytes(1) # Define a bytes object
