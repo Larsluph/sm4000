@@ -9,7 +9,9 @@ import time
 
 import keyboard
 
-import smbus
+import board
+import ms5836
+import busio
 
 ###########
 ## FUNCs ##
@@ -101,23 +103,7 @@ def main():
             stream.flush()
             print('data sent')
 
-    try:
+    if server_socket:
         stream.close()
-        print('stream is closed')
-    except:
-        print("can't close stream")
-    try:
         connection.close()
-        print('connection socket is closed')
-    except:
-        print("can't close connection")
-    try:
         server_socket.close()
-        print('server socket is closed')
-    except:
-        print("can't close server socket")
-
-    print('End of program')
-
-if __name__ == '__main__':
-    main()
