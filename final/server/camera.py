@@ -18,16 +18,14 @@ os.system("clear")
 # DONE : picamera
 try:
     print("Initializing camera...")
-    global camera
-    camera = picamera.PiCamera()
-    camera.resolution = (768, 432)
+    camera = picamera.PiCamera(resolution=(1296,730),framerate=30)
     camera.rotation = 180
     camera.start_preview(alpha=0)
     camera.stop_preview()
     print("Camera initialized")
 except picamera.exc.PiCameraError:
     print("Camera failed to initialize\nTry rebooting the system")
-    quit()
+    raise SystemExit
 
 # DONE : server set up
 ip = ('192.168.137.2',50002)
