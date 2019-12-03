@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 #-*- coding:utf-8 -*-
+
 import os
 import pathlib
 import socket
@@ -53,6 +54,7 @@ with open("sm4000_received_data\\camera_data\\"+vidname,mode='wb') as vid_file:
 
 client_socket.send(status.encode())
 cv2.destroyAllWindows()
+time.sleep(1)
 stream.close()
 client_socket.close()
 print('client socket closed')
