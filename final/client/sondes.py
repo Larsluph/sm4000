@@ -1,5 +1,5 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
+#!/usr/bin/env python3
+#-*- coding:utf-8 -*-
 
 import os
 import socket
@@ -36,14 +36,17 @@ with open("sm4000_received_data\\probes_data\\"+vidname,mode='w') as output_file
     running = True
     while running:
         try:
-            data = stream.readline().decode()
+            data = stream.readline().decode().split(",")[:-1]
             print(data)
             output_file.write(data)
             output_file.flush()
         except:
             print("can't read incoming data")
+
         if keyboard.is_pressed('esc'):
             running = False
+
+        time.sleep(2)
 
 stream.close()
 client_socket.close()

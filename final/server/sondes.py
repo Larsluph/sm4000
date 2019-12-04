@@ -7,18 +7,12 @@ import socket
 import sys
 import time
 
-import keyboard
-
 import adafruit_ads1x15.ads1115 as ADS
 import board
 import busio
 import ms5837
 import smbus
 from adafruit_ads1x15.analog_in import AnalogIn
-
-def stop_running():
-    global running
-    running = False
 
 ##################
 ## MAIN PROGRAM ##
@@ -57,12 +51,11 @@ try:
 except:
     server_check = False
 
-if server_check:
-    stream = receiver.makefile('wb')
+stream = receiver.makefile('wb')
+print("stream initialized")
 
 t0 = time.perf_counter()
 t_last = 0
-keyboard.add_hotkey('esc', stop_running)
 
 i = 1
 global running
@@ -73,7 +66,8 @@ while running:
     t_last = t
 
     # niveau d'eau
-    lvl = water_lvl.voltage
+    lvl_val = water_lvl.value
+    lvl_volt = water_lvl.voltage
 
     # pres / temp
     if sensor.read():
@@ -81,15 +75,24 @@ while running:
         temp = sensor.temperature(ms5837.UNITS_Centigrade)
         depth = sensor.depth()
         alti = sensor.altitude()
+    else:
+        print("can't read sensor data")
 
-    data = f"{i},{t},{delta_t} - {lvl} - {pressure},{temp},{depth},{alti}" + chr(13)
+    data = f"{i},{t},{delta_t},{lvl_val},{lvl_volt},{pressure},{temp},{depth},{alti}" + chr(13)
     i += 1
+
     if server_check:
-        stream.write(data.encode())
-        stream.flush()
-        print('data sent')
+        try:
+            stream.write(data.encode())
+            stream.flush()
+            print(data)
+        except:
+            print("unable to write on stream")
+            print("check socket connection")
+            running = False
 
 if server_socket:
     stream.close()
     connection.close()
     server_socket.close()
+raise SystemExit
