@@ -47,18 +47,15 @@ try:
     server_socket.listen(0)
     receiver, address = server_socket.accept()
     print("Connected")
-    server_check = True
 except:
-    server_check = False
-
-stream = receiver.makefile('wb')
-print("stream initialized")
+    print("unable to bind socket\nExiting...")
+    time.sleep(1)
+    raise SystemExit
 
 t0 = time.perf_counter()
 t_last = 0
 
 i = 1
-global running
 running = True
 while running:
     t = (time.perf_counter() - t0) * 1000
@@ -66,7 +63,7 @@ while running:
     t_last = t
 
     # niveau d'eau
-    lvl_val = water_lvl.value
+    lvl_val  = water_lvl.value
     lvl_volt = water_lvl.voltage
 
     # pres / temp
@@ -78,21 +75,18 @@ while running:
     else:
         print("can't read sensor data")
 
-    data = f"{i},{t},{delta_t},{lvl_val},{lvl_volt},{pressure},{temp},{depth},{alti}" + chr(13)
+    # data = f"{i},{t},{delta_t},{lvl_val},{lvl_volt},{pressure},{temp},{depth},{alti}" + chr(13)
+    data = ",".join( str(i),str(t),str(delta_t),str(lvl_val),str(lvl_volt),str(pressure),str(temp),str(depth),str(alti) ) + chr(13)
     i += 1
 
-    if server_check:
-        try:
-            stream.write(data.encode())
-            stream.flush()
-            print(data)
-        except:
-            print("unable to write on stream")
-            print("check socket connection")
-            running = False
+    try:
+        server_socket.send(data.encode())
+        print(data)
+    except:
+        print("unable to send data")
+        print("check socket connection")
+        running = False
 
-if server_socket:
-    stream.close()
-    connection.close()
-    server_socket.close()
+receiver.close()
+server_socket.close()
 raise SystemExit
