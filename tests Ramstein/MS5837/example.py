@@ -12,8 +12,8 @@ sensor = ms5837.MS5837_30BA() # Default I2C bus is 1 (Raspberry Pi 3)
 
 # We must initialize the sensor before reading it
 if not sensor.init():
-        print("Sensor could not be initialized")
-        exit(1)
+    print("Sensor could not be initialized")
+    exit(1)
 
 # We have to read values from sensor to update pressure and temperature
 if not sensor.read():
@@ -46,12 +46,12 @@ time.sleep(5)
 
 # Spew readings
 while True:
-        if sensor.read():
-                print("P:")
-                print(sensor.pressure(), "mbar") # Default is mbar (no arguments)
-                print(sensor.pressure(ms5837.UNITS_psi), "psi") # Request psi
-                print(sensor.temperature(), "C") # Default is degrees C (no arguments)
-                print(sensor.temperature(ms5837.UNITS_Farenheit), "F") # Request Farenheit
-        else:
-                print("Sensor read failed!")
-                exit(1)
+    if sensor.read():
+        print("P:")
+        print(sensor.pressure(), "mbar") # Default is mbar (no arguments)
+        print(sensor.pressure(ms5837.UNITS_psi), "psi") # Request psi
+        print(sensor.temperature(), "C") # Default is degrees C (no arguments)
+        print(sensor.temperature(ms5837.UNITS_Farenheit), "F") # Request Farenheit
+    else:
+        print("Sensor read failed!")
+        exit(1)

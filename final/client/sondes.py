@@ -3,6 +3,9 @@
 
 import os
 import socket
+import time
+
+import keyboard
 
 os.system("title client_sondes")
 
@@ -29,8 +32,9 @@ except:
     pass
 
 vidname = time.strftime('probes_data_%Y-%m-%d_%H-%M-%S.txt')
-with open("sm4000_received_data\\camera_data\\"+vidname,mode='w') as output_file:
-    while True:
+with open("sm4000_received_data\\probes_data\\"+vidname,mode='w') as output_file:
+    running = True
+    while running:
         try:
             data = stream.readline().decode()
             print(data)
@@ -38,6 +42,8 @@ with open("sm4000_received_data\\camera_data\\"+vidname,mode='w') as output_file
             output_file.flush()
         except:
             print("can't read incoming data")
+        if keyboard.is_pressed('esc'):
+            running = False
 
 stream.close()
 client_socket.close()

@@ -10,17 +10,17 @@ import serial
 
 import module_servos as servo
 
-####################
-####### FUNCs ######
-####################
-    
+##############
+#### FUNCs ###
+##############
+
 def move(com_port,dir,delay):
     servo.move(com_port, pin_id["left"], 1500-dir["left"], delay)
     servo.move(com_port, pin_id["right"], 1500+dir["right"], delay)
     servo.move(com_port, pin_id["y"], 1500+dir["y"], delay)
 
     return 0
-    
+
 def light_mgmt(com_port,lights,delay):
     servo.move(com_port, pin_id["lights"], 1000+lights, delay)
 
@@ -36,11 +36,11 @@ def test_servo(com_port):
         if incoming_data.decode('ascii') == ("SSC32-V2.50USB" + chr(13)):
             print("servo initialized!")
             servo_on = True
-            
+
         else:
             print("servo isn't responding\nRetrying in 5 sec...")
             time.sleep(5)
-    
+
 ##################
 ## MAIN PROGRAM ##
 ##################
@@ -88,10 +88,10 @@ with serial.Serial('/dev/ttyUSB0', 9600, timeout = 1) as com:
         print(dir)
 
         if dir == "exit":
-            com.close()
-            telecommande.close()
-            server_socket.close()
-            raise SystemExit
+            for x in ["left","y","right"]:
+                dir[x] = 0
+                move(com,dir,2000)
+                light_mgmt(com,0,2000)
 
         elif dir["powered"] == 1:
             pass
@@ -106,3 +106,7 @@ with serial.Serial('/dev/ttyUSB0', 9600, timeout = 1) as com:
             light_mgmt(com,dir["lights"],2000)
         else:
             light_mgmt(com,0,2000)
+
+    telecommande.close()
+    server_socket.close()
+    raise SystemExit
