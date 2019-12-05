@@ -55,6 +55,8 @@ except:
 t0 = time.perf_counter()
 t_last = 0
 
+server_socket.send("i,t,delta_t,lvl_val,lvl_volt,pressure,temp,depth,alti".encode())
+
 i = 1
 running = True
 while running:

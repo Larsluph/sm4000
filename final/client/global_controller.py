@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+﻿#!/usr/bin/env python3
 #-*- coding:utf-8 -*-
 
 import os
@@ -274,17 +274,17 @@ if joytest:
 else:
     data.key_vars()
     """ key_control """
-    keyboard.add_hotkey('z',forward,args=[data])
-    keyboard.add_hotkey('s',backward,args=[data])
-    keyboard.add_hotkey('q',turn_left,args=[data])
-    keyboard.add_hotkey('d',turn_right,args=[data])
-    keyboard.add_hotkey('shift',up,args=[data])
-    keyboard.add_hotkey('ctrl',down,args=[data])
-    keyboard.add_hotkey('space',stop,args=[data])
-    keyboard.add_hotkey('enter',toggle_pwr,args=[data])
-    keyboard.add_hotkey('*',light_mgmt,args=[data,"+",False])
-    keyboard.add_hotkey('ù',light_mgmt,args=[data,"-",False])
-    keyboard.add_hotkey('$',light_mgmt,args=[data,0,True])
+    keyboard.add_hotkey('z',forward,args=[data],suppress=True),
+    keyboard.add_hotkey('s',backward,args=[data],suppress=True),
+    keyboard.add_hotkey('q',turn_left,args=[data],suppress=True),
+    keyboard.add_hotkey('d',turn_right,args=[data],suppress=True),
+    keyboard.add_hotkey('shift',up,args=[data],suppress=True),
+    keyboard.add_hotkey('ctrl',down,args=[data],suppress=True),
+    keyboard.add_hotkey('space',stop,args=[data],suppress=True),
+    keyboard.add_hotkey('enter',toggle_pwr,args=[data],suppress=True),
+    keyboard.add_hotkey('*',light_mgmt,args=[data,"+",False],suppress=True),
+    keyboard.add_hotkey('ù',light_mgmt,args=[data,"-",False],suppress=True),
+    keyboard.add_hotkey('$',light_mgmt,args=[data,0,True],suppress=True),
 
     print("\nkeyboard ready")
     print("Waiting for instructions...")

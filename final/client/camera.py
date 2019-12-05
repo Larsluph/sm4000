@@ -34,7 +34,7 @@ try:
 except:
     pass
 
-vidname = time.strftime('camera_output_%Y-%m-%d_%H-%M-%S.mjpeg')
+vidname = time.strftime('sm4000_camera_output_%Y-%m-%d_%H-%M-%S.mjpeg')
 with open("sm4000_received_data\\camera_data\\"+vidname,mode='wb') as vid_file:
     status = ""
     bytes = bytes(1) # Define a bytes object
