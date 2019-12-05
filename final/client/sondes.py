@@ -26,7 +26,7 @@ try:
 except:
     pass
 
-keyboard.add_hotkey('esc',lambda: exec("running=True"),suppress=True)
+keyboard.add_hotkey('esc',lambda: exec("running=False"),suppress=True)
 
 vidname = time.strftime('sm4000_probes_data_%Y-%m-%d_%H-%M-%S.txt')
 with open("sm4000_received_data\\probes_data\\"+vidname,mode='w') as output_file:
