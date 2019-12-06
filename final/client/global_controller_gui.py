@@ -81,7 +81,6 @@ def print_recap(data, screen, textPrint):
     fg_color = ( 255, 255,   0) # yellow
     bg_color = (   0,   0,   0) # black
 
-    # -------- Main Program Loop -----------
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             data.running = False
@@ -221,14 +220,17 @@ def toggle_pwr(data):
     send(data)
 
 def send(data, screen, textPrint):
+    data.t = threading.Thread(target=print_recap, name="thread-recap",args=tuple([data]))
+    data.t.start()
     cmd = str(data.dir)
     cmd += " " * (128-len(cmd))
 
     if server_check:
         client.send(cmd.encode("Utf8"))
 
-    # print(data.dir)
-    print_recap(data, screen, textPrint)
+    print(data.dir)
+
+    data.t.join()
 
 ##################
 ## MAIN PROGRAM ##
