@@ -23,6 +23,7 @@ i2c = busio.I2C(board.SCL, board.SDA)
 ads = ADS.ADS1115(i2c)
 
 water_lvl = AnalogIn(ads, ADS.P0)
+battery_cells = AnalogIn(ads, ADS.P1)
 
 #####
 
@@ -55,7 +56,7 @@ except:
 t0 = time.perf_counter()
 t_last = 0
 
-server_socket.send("i,t,delta_t,lvl_val,lvl_volt,pressure,temp,depth,alti".encode())
+receiver.send("# i,t,delta_t,lvl_val,lvl_volt,pressure,temp,depth,alti".encode())
 
 i = 1
 running = True
@@ -67,6 +68,7 @@ while running:
     # niveau d'eau
     lvl_val  = water_lvl.value
     lvl_volt = water_lvl.voltage
+    bat_val  = battery_cells.value
 
     # pres / temp
     if sensor.read():
@@ -82,7 +84,7 @@ while running:
     i += 1
 
     try:
-        server_socket.send(data.encode())
+        receiver.send(data.encode())
         print(data)
     except:
         print("unable to send data")
