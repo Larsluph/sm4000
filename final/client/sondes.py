@@ -30,11 +30,13 @@ keyboard.add_hotkey('esc',lambda: exec("running=False"),suppress=True)
 
 vidname = time.strftime('sm4000_probes_data_%Y-%m-%d_%H-%M-%S.txt')
 with open("sm4000_received_data\\probes_data\\"+vidname,mode='w') as output_file:
-    global running
+    datatags = client.recv(1024).decode()
+    print(datatags,file=output_file,flush=True)
     running = True
     while running:
         try:
             data = client.recv(1024).decode()
+            print(datatags)
             print(data.split(","))
             output_file.write(data)
             output_file.flush()
