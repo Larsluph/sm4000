@@ -9,6 +9,10 @@ import keyboard
 
 os.system("title client_sondes")
 
+def stop_running():
+    global running
+    running = False
+
 try:
     ip = ("192.168.137.2",50003)
 
@@ -26,23 +30,21 @@ try:
 except:
     pass
 
-keyboard.add_hotkey('esc',lambda: exec("running=False"),suppress=True)
+keyboard.add_hotkey('esc',stop_running,suppress=False)
 
 vidname = time.strftime('sm4000_probes_data_%Y-%m-%d_%H-%M-%S.txt')
 with open("sm4000_received_data\\probes_data\\"+vidname,mode='w') as output_file:
-    datatags = client.recv(1024).decode()
-    print(datatags,file=output_file,flush=True)
     running = True
     while running:
         try:
-            data = client.recv(1024).decode()
-            print(datatags)
-            print(data.split(","))
+            # i,lvl_volt,bat_volt,pressure,temp,depth
+            data = client.recv(1024).decode().split(",")
+            print(data)
             output_file.write(data)
             output_file.flush()
         except:
             print("can't read incoming data")
-            time.sleep(1)
+            running = False
 
 client.close()
 print("socket closed\nDisconnected")

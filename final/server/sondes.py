@@ -23,6 +23,7 @@ i2c = busio.I2C(board.SCL, board.SDA)
 ads_water = ADS.ADS1115(i2c,address=0x48)
 # ads_battery = ADS.ADS1115(i2c,address=0x49)
 # 32768 limite batterie +/-
+# cap = [3.00:4.20]
 
 water_lvl = AnalogIn(ads_water, ADS.P0)
 # battery_cells = [AnalogIn(ads_battery, i) for i in range(4)]
@@ -59,8 +60,6 @@ except:
 t0 = time.perf_counter()
 t_last = 0
 
-receiver.send("i,t,delta_t,lvl_val,lvl_volt,pressure,temp,depth,alti".encode())
-
 i = 1
 running = True
 while running:
@@ -74,7 +73,9 @@ while running:
 
     ### cellules batterie
     # bat_val  = [battery_cells[i].value for i in range(4)]
-    bat_val = battery_cells.value
+    # bat_volt = [battery_cells[i].voltage for i in range(4)]
+    bat_val  = battery_cells.value
+    bat_volt = battery_cells.voltage
 
     ### pres / temp
     if sensor.read():
@@ -85,8 +86,7 @@ while running:
     else:
         print("can't read sensor data")
 
-    # data = f"{i},{t},{delta_t},{lvl_val},{lvl_volt},{pressure},{temp},{depth},{alti}" + chr(13)
-    data = ",".join( str(i),str(t),str(delta_t),str(lvl_val),str(lvl_volt),str(bat_val),str(pressure),str(temp),str(depth),str(alti) ) + chr(13)
+    data = ",".join( [str(i),str(lvl_volt),str(bat_volt),str(pressure),str(temp),str(depth)] ) + "\n"
     i += 1
 
     try:
@@ -96,6 +96,7 @@ while running:
         print("unable to send data")
         print("check socket connection")
         running = False
+    time.sleep(1)
 
 receiver.close()
 server_socket.close()
