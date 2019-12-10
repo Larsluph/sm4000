@@ -65,12 +65,15 @@ while running:
     delta_t = t - t_last
     t_last = t
 
-    # niveau d'eau
+    ### niveau d'eau
     lvl_val  = water_lvl.value
     lvl_volt = water_lvl.voltage
-    bat_val  = battery_cells.value
 
-    # pres / temp
+    ### cellules batterie
+    bat_val  = battery_cells.value
+    bat_volt = battery_cells.voltage
+
+    ### pres / temp
     if sensor.read():
         pressure = sensor.pressure(ms5837.UNITS_mbar)
         temp = sensor.temperature(ms5837.UNITS_Centigrade)
