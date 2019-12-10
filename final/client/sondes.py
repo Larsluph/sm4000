@@ -33,7 +33,6 @@ with open("sm4000_received_data\\probes_data\\"+vidname,mode='w') as output_file
     global running
     running = True
     while running:
-        time.sleep(1)
         try:
             data = client.recv(1024).decode()
             print(data.split(","))
@@ -41,6 +40,7 @@ with open("sm4000_received_data\\probes_data\\"+vidname,mode='w') as output_file
             output_file.flush()
         except:
             print("can't read incoming data")
+            time.sleep(1)
 
 client.close()
 print("socket closed\nDisconnected")
