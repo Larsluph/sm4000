@@ -20,10 +20,13 @@ from adafruit_ads1x15.analog_in import AnalogIn
 
 # setup ads
 i2c = busio.I2C(board.SCL, board.SDA)
-ads = ADS.ADS1115(i2c)
+ads_water = ADS.ADS1115(i2c,address=0x48)
+# ads_battery = ADS.ADS1115(i2c,address=0x49)
+# 32768 limite batterie +/-
 
-water_lvl = AnalogIn(ads, ADS.P0)
-battery_cells = AnalogIn(ads, ADS.P1)
+water_lvl = AnalogIn(ads_water, ADS.P0)
+# battery_cells = [AnalogIn(ads_battery, i) for i in range(4)]
+battery_cells = AnalogIn(ads_water, ADS.P3)
 
 #####
 
@@ -56,7 +59,7 @@ except:
 t0 = time.perf_counter()
 t_last = 0
 
-receiver.send("# i,t,delta_t,lvl_val,lvl_volt,pressure,temp,depth,alti".encode())
+receiver.send("i,t,delta_t,lvl_val,lvl_volt,pressure,temp,depth,alti".encode())
 
 i = 1
 running = True
@@ -70,8 +73,8 @@ while running:
     lvl_volt = water_lvl.voltage
 
     ### cellules batterie
-    bat_val  = battery_cells.value
-    bat_volt = battery_cells.voltage
+    # bat_val  = [battery_cells[i].value for i in range(4)]
+    bat_val = battery_cells.value
 
     ### pres / temp
     if sensor.read():
@@ -83,7 +86,7 @@ while running:
         print("can't read sensor data")
 
     # data = f"{i},{t},{delta_t},{lvl_val},{lvl_volt},{pressure},{temp},{depth},{alti}" + chr(13)
-    data = ",".join( str(i),str(t),str(delta_t),str(lvl_val),str(lvl_volt),str(pressure),str(temp),str(depth),str(alti) ) + chr(13)
+    data = ",".join( str(i),str(t),str(delta_t),str(lvl_val),str(lvl_volt),str(bat_val),str(pressure),str(temp),str(depth),str(alti) ) + chr(13)
     i += 1
 
     try:
