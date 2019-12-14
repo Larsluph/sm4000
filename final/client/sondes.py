@@ -39,7 +39,8 @@ with open("sm4000_received_data\\probes_data\\"+vidname,mode='w') as output_file
         try:
             # i,lvl_volt,bat_volt,pressure,temp,depth
             data = client.recv(1024).decode().split(",")
-            print(data)
+            i,t,delta_t,lvl_val,lvl_volt,bat_val,bat_volt,pressure,temp,depth,alti = data
+            print( i,lvl_volt,bat_volt,temp,depth )
             output_file.write(data)
             output_file.flush()
         except:

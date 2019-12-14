@@ -86,7 +86,7 @@ while running:
     else:
         print("can't read sensor data")
 
-    data = ",".join( [str(i),str(lvl_volt),str(bat_volt),str(pressure),str(temp),str(depth)] ) + "\n"
+    data = ",".join( [ str(x) for x in [i,t,delta_t,lvl_val,lvl_volt,bat_val,bat_volt,pressure,temp,depth,alti] ] ) + "\n"
     i += 1
 
     try:
