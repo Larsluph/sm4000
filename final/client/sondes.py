@@ -30,9 +30,12 @@ keyboard.add_hotkey('esc',lambda: exec("global running;running=False"),suppress=
 
 vidname = time.strftime('sm4000_probes_data_%Y-%m-%d_%H-%M-%S.txt')
 with open("sm4000_received_data\\probes_data\\"+vidname,mode='w') as output_file:
+    debug = True
     running = True
     while running:
         try:
+            if debug:
+                print("waiting for data...")
             data = i,t,delta_t,lvl_val,lvl_volt,bat_val,bat_volt,pressure,temp,depth,alti = client.recv(1024).decode().split(",")
             print( i,lvl_volt,bat_volt,temp,depth )
             output_file.write(data)
