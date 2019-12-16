@@ -92,6 +92,7 @@ with serial.Serial('/dev/ttyUSB0', 9600, timeout = 1) as com:
                 dir[x] = 0
                 move(com,dir,2000)
                 light_mgmt(com,0,2000)
+            break
 
         elif dir["powered"] == 1:
             pass
@@ -109,4 +110,5 @@ with serial.Serial('/dev/ttyUSB0', 9600, timeout = 1) as com:
 
     telecommande.close()
     server_socket.close()
-    raise SystemExit
+
+raise SystemExit
