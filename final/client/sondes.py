@@ -27,6 +27,7 @@ except:
     pass
 
 keyboard.add_hotkey('esc',lambda: exec("global running;running=False"),suppress=False)
+print("waiting for data...")
 
 vidname = time.strftime('sm4000_probes_data_%Y-%m-%d_%H-%M-%S.txt')
 with open("sm4000_received_data\\probes_data\\"+vidname,mode='w') as output_file:
