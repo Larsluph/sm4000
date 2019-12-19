@@ -135,7 +135,7 @@ def send(data):
 
 data = Vars()
 
-try:
+if input("check network : (y/n)") == "y":
     ip = ("192.168.137.2",50001)
 
     print("Connecting to %s..."%(":".join(map(str,ip))))
@@ -143,7 +143,7 @@ try:
     client.connect(ip)
     print("Connected!")
     server_check = True
-except:
+else:
     print("unable to connect to host")
     print("ignoring...")
     server_check = False
