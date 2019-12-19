@@ -274,17 +274,17 @@ if joytest:
 else:
     data.key_vars()
     """ key_control """
-    keyboard.add_hotkey('z',forward,args=[data],suppress=True),
-    keyboard.add_hotkey('s',backward,args=[data],suppress=True),
-    keyboard.add_hotkey('q',turn_left,args=[data],suppress=True),
-    keyboard.add_hotkey('d',turn_right,args=[data],suppress=True),
-    keyboard.add_hotkey('shift',up,args=[data],suppress=True),
-    keyboard.add_hotkey('ctrl',down,args=[data],suppress=True),
-    keyboard.add_hotkey('space',stop,args=[data],suppress=True),
-    keyboard.add_hotkey('enter',toggle_pwr,args=[data],suppress=True),
-    keyboard.add_hotkey('*',light_mgmt,args=[data,"+",False],suppress=True),
-    keyboard.add_hotkey('ù',light_mgmt,args=[data,"-",False],suppress=True),
-    keyboard.add_hotkey('$',light_mgmt,args=[data,0,True],suppress=True),
+    keyboard.add_hotkey('z',forward,args=[data],suppress=True)
+    keyboard.add_hotkey('s',backward,args=[data],suppress=True)
+    keyboard.add_hotkey('q',turn_left,args=[data],suppress=True)
+    keyboard.add_hotkey('d',turn_right,args=[data],suppress=True)
+    keyboard.add_hotkey('shift',up,args=[data],suppress=True)
+    keyboard.add_hotkey('ctrl',down,args=[data],suppress=True)
+    keyboard.add_hotkey('space',stop,args=[data],suppress=True)
+    keyboard.add_hotkey('enter',toggle_pwr,args=[data],suppress=True)
+    keyboard.add_hotkey('*',light_mgmt,args=[data,"+",False],suppress=True)
+    keyboard.add_hotkey('ù',light_mgmt,args=[data,"-",False],suppress=True)
+    keyboard.add_hotkey('$',light_mgmt,args=[data,0,True],suppress=True)
 
     print("\nkeyboard ready")
     print("Waiting for instructions...")
