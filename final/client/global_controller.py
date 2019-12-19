@@ -144,7 +144,6 @@ if input("check network : (y/n)") == "y":
     print("Connected!")
     server_check = True
 else:
-    print("unable to connect to host")
     print("ignoring...")
     server_check = False
 
