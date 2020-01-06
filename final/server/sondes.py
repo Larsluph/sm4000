@@ -86,6 +86,10 @@ while running:
         depth = sensor.depth()
         alti = sensor.altitude()
     else:
+        pressure = 0
+        temp = 0
+        depth = 0
+        alti = 0
         print("can't read sensor data")
 
     data = ",".join( [ str(x) for x in [i,t,delta_t,lvl_val,lvl_volt,bat_val,bat_volt,pressure,temp,depth,alti] ] ) + "\n"
@@ -93,13 +97,15 @@ while running:
 
     try:
         receiver.send(data.encode())
-        print(data)
-    except IOError: # broken pipe
+        print("data sent")
+    except IOError:
+        # broken pipe
         print("unable to send data")
         print("check socket connection")
         running = False
     except:
-        
+        pass
+    
     time.sleep(2)
 
 receiver.close()
