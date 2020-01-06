@@ -1,10 +1,9 @@
-#!/usr/bin/env python3
+﻿#!/usr/bin/env python3
 #-*- coding:utf-8 -*-
 
 import os
 import socket
 import sys
-import threading
 import time
 
 import keyboard
@@ -16,27 +15,6 @@ os.system('title sm4000 client controller')
 ############
 ## CLASSs ##
 ############
-
-class TextPrint:
-    def __init__(self):
-        self.reset()
-        self.font = pygame.font.Font(None, 20)
-
-    def print(self, screen, textString, color=(255,255,0)):
-        textBitmap = self.font.render(textString, True, color)
-        screen.blit(textBitmap, [self.x, self.y])
-        self.y += self.line_height
-
-    def reset(self):
-        self.x = 10
-        self.y = 10
-        self.line_height = 15
-
-    def indent(self):
-        self.x += 10
-
-    def unindent(self):
-        self.x -= 10
 
 class Vars:
     def __init__(self):
@@ -76,49 +54,6 @@ class Vars:
 ###########
 ## FUNCs ##
 ###########
-
-def print_recap(data, screen, textPrint):
-    fg_color = ( 255, 255,   0) # yellow
-    bg_color = (   0,   0,   0) # black
-
-    # DRAWING STEP
-    # First, clear the screen to white. Don't put other drawing commands
-    # above this, or they will be erased with this command.
-    screen.fill(bg_color)
-    textPrint.reset()
-
-    textPrint.print(screen, f"axes:", fg_color)
-    textPrint.indent()
-    for i in range(len(data.axes)):
-        textPrint.print(screen, f"Axe {i} : {data.axes[i]}", fg_color)
-    textPrint.unindent()
-
-    textPrint.print(screen, f"buttons:", fg_color)
-    textPrint.indent()
-    for button in data.buttons[1:]:
-        textPrint.print(screen, f"{button}", fg_color)
-    textPrint.unindent()
-
-    textPrint.print(screen, f"dir:", fg_color)
-    textPrint.indent()
-    for x in data.dir:
-        textPrint.print(screen, f"{x} : {data.dir[x]}", fg_color)
-    textPrint.unindent()
-
-    textPrint.print(screen, f"pwr:", fg_color)
-    textPrint.indent()
-    for x in data.pwr:
-        textPrint.print(screen, f"{x} : {data.pwr[x]}", fg_color)
-    textPrint.unindent()
-
-    textPrint.print(screen, f"boosted:", fg_color)
-    textPrint.unindent()
-
-    # ALL CODE TO DRAW SHOULD GO ABOVE THIS COMMENT
-
-    # Go ahead and update the screen with what we've drawn.
-    pygame.display.flip()
-
 def check_joy(joy):
     pygame.event.get()
     print(
@@ -185,16 +120,14 @@ def toggle_pwr(data):
     data.dir['powered'] = not(data.dir['powered'])
     send(data)
 
-def send(data, screen, textPrint):
-    data.t = threading.Thread(target=print_recap, name="thread-recap",args=[data])
-    data.t.start()
+def send(data):
     cmd = str(data.dir)
     cmd += " " * (128-len(cmd))
 
     if server_check:
         client.send(cmd.encode("Utf8"))
 
-    data.t.join()
+    print(data.dir)
 
 ##################
 ## MAIN PROGRAM ##
@@ -227,13 +160,6 @@ if joytest:
     """ joy_control """
     print("\njoystick ready")
     print("Waiting for instructions...")
-
-    size = [500, 700]
-    screen = pygame.display.set_mode(size)
-    pygame.display.set_caption("sm4000 controller recap")
-
-    # Get ready to print
-    textPrint = TextPrint()
 
     while data.running:
         pygame.event.get()
@@ -343,7 +269,7 @@ if joytest:
 
         if data.latest != data.dir:
             data.latest = data.dir.copy()
-            send(data, screen, textPrint)
+            send(data)
 else:
     data.key_vars()
     """ key_control """
@@ -370,7 +296,6 @@ if server_check:
     client.send("'exit'".encode("Utf8"))
     client.close()
 
-pygame.quit()
 print("END OF PROGRAM")
 time.sleep(0.5)
 

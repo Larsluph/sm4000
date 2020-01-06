@@ -41,6 +41,8 @@ if not sensor.read():
     print("Sensor read failed!")
     raise SystemExit
 
+print("Sensor initialized")
+
 sensor.setFluidDensity(ms5837.DENSITY_FRESHWATER)
 
 try:
@@ -92,11 +94,13 @@ while running:
     try:
         receiver.send(data.encode())
         print(data)
-    except:
+    except IOError: # broken pipe
         print("unable to send data")
         print("check socket connection")
         running = False
-    time.sleep(1)
+    except:
+        
+    time.sleep(2)
 
 receiver.close()
 server_socket.close()

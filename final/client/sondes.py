@@ -54,6 +54,7 @@ try:
   update_debug(win,debug_screen,f"Connecting to {':'.join(map(str,ip))}...")
   client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
   client.connect(ip)
+  client.settimeout(3.0)
   update_debug(win,debug_screen,"Connected!")
 except:
   update_debug(win,debug_screen,"unable to connect to host")
@@ -72,7 +73,6 @@ update_debug(win,debug_screen,"waiting for data...")
 
 vidpath = "sm4000_received_data\\probes_data\\" + time.strftime('sm4000_probes_data_%Y-%m-%d_%H-%M-%S.txt')
 with open(vidpath,mode='w') as output_file:
-  debug = True
   running = True
   while running:
     try:
@@ -80,12 +80,13 @@ with open(vidpath,mode='w') as output_file:
 
       for x in "i,t,delta_t,lvl_val,lvl_volt,bat_val,bat_volt,pressure,temp,depth,alti".split(","):
         tk_vars[x].set(eval(x))
+    except:
+      update_debug(win,debug_screen,sys.exc_info())
+      data = "can't read incoming data"
+    finally:
       output_file.write(data)
       output_file.flush()
       update_window(win)
-    except:
-      update_debug(win,debug_screen,"can't read incoming data")
-      running = False
 
 client.close()
 update_debug(win,debug_screen,"Disconnected")
