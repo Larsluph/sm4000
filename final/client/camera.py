@@ -2,7 +2,6 @@
 #-*- coding:utf-8 -*-
 
 import os
-import pathlib
 import socket
 import time
 
@@ -11,9 +10,9 @@ import numpy
 
 import cv2
 
-##For a stream coming from an url :
-##import urllib
-##stream=urllib.urlopen('http://localhost:8080/frame.mjpg')
+# For a stream coming from an url :
+# import requests
+# stream=requests.get('http://localhost:8080/frame.mjpg').content
 
 os.system("title client_camera")
 
@@ -24,40 +23,40 @@ client_socket.connect(ip)
 print("Connected")
 
 stream = client_socket.makefile('rb')
+
 try:
-    os.system("mkdir sm4000_received_data\\camera_data")
+  os.system("mkdir sm4000_received_data\\camera_data")
 except:
-    pass
+  pass
 
 vidname = time.strftime('sm4000_camera_output_%Y-%m-%d_%H-%M-%S.mjpeg')
 with open("sm4000_received_data\\camera_data\\"+vidname,mode='wb') as vid_file:
-    bytes = bytes(1) # Define a bytes object
+  bytes_var = bytes(1)
 
-    scale = 50
+  scale = 50
 
-    running = True
-    while running:
-        bytes += stream.read(4096)
-        a = bytes.find(b'\xff\xd8')
-        b = bytes.find(b'\xff\xd9')
+  running = True
+  while running:
+    bytes_var += stream.read(4096)
+    a = bytes_var.find(b'\xff\xd8')
+    b = bytes_var.find(b'\xff\xd9')
 
-        if a!=-1 and b!=-1:
-            image_bytes = bytes[a:b + 2]
-            bytes = bytes[b + 2:]
-            vid_file.write(image_bytes)
-            vid_file.flush()
+    if a!=-1 and b!=-1:
+      image_bytes = bytes_var[a:b + 2]
+      bytes_var = bytes_var[b + 2:]
+      vid_file.write(image_bytes)
+      vid_file.flush()
 
-            src = numpy.frombuffer(image_bytes, dtype=numpy.uint8)
+      img = cv2.imdecode(numpy.frombuffer(image_bytes, dtype=numpy.uint8),1)
 
-            w = int( img.shape[1] * scale / 100)
-            h = int( img.shape[0] * scale / 100)
-            dsize = ( w, h)
+      width = int(img.shape[1] * scale / 100)
+      height = int(img.shape[0] * scale / 100)
+      dsize = (width,height)
 
-            src = cv2.resize(src,dsize)
-            image = cv2.imdecode(src, 1)
-            cv2.imshow('Image from piCamera', image)
-            if cv2.waitKey(1) & 0xFF == ord('q'):
-                running = False
+      img = cv2.resize(img,dsize,interpolation=cv2.INTER_AREA)
+      cv2.imshow('Image from piCamera', img)
+      if cv2.waitKey(1) & 0xFF == ord('q'):
+        running = False
 
 client_socket.send(status.encode())
 cv2.destroyAllWindows()
