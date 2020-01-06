@@ -18,17 +18,12 @@ import cv2
 os.system("title client_camera")
 
 client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-
 print("Connecting...")
-
 ip = ('192.168.137.2', 50002)
-
 client_socket.connect(ip)
-
 print("Connected")
 
 stream = client_socket.makefile('rb')
-
 try:
     os.system("mkdir sm4000_received_data\\camera_data")
 except:
@@ -36,21 +31,31 @@ except:
 
 vidname = time.strftime('sm4000_camera_output_%Y-%m-%d_%H-%M-%S.mjpeg')
 with open("sm4000_received_data\\camera_data\\"+vidname,mode='wb') as vid_file:
-    status = ""
     bytes = bytes(1) # Define a bytes object
-    while not(status in ["stop"]):
+
+    scale = 50
+    height = 730 * scale / 100
+    width = 1296 * scale / 100
+    dsize = (width, height)
+
+    running = True
+    while running:
         bytes += stream.read(4096)
         a = bytes.find(b'\xff\xd8')
         b = bytes.find(b'\xff\xd9')
+
         if a!=-1 and b!=-1:
             image_bytes = bytes[a:b + 2]
             bytes = bytes[b + 2:]
-            image = cv2.imdecode(numpy.fromstring(image_bytes, dtype=numpy.uint8), 1)
             vid_file.write(image_bytes)
             vid_file.flush()
+
+            src = numpy.fromstring(image_bytes, dtype=numpy.uint8)
+            src = cv2.resize(src,dsize)
+            image = cv2.imdecode(src, 1)
             cv2.imshow('Image from piCamera', image)
             if cv2.waitKey(1) & 0xFF == ord('q'):
-                status = "stop"
+                running = False
 
 client_socket.send(status.encode())
 cv2.destroyAllWindows()
