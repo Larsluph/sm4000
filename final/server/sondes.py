@@ -34,30 +34,30 @@ battery_cells = AnalogIn(ads_water, ADS.P3)
 # setup ms5837
 sensor = ms5837.MS5837_30BA()
 if not sensor.init():
-    print("Sensor could not be initialized")
-    raise SystemExit
+  print("Sensor could not be initialized")
+  raise SystemExit
 
 if not sensor.read():
-    print("Sensor read failed!")
-    raise SystemExit
+  print("Sensor read failed!")
+  raise SystemExit
 
 print("Sensor initialized")
 
 sensor.setFluidDensity(ms5837.DENSITY_FRESHWATER)
 
 try:
-    ip = ('192.168.137.2',50003)
-    server_socket = socket.socket()
-    server_socket.bind(ip)
-    print("server binded to '%s'" % (":".join(map(str,ip))) )
-    print("Waiting for receiver")
-    server_socket.listen(0)
-    receiver, address = server_socket.accept()
-    print("Connected")
+  ip = ('192.168.137.2',50003)
+  server_socket = socket.socket()
+  server_socket.bind(ip)
+  print("server binded to '%s'" % (":".join(map(str,ip))) )
+  print("Waiting for receiver")
+  server_socket.listen(0)
+  receiver, address = server_socket.accept()
+  print("Connected")
 except:
-    print("unable to bind socket\nExiting...")
-    time.sleep(1)
-    raise SystemExit
+  print("unable to bind socket\nExiting...")
+  time.sleep(1)
+  raise SystemExit
 
 t0 = time.perf_counter()
 t_last = 0
@@ -65,48 +65,45 @@ t_last = 0
 i = 1
 running = True
 while running:
-    t = (time.perf_counter() - t0) * 1000
-    delta_t = t - t_last
-    t_last = t
+  t = (time.perf_counter() - t0) * 1000
+  delta_t = t - t_last
+  t_last = t
 
-    ### niveau d'eau
-    lvl_val  = water_lvl.value
-    lvl_volt = water_lvl.voltage
+  ### niveau d'eau
+  lvl_val  = water_lvl.value
+  lvl_volt = water_lvl.voltage
 
-    ### cellules batterie
-    # bat_val  = [battery_cells[i].value for i in range(4)]
-    # bat_volt = [battery_cells[i].voltage for i in range(4)]
-    bat_val  = battery_cells.value
-    bat_volt = battery_cells.voltage
+  ### cellules batterie
+  # bat_val  = [battery_cells[i].value for i in range(4)]
+  # bat_volt = [battery_cells[i].voltage for i in range(4)]
+  bat_val  = battery_cells.value
+  bat_volt = battery_cells.voltage
 
-    ### pres / temp
-    if sensor.read():
-        pressure = sensor.pressure(ms5837.UNITS_mbar)
-        temp = sensor.temperature(ms5837.UNITS_Centigrade)
-        depth = sensor.depth()
-        alti = sensor.altitude()
-    else:
-        pressure = 0
-        temp = 0
-        depth = 0
-        alti = 0
-        print("can't read sensor data")
+  ### pres / temp
+  if sensor.read():
+    pressure = sensor.pressure(ms5837.UNITS_mbar)
+    temp = sensor.temperature(ms5837.UNITS_Centigrade)
+    depth = sensor.depth()
+    alti = sensor.altitude()
+  else:
+    pressure=temp=depth=alti=0
+    print("can't read sensor data")
 
-    data = ",".join( [ str(x) for x in [i,t,delta_t,lvl_val,lvl_volt,bat_val,bat_volt,pressure,temp,depth,alti] ] ) + "\n"
-    i += 1
+  data = ",".join( [ str(x) for x in [i,t,delta_t,lvl_val,lvl_volt,bat_val,bat_volt,pressure,temp,depth,alti] ] ) + "\n"
+  i += 1
 
-    try:
-        receiver.send(data.encode())
-        print("data sent")
-    except IOError:
-        # broken pipe
-        print("unable to send data")
-        print("check socket connection")
-        running = False
-    except:
-        pass
-    
-    time.sleep(2)
+  try:
+    receiver.send(data.encode())
+    print("data sent")
+  except IOError:
+    # broken pipe
+    print("unable to send data")
+    print("check socket connection")
+    running = False
+  except:
+    print("error while sending data. ignoring...")
+
+  time.sleep(2)
 
 receiver.close()
 server_socket.close()
