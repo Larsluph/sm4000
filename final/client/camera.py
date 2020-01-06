@@ -34,9 +34,6 @@ with open("sm4000_received_data\\camera_data\\"+vidname,mode='wb') as vid_file:
     bytes = bytes(1) # Define a bytes object
 
     scale = 50
-    height = 730 * scale / 100
-    width = 1296 * scale / 100
-    dsize = (width, height)
 
     running = True
     while running:
@@ -50,7 +47,12 @@ with open("sm4000_received_data\\camera_data\\"+vidname,mode='wb') as vid_file:
             vid_file.write(image_bytes)
             vid_file.flush()
 
-            src = numpy.fromstring(image_bytes, dtype=numpy.uint8)
+            src = numpy.frombuffer(image_bytes, dtype=numpy.uint8)
+
+            w = int( img.shape[1] * scale / 100)
+            h = int( img.shape[0] * scale / 100)
+            dsize = ( w, h)
+
             src = cv2.resize(src,dsize)
             image = cv2.imdecode(src, 1)
             cv2.imshow('Image from piCamera', image)
