@@ -31,6 +31,15 @@ battery_cells = AnalogIn(ads_water, ADS.P3)
 
 #####
 
+# setup ads
+if not(water_lvl.value):
+  print("water_lvl ads could not be initialized")
+
+if not(battery_cells.value):
+  print("battery_cells ads could not be initialized")
+
+print("ADSs check successful")
+
 # setup ms5837
 sensor = ms5837.MS5837_30BA()
 if not sensor.init():
@@ -97,10 +106,11 @@ while running:
     print("data sent")
   except IOError:
     # broken pipe
-    print("unable to send data")
+    print("unable to send data : broken pipe error")
     print("check socket connection")
     running = False
-  except:
+  except Exception as e:
+    print(e)
     print("error while sending data. ignoring...")
 
   time.sleep(2)

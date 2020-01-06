@@ -20,6 +20,10 @@ def update_debug(window,text,msg):
 
   update_window(window)
 
+def update_log(file,msg):
+  file.write(msg)
+  file.flush()
+
 win = tk.Tk()
 win.title = "GUI_sondes"
 
@@ -71,7 +75,7 @@ except:
 keyboard.add_hotkey('esc',lambda: exec("global running;running=False"),suppress=False)
 update_debug(win,debug_screen,"waiting for data...")
 
-vidpath = "sm4000_received_data\\probes_data\\" + time.strftime('sm4000_probes_data_%Y-%m-%d_%H-%M-%S.txt')
+vidpath = time.strftime('sm4000_received_data\\probes_data\\sm4000_probes_data_%Y-%m-%d_%H-%M-%S.txt')
 with open(vidpath,mode='w') as output_file:
   running = True
   while running:
@@ -81,11 +85,12 @@ with open(vidpath,mode='w') as output_file:
       for x in "i,t,delta_t,lvl_val,lvl_volt,bat_val,bat_volt,pressure,temp,depth,alti".split(","):
         tk_vars[x].set(eval(x))
     except:
-      update_debug(win,debug_screen,sys.exc_info())
-      data = "can't read incoming data"
+      update_debug( win,debug_screen,str(sys.exc_info()[1]) )
+      for x in "lvl_val,lvl_volt,bat_val,bat_volt,pressure,temp,depth,alti".split(","):
+        tk_vars[x].set(0)
     finally:
-      output_file.write(data)
-      output_file.flush()
+      update_log(output_file,data)
+      update_debug(win,debug_screen,f"data n°{i} received!")
       update_window(win)
 
 client.close()
