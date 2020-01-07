@@ -9,6 +9,8 @@ import time
 import keyboard
 import pygame
 import pygame.joystick
+import tkinter as tk
+for tk import BooleanVar,StringVar,IntVar,DoubleVar
 
 os.system('title sm4000 client controller')
 
@@ -18,6 +20,17 @@ os.system('title sm4000 client controller')
 
 class Vars:
     def __init__(self):
+        self.win = tk.Tk()
+        self.win.title("global controller GUI")
+        self.tk_vars = {
+            "powered": BooleanVar(),
+            "left": IntVar(),
+            "right": IntVar(),
+            "y": IntVar(),
+            "light_pow": BooleanVar(),
+            "lights" : IntVar()
+        }
+
         self.running = True
         self.dir = {
             "powered" : False,
