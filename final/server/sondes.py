@@ -95,7 +95,6 @@ while running:
     depth = sensor.depth()
     alti = sensor.altitude()
   else:
-    pressure=temp=depth=alti=0
     print("can't read sensor data")
 
   data = ",".join( [ str(x) for x in [i,t,delta_t,lvl_val,lvl_volt,bat_val,bat_volt,pressure,temp,depth,alti] ] ) + "\n"
@@ -106,11 +105,11 @@ while running:
     print("data sent")
   except IOError:
     # broken pipe
-    print("unable to send data : broken pipe error")
+    print(f"unable to send data : {sys.exc_info()[1]}")
     print("check socket connection")
     running = False
-  except Exception as e:
-    print(e)
+  except:
+    print(f"{sys.exc_info()[0]} : {sys.exc_info()[1]}")
     print("error while sending data. ignoring...")
 
   time.sleep(2)

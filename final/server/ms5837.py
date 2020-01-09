@@ -123,8 +123,8 @@ class MS5837(object):
         
         return True
     
-    def setFluidDensity(self, denisty):
-        self._fluidDensity = denisty
+    def setFluidDensity(self, density):
+        self._fluidDensity = density
         
     # Pressure in requested units
     # mbar * conversion

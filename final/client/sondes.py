@@ -20,8 +20,8 @@ def update_debug(window,text,msg):
 
   update_window(window)
 
-def update_log(file,msg):
-  file.write(msg)
+def update_log(file,data):
+  file.write(data)
   file.flush()
 
 win = tk.Tk()
@@ -84,14 +84,15 @@ with open(vidpath,mode='w') as output_file:
 
       for x in "i,t,delta_t,lvl_val,lvl_volt,bat_val,bat_volt,pressure,temp,depth,alti".split(","):
         tk_vars[x].set(eval(x))
+
     except:
       update_debug( win,debug_screen,str(sys.exc_info()[1]) )
       for x in "lvl_val,lvl_volt,bat_val,bat_volt,pressure,temp,depth,alti".split(","):
         tk_vars[x].set(0)
+
     finally:
       update_log(output_file,data)
       update_debug(win,debug_screen,f"data n°{i} received!")
-      update_window(win)
 
 client.close()
 update_debug(win,debug_screen,"Disconnected")
