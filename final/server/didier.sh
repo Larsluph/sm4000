@@ -1,9 +1,9 @@
 ﻿#!/usr/bin/env bash
 
-python3 /media/pi/didier/propulsion.py&
+python3 ~/Desktop/final/propulsion.py&
 sleep 1
-python3 /media/pi/didier/camera.py&
+python3 ~/Desktop/final/camera.py&
 sleep 1
-python3 /media/pi/didier/sondes.py&
+python3 ~/Desktop/final/sondes.py&
 
 exit 1

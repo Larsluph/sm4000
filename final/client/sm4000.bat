@@ -1,7 +1,7 @@
-start python %~dp0\final\client\global_controller.py
-timeout 1
-start python %~dp0\final\client\camera.py
-timeout 1
-start python %~dp0\final\client\sondes.py
+start python %~dp0global_controller.py
+timeout 2
+start python %~dp0camera.py
+timeout 2
+start python %~dp0sondes.py
 
 exit
