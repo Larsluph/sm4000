@@ -13,8 +13,6 @@ import pygame.joystick
 
 from tk import BooleanVar, DoubleVar, IntVar, StringVar
 
-os.system('title sm4000 client controller')
-
 ############
 ## CLASSs ##
 ############
@@ -24,8 +22,8 @@ class Vars:
     self.win = tk.Tk()
     self.win.title("global controller GUI")
 
-    debug_screen = tk.Text(win,height=7,width=120,state=tk.DISABLED)
-    debug_screen.grid(row=0,column=0,columnspan=8)
+    debug_screen = tk.Text(win,height=9,width=120,state=tk.DISABLED)
+    debug_screen.grid(row=0,column=0,columnspan=13)
 
     self.tk_vars = {
       "powered": BooleanVar(),
@@ -106,9 +104,9 @@ def update_debug(window,text,msg,prefix="\n"):
 
   update_window(window)
 
-def grid(win,var,coords):
-  tk.Label(win, text=f"{var} value :").grid(row=coords[0]+1,column=coords[1]*2,sticky=tk.E)
-  tk.Label(win, textvariable=tk_vars[var]).grid(row=coords[0]+1,column=coords[1]*2+1,sticky=tk.W)
+def grid(window,var,coords,cspan=1):
+  tk.Label(window, text=f"{var} :").grid(row=coords[0]+1,column=coords[1]*2,columnspan=cspan,sticky=tk.E)
+  tk.Label(window, textvariable=tk_vars[var]).grid(row=coords[0]+1,column=coords[1]*2+1,sticky=tk.W)
 
 def check_joy(joy):
   pygame.event.get()
