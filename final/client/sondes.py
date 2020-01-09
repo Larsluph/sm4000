@@ -29,7 +29,7 @@ def grid(win,var,coords):
   tk.Label(win, textvariable=tk_vars[var]).grid(row=coords[0]+1,column=coords[1]*2+1,sticky=tk.W)
 
 win = tk.Tk()
-win.title = "GUI sondes"
+win.title("GUI sondes")
 
 debug_screen = tk.Text(win,height=7,width=120,state=tk.DISABLED)
 debug_screen.grid(row=0,column=0,columnspan=8)
