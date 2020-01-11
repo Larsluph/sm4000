@@ -5,298 +5,453 @@ import os
 import socket
 import sys
 import time
+import tkinter as tk
 
 import keyboard
 import pygame
 import pygame.joystick
 
-os.system('title sm4000 client controller')
+from tkinter import BooleanVar, DoubleVar, IntVar, StringVar
 
 ############
 ## CLASSs ##
 ############
 
 class Vars:
-    def __init__(self):
-        self.running = True
-        self.dir = {
-            "powered" : False,
-            "left" : 0,
-            "right" : 0,
-            "y" : 0,
-            "light_pow" : False,
-            "lights" : 0
-        }
-        self.pwr = dict()
-        self.pos = 100
-        self.threshold = .2
-        self.light_step = self.pos
+  def __init__(self):
+    self.running = True
+    self.dir = {
+      "powered" : False,
+      "left" : 0,
+      "right" : 0,
+      "y" : 0,
+      "light_pow" : False,
+      "lights" : 0
+    }
+    self.pwr = dict()
+    self.pos = 100
+    self.threshold = .2
+    self.light_step = self.pos
 
-        self.key_init = False
-        self.joy_init = False
+    self.key_init = False
+    self.joy_init = False
 
-    def key_vars(self):
-        self.key_init = True
-  
-    def joy_vars(self):
-        self.joy_init = True
-        self.joy = pygame.joystick.Joystick(0)
-        self.joy.init()
-        check_joy(self.joy)
+    return
 
-        self.boosted = True
+  def key_vars(self):
+    self.key_init = True
+    self.joy_init = False
 
-        self.latest = self.dir.copy()
+    return
 
-        self.axes = tuple()
-        self.buttons = tuple()
+  def joy_vars(self):
+    self.key_init = False
+    self.joy_init = True
+    self.joy = pygame.joystick.Joystick(0)
+    self.joy.init()
+    check_joy(self)
+
+    self.boosted = True
+    self.latest = self.dir.copy()
+    self.axes = tuple()
+    self.buttons = tuple()
+
+    return
+
+  def gui_setup(self):
+    self.win = tk.Tk()
+    self.win.title("global controller GUI")
+
+    self.font_debug = ('Helvetica', 18)
+    self.font = ('Helvetica', 37)
+
+    self.debug_screen = tk.Text(self.win,height=14,width=96,state=tk.DISABLED,font=self.font_debug)
+    self.debug_screen.grid(row=0,column=0,columnspan=14)
+
+    self.tk_vars = {
+      "left": IntVar(),
+      "right": IntVar(),
+      "y": IntVar(),
+      "lights" : IntVar(),
+      # ^- = dir
+
+      "axes": (
+        DoubleVar(),
+        DoubleVar(),
+        DoubleVar(),
+        IntVar() # hat[1]
+      ),
+      "buttons": (
+        BooleanVar(),
+        BooleanVar(),
+        BooleanVar(),
+        BooleanVar(),
+        BooleanVar(),
+        BooleanVar(),
+        BooleanVar(),
+        BooleanVar(),
+        BooleanVar(),
+        BooleanVar(),
+        BooleanVar(),
+        BooleanVar()
+      )
+    }
+
+    self.tk_lbls = {
+      "powered":   None,
+      "light_pow": None,
+      "boosted":   None
+    }
+
+    self.grid_val = {
+      "left":      ( (1,0,1),(1,1,1) ),
+      "right":     ( (2,0,1),(2,1,1) ),
+      "y":         ( (1,4,1),(1,5,3) ),
+      "lights" :   ( (1,8,4),(1,12,2) )
+    }
+
+    self.grid_val_lbls = {
+      "powered":   ( (0,0,1),(0,1,1) ),
+      "light_pow": ( (0,8,4),(0,12,2) ),
+      "boosted":   ( (0,2,4),(0,6,2) )
+    }
+
+    for x in self.grid_val.keys():
+      grid(self,x,self.grid_val[x])
+
+    for x in self.grid_val_lbls.keys():
+      grid_lbls(self,x,self.grid_val_lbls[x])
+
+    grid_spec(self)
+
+    return
 
 ###########
 ## FUNCs ##
 ###########
-def check_joy(joy):
-    pygame.event.get()
-    print(
-        f"id       {str(joy.get_id())}",
-        f"name     {str(joy.get_name())}",
-        f"axes     {str(joy.get_numaxes())}",
-        f"buttons  {str(joy.get_numbuttons())}",
-        f"hats     {str(joy.get_numhats())}",
-        f"balls    {str(joy.get_numballs())}",
-    sep='\n')
-    time.sleep(1)
+
+def update_vars(data):
+  # update all GUI labels
+
+  ### powered,light_pow,boosted
+  for x in data.tk_lbls.keys():
+    check = data.dir[x] if x in data.dir else data.boosted
+    bg = "#00FF00" if check else "#FF0000"
+    # set lbl bg color to either green or red based on vars
+    data.tk_lbls[x].config(bg=bg)
+    del bg
+
+  ### left,right,y,lights
+  for x in data.grid_val.keys():
+    data.tk_vars[x].set(data.dir[x])
+
+  ### axes x,z,slider
+  for i in range(len(data.axes)-2):
+    data.tk_vars["axes"][i].set(data.axes[i])
+  ### axe y
+  data.tk_vars["axes"][3].set(data.axes[4][1])
+
+  ### buttons
+  for i in range(len(data.buttons)-1):
+    data.tk_vars["buttons"][i].set(data.buttons[i+1])
+
+  update_window(data.win)
+
+  return
+
+def update_window(window):
+  window.update_idletasks()
+  window.update()
+  return
+
+def update_debug(window,text,msg,prefix="\n"):
+  text.config(state=tk.NORMAL)
+  text.insert(tk.END, f"{prefix}{msg}")
+  text.config(state=tk.DISABLED)
+  text.see(tk.END)
+
+  update_window(window)
+  return
+
+def grid(data,var,coords):
+  # coords = ( (0,0,0),(0,0,0) )
+  #             label , value
+  tk.Label(data.win, text=f"{var} :", font=data.font).grid(row=coords[0][0]+1,column=coords[0][1],columnspan=coords[0][2],sticky=tk.E)
+  tk.Label(data.win, textvariable=data.tk_vars[var], font=data.font).grid(row=coords[1][0]+1,column=coords[1][1],columnspan=coords[1][2],sticky=tk.W)
+
+  return
+
+def grid_lbls(data,var,coords):
+  tk.Label(data.win, text=f"{var} :", font=data.font).grid(row=coords[0][0]+1,column=coords[0][1],columnspan=coords[0][2],sticky=tk.E)
+  data.tk_lbls[var] = tk.Label(data.win, text="            ",bg="#FF0000", font=data.font)
+  data.tk_lbls[var].grid(row=coords[1][0]+1,column=coords[1][1],columnspan=coords[1][2])
+
+  return
+
+def grid_spec(data):
+  tk.Label(data.win, text="Axes :", font=data.font).grid(row=4,column=0,columnspan=2,sticky=tk.E)
+  for i in range(len(data.tk_vars["axes"])):
+    tk.Label(data.win, textvariable=data.tk_vars["axes"][i], font=data.font).grid(row=4,column=2+i*3,columnspan=3)
+
+  tk.Label(data.win, text="Buttons pressed :", font=data.font).grid(row=5,column=0,columnspan=2,sticky=tk.E)
+  for i in range(len(data.tk_vars["buttons"])):
+    tk.Label(data.win, textvariable=data.tk_vars["buttons"][i], font=data.font).grid(row=5,column=2+i)
+
+  return
+
+def check_joy(data):
+  pygame.event.get()
+  update_debug(data.win,data.debug_screen,"\n".join([
+    f"id       {str(data.joy.get_id())}",
+    f"name     {str(data.joy.get_name())}",
+    f"axes     {str(data.joy.get_numaxes())}",
+    f"buttons  {str(data.joy.get_numbuttons())}",
+    f"hats     {str(data.joy.get_numhats())}",
+    f"balls    {str(data.joy.get_numballs())}"]))
+  time.sleep(1)
 
 def forward(data):
-    data.dir["left"] += +data.pos
-    data.dir["right"] += +data.pos
-    send(data)
+  data.dir["left"] += +data.pos
+  data.dir["right"] += +data.pos
+  send(data)
 
 def backward(data):
-    data.dir["left"] += -data.pos
-    data.dir["right"] += -data.pos
-    send(data)
+  data.dir["left"] += -data.pos
+  data.dir["right"] += -data.pos
+  send(data)
 
 def turn_left(data):
-    data.dir["left"] += -data.pos
-    data.dir["right"] += +data.pos
-    send(data)
+  data.dir["left"] += -data.pos
+  data.dir["right"] += +data.pos
+  send(data)
 
 def turn_right(data):
-    data.dir["left"] += +data.pos
-    data.dir["right"] += -data.pos
-    send(data)
+  data.dir["left"] += +data.pos
+  data.dir["right"] += -data.pos
+  send(data)
 
 # def left(data):
-#     pass
+#   pass
 
 # def right(data):
-#     pass
+#   pass
 
 def up(data):
-    data.dir["y"] += +data.pos
-    send(data)
+  data.dir["y"] += +data.pos
+  send(data)
 
 def down(data):
-    data.dir["y"] += -data.pos
-    send(data)
+  data.dir["y"] += -data.pos
+  send(data)
 
 def stop(data):
-    data.dir["left"] = 0
-    data.dir["right"] = 0
-    data.dir["y"] = 0
-    send(data)
+  data.dir["left"] = 0
+  data.dir["right"] = 0
+  data.dir["y"] = 0
+  send(data)
 
 def light_mgmt(data,operator,reset):
-    if not(reset):
-        if operator == "+":
-            data.dir["lights"] += data.light_step
-        else:
-            data.dir["lights"] -= data.light_step
+  if not(reset):
+    if operator == "+":
+      data.dir["lights"] += data.light_step
     else:
-        data.dir["light_pow"] = not(data.dir["light_pow"])
-    send(data)
+      data.dir["lights"] -= data.light_step
+  else:
+    data.dir["light_pow"] = not(data.dir["light_pow"])
+  send(data)
 
 def toggle_pwr(data):
-    data.dir['powered'] = not(data.dir['powered'])
-    send(data)
+  data.dir['powered'] = not(data.dir['powered'])
+  send(data)
 
 def send(data):
-    cmd = str(data.dir)
-    cmd += " " * (128-len(cmd))
+  cmd = str(data.dir)
+  cmd += " " * (128-len(cmd))
 
-    if server_check:
-        client.send(cmd.encode("Utf8"))
+  if net_check:
+    client.send(cmd.encode("Utf8"))
 
-    print(data.dir)
+  update_debug(data.win,data.debug_screen,data.dir)
 
 ##################
 ## MAIN PROGRAM ##
 ##################
 
 data = Vars()
+data.gui_setup()
 
-if input("check network : (y/n)") == "y":
-    ip = ("192.168.137.2",50001)
+update_debug(data.win,data.debug_screen,"check network : (y/n)",prefix="")
+net_check = True if input() == "y" else False
+if net_check:
+  ip = ("192.168.137.2",50001)
 
-    print("Connecting to %s..."%(":".join(map(str,ip))))
-    client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    client.connect(ip)
-    print("Connected!")
-    server_check = True
+  update_debug(data.win,data.debug_screen,f"Connecting to {ip[0]}:{ip[1]}...")
+  client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+  client.connect(ip)
+  update_debug(data.win,data.debug_screen,"Connected!")
 else:
-    print("ignoring...")
-    server_check = False
+  update_debug(data.win,data.debug_screen,"ignoring...")
 
 pygame.init()
 pygame.joystick.init()
 
-if pygame.joystick.get_count() != 0:
-    data.joy_vars()
-    joytest = True if input("use keyboard ? (y/n)\n") == "n" else False
-else:
-    joytest = False
+update_debug(data.win,data.debug_screen,"use keyboard ? (y/n)")
+joytest = True if input() == "n" else False
 
 if joytest:
-    """ joy_control """
-    print("\njoystick ready")
-    print("Waiting for instructions...")
+  # joy_control
+  data.joy_vars()
+  update_debug(data.win,data.debug_screen,"joystick ready",prefix="\n"*2)
 
-    while data.running:
-        pygame.event.get()
-        data.axes = (
-            data.joy.get_axis(0),
-            -data.joy.get_axis(1),
-            data.joy.get_axis(2),
-            data.joy.get_axis(3),
-            data.joy.get_hat(0)
-        )
-        data.buttons = (
-            None,
-            data.joy.get_button(0),
-            data.joy.get_button(1),
-            data.joy.get_button(2),
-            data.joy.get_button(3),
-            data.joy.get_button(4),
-            data.joy.get_button(5),
-            data.joy.get_button(6),
-            data.joy.get_button(7),
-            data.joy.get_button(8),
-            data.joy.get_button(9),
-            data.joy.get_button(10),
-            data.joy.get_button(11)
-        )
+  update_debug(data.win,data.debug_screen,"Waiting for instructions...")
 
-        data.pwr = {
-            "x": int( abs( round(data.axes[0],2) ) * 5),
-            "y": int( abs( round(data.axes[1],2) ) * 5),
-            "lights": int(abs(data.axes[2] - 1) * 5)
-        }
+  while data.running:
+    pygame.event.get()
+    data.axes = (
+      round(data.joy.get_axis(0),2),
+      round(-data.joy.get_axis(1),2),
+      round(data.joy.get_axis(2),2),
+      round(data.joy.get_axis(3),2),
+      data.joy.get_hat(0)
+    )
+    for x in data.axes[4]:
+      x = round(x,2)
 
-        if not(data.boosted):
-            for x in ["x","y"]:
-                data.pwr[x] /= 2.5
+    data.buttons = (
+      None,
+      data.joy.get_button(0),
+      data.joy.get_button(1),
+      data.joy.get_button(2),
+      data.joy.get_button(3),
+      data.joy.get_button(4),
+      data.joy.get_button(5),
+      data.joy.get_button(6),
+      data.joy.get_button(7),
+      data.joy.get_button(8),
+      data.joy.get_button(9),
+      data.joy.get_button(10),
+      data.joy.get_button(11)
+    )
 
-        # top
-        if data.buttons[1] == 0:
-            if (-data.threshold < data.axes[0] < +data.threshold) and (data.axes[1] > +data.threshold):
-                data.dir["left"] = (+data.pos) * data.pwr["y"]
-                data.dir["right"] = (+data.pos) * data.pwr["y"]
+    data.pwr = {
+      "x": int( abs( round(data.axes[0],2) ) * 5),
+      "y": int( abs( round(data.axes[1],2) ) * 5),
+      "lights": int(abs(data.axes[2] - 1) * 5)
+    }
 
-            # top right
-            elif (data.axes[0] > +data.threshold) and (data.axes[1] > +data.threshold):
-                data.dir["left"] = (+data.pos * 1.5) * data.pwr["x"]
-                data.dir["right"] = (+data.pos * .5) * data.pwr["x"]
+    if not(data.boosted):
+      for x in ["x","y"]:
+        data.pwr[x] /= 2.5
 
-            # right
-            elif (data.axes[0] > +data.threshold) and (-data.threshold < data.axes[1] < +data.threshold):
-                data.dir["left"] = (+data.pos) * data.pwr["x"]
-                data.dir["right"] = (-data.pos) * data.pwr["x"]
+    if data.buttons[1] == 0:
+      # top
+      if (-data.threshold < data.axes[0] < +data.threshold) and (data.axes[1] > +data.threshold):
+        data.dir["left"] = (+data.pos) * data.pwr["y"]
+        data.dir["right"] = (+data.pos) * data.pwr["y"]
 
-            # bottom right
-            elif (data.axes[0] > +data.threshold) and (data.axes[1] < -data.threshold):
-                data.dir["left"] = (-data.pos * 1.5) * data.pwr["x"]
-                data.dir["right"] = (-data.pos * .5) * data.pwr["x"]
+      # top right
+      elif (data.axes[0] > +data.threshold) and (data.axes[1] > +data.threshold):
+        data.dir["left"] = (+data.pos * 1.5) * data.pwr["x"]
+        data.dir["right"] = (+data.pos * .5) * data.pwr["x"]
 
-            # bottom
-            elif (-data.threshold < data.axes[0] < +data.threshold) and (data.axes[1] < -data.threshold):
-                data.dir["left"] = (-data.pos) * data.pwr["y"]
-                data.dir["right"] = (-data.pos) * data.pwr["y"]
+      # right
+      elif (data.axes[0] > +data.threshold) and (-data.threshold < data.axes[1] < +data.threshold):
+        data.dir["left"] = (+data.pos) * data.pwr["x"]
+        data.dir["right"] = (-data.pos) * data.pwr["x"]
 
-            # bottom left
-            elif (data.axes[0] < -data.threshold) and (data.axes[1] < -data.threshold):
-                data.dir["left"] = (-data.pos * .5) * data.pwr["x"]
-                data.dir["right"] = (-data.pos * 1.5) * data.pwr["x"]
+      # bottom right
+      elif (data.axes[0] > +data.threshold) and (data.axes[1] < -data.threshold):
+        data.dir["left"] = (-data.pos * 1.5) * data.pwr["x"]
+        data.dir["right"] = (-data.pos * .5) * data.pwr["x"]
 
-            # left
-            elif (data.axes[0] < -data.threshold) and (-data.threshold < data.axes[1] < +data.threshold):
-                data.dir["left"] = (-data.pos) * data.pwr["x"]
-                data.dir["right"] = (+data.pos) * data.pwr["x"]
+      # bottom
+      elif (-data.threshold < data.axes[0] < +data.threshold) and (data.axes[1] < -data.threshold):
+        data.dir["left"] = (-data.pos) * data.pwr["y"]
+        data.dir["right"] = (-data.pos) * data.pwr["y"]
 
-            # top left
-            elif (data.axes[0] < -data.threshold) and (data.axes[1] > +data.threshold):
-                data.dir["left"] = (+data.pos * .5) * data.pwr["x"]
-                data.dir["right"] = (+data.pos * 1.5) * data.pwr["x"]
+      # bottom left
+      elif (data.axes[0] < -data.threshold) and (data.axes[1] < -data.threshold):
+        data.dir["left"] = (-data.pos * .5) * data.pwr["x"]
+        data.dir["right"] = (-data.pos * 1.5) * data.pwr["x"]
 
-            if data.axes[4][1] == +1:
-                data.dir["y"] = +data.pos
+      # left
+      elif (data.axes[0] < -data.threshold) and (-data.threshold < data.axes[1] < +data.threshold):
+        data.dir["left"] = (-data.pos) * data.pwr["x"]
+        data.dir["right"] = (+data.pos) * data.pwr["x"]
 
-            elif data.axes[4][1] == -1:
-                data.dir["y"] = -data.pos
+      # top left
+      elif (data.axes[0] < -data.threshold) and (data.axes[1] > +data.threshold):
+        data.dir["left"] = (+data.pos * .5) * data.pwr["x"]
+        data.dir["right"] = (+data.pos * 1.5) * data.pwr["x"]
 
-            elif (-data.threshold < data.axes[0] < +data.threshold) and (-data.threshold < data.axes[1] < +data.threshold) and (data.axes[4][1] == 0):
-                data.dir["left"] = 0
-                data.dir["right"] = 0
-                data.dir["y"] = 0
+      elif (-data.threshold < data.axes[0] < +data.threshold) and (-data.threshold < data.axes[1] < +data.threshold):
+        data.dir["left"] = 0
+        data.dir["right"] = 0
 
-        if data.buttons[2] == 1:
-            data.boosted = not(data.boosted)
-            time.sleep(0.5)
+      data.dir["y"] = data.pos*data.axes[4][1]
 
-        elif data.buttons[4] == 1:
-            data.dir["light_pow"] = not(data.dir["light_pow"])
-            time.sleep(0.5)
+      if data.buttons[2] == 1:
+        data.boosted = not(data.boosted)
+        time.sleep(0.5)
 
-        elif data.buttons[11] == 1:
-            data.dir['powered'] = not(data.dir['powered'])
-            time.sleep(0.5)
+      elif data.buttons[4] == 1:
+        data.dir["light_pow"] = not(data.dir["light_pow"])
+        time.sleep(0.5)
 
-        elif data.buttons[12] == 1:
-            print("stopping transmission...")
-            data.dir["powered"] = False
-            data.running = False
+      elif data.buttons[11] == 1:
+        data.dir['powered'] = not(data.dir['powered'])
+        time.sleep(0.5)
 
-        data.dir["lights"] = data.light_step * data.pwr["lights"]
+      elif data.buttons[12] == 1:
+        update_debug(data.win,data.debug_screen,"stopping transmission...")
+        data.dir["powered"] = False
+        data.running = False
 
-        if data.latest != data.dir:
-            data.latest = data.dir.copy()
-            send(data)
-else:
-    data.key_vars()
-    """ key_control """
-    keyboard.add_hotkey('z',forward,args=[data],suppress=True)
-    keyboard.add_hotkey('s',backward,args=[data],suppress=True)
-    keyboard.add_hotkey('q',turn_left,args=[data],suppress=True)
-    keyboard.add_hotkey('d',turn_right,args=[data],suppress=True)
-    keyboard.add_hotkey('shift',up,args=[data],suppress=True)
-    keyboard.add_hotkey('ctrl',down,args=[data],suppress=True)
-    keyboard.add_hotkey('space',stop,args=[data],suppress=True)
-    keyboard.add_hotkey('enter',toggle_pwr,args=[data],suppress=True)
-    keyboard.add_hotkey('*',light_mgmt,args=[data,"+",False],suppress=True)
-    keyboard.add_hotkey('ù',light_mgmt,args=[data,"-",False],suppress=True)
-    keyboard.add_hotkey('$',light_mgmt,args=[data,0,True],suppress=True)
+      data.dir["lights"] = data.light_step * data.pwr["lights"]
 
-    print("\nkeyboard ready")
-    print("Waiting for instructions...")
-    keyboard.wait('esc')
+      if data.latest != data.dir:
+        data.latest = data.dir.copy()
+        send(data)
 
-    print("stopping transmission...")
-    keyboard.clear_all_hotkeys()
+    update_vars(data)
 
-if server_check:
+  if net_check:
     client.send("'exit'".encode("Utf8"))
     client.close()
 
-print("END OF PROGRAM")
-time.sleep(0.5)
+  update_debug(data.win,data.debug_screen,"END OF PROGRAM")
+  time.sleep(0.5)
 
-raise SystemExit
+  data.win.destroy()
+  raise SystemExit
+
+else:
+  data.key_vars()
+  # key_control
+  keyboard.add_hotkey('z',forward,args=[data],suppress=True)
+  keyboard.add_hotkey('s',backward,args=[data],suppress=True)
+  keyboard.add_hotkey('q',turn_left,args=[data],suppress=True)
+  keyboard.add_hotkey('d',turn_right,args=[data],suppress=True)
+  keyboard.add_hotkey('shift',up,args=[data],suppress=True)
+  keyboard.add_hotkey('ctrl',down,args=[data],suppress=True)
+  keyboard.add_hotkey('space',stop,args=[data],suppress=True)
+  keyboard.add_hotkey('enter',toggle_pwr,args=[data],suppress=True)
+  keyboard.add_hotkey('*',light_mgmt,args=[data,"+",False],suppress=True)
+  keyboard.add_hotkey('ù',light_mgmt,args=[data,"-",False],suppress=True)
+  keyboard.add_hotkey('$',light_mgmt,args=[data,0,True],suppress=True)
+
+  print("\nkeyboard ready")
+  print("Waiting for instructions...")
+  keyboard.wait('esc')
+
+  print("stopping transmission...")
+  keyboard.clear_all_hotkeys()
+
+  if net_check:
+    client.send("'exit'".encode("Utf8"))
+    client.close()
+
+  print("END OF PROGRAM")
+  time.sleep(0.5)
+
+  raise SystemExit
