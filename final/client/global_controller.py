@@ -20,6 +20,9 @@ from tkinter import BooleanVar, DoubleVar, IntVar, StringVar
 class Vars:
   def __init__(self):
     self.running = True
+
+    self.gui_check = False # bool to (de)activate GUI
+
     self.dir = {
       "powered" : False,
       "left" : 0,
@@ -130,8 +133,44 @@ class Vars:
 ## FUNCs ##
 ###########
 
-def update_vars(data):
+def update_dir(data):
+  pygame.event.get()
+  data.axes = (
+    round(data.joy.get_axis(0),2),
+    round(-data.joy.get_axis(1),2),
+    round(data.joy.get_axis(2),2),
+    round(data.joy.get_axis(3),2),
+    data.joy.get_hat(0)
+  )
+
+  data.buttons = (
+    None,
+    data.joy.get_button(0),
+    data.joy.get_button(1),
+    data.joy.get_button(2),
+    data.joy.get_button(3),
+    data.joy.get_button(4),
+    data.joy.get_button(5),
+    data.joy.get_button(6),
+    data.joy.get_button(7),
+    data.joy.get_button(8),
+    data.joy.get_button(9),
+    data.joy.get_button(10),
+    data.joy.get_button(11)
+  )
+
+  coef = 2.5 if data.boosted else 5
+  data.pwr = {
+    "x": int( abs( round(data.axes[0],2) ) * coef),
+    "y": int( abs( round(data.axes[1],2) ) * coef),
+    "lights": int(abs(data.axes[2] - 1) * coef)
+  }
+
+def update_tkvars(data):
   # update all GUI labels
+
+  if not(data.gui_check):
+    return
 
   ### powered,light_pow,boosted
   for x in data.tk_lbls.keys():
@@ -201,13 +240,18 @@ def grid_spec(data):
 
 def check_joy(data):
   pygame.event.get()
-  update_debug(data.win,data.debug_screen,"\n".join([
+  msg="\n".join([
     f"id       {str(data.joy.get_id())}",
     f"name     {str(data.joy.get_name())}",
     f"axes     {str(data.joy.get_numaxes())}",
     f"buttons  {str(data.joy.get_numbuttons())}",
     f"hats     {str(data.joy.get_numhats())}",
-    f"balls    {str(data.joy.get_numballs())}"]))
+    f"balls    {str(data.joy.get_numballs())}"]
+  )
+  if data.gui_check:
+    update_debug(data.win,data.debug_screen,msg)
+  else:
+    print(msg)
   time.sleep(1)
 
 def forward(data):
@@ -271,77 +315,77 @@ def send(data):
   if net_check:
     client.send(cmd.encode("Utf8"))
 
-  update_debug(data.win,data.debug_screen,data.dir)
+  msg=data.dir
+  if data.gui_check:
+    update_debug(data.win,data.debug_screen,msg)
+  else:
+    print(msg)
 
 ##################
 ## MAIN PROGRAM ##
 ##################
 
 data = Vars()
-data.gui_setup()
+if data.gui_check:
+  data.gui_setup()
 
-update_debug(data.win,data.debug_screen,"check network : (y/n)",prefix="")
+msg="check network : (y/n)"
+if data.gui_check:
+  update_debug(data.win,data.debug_screen,msg,prefix="")
+else:
+  print(msg)
 net_check = True if input() == "y" else False
 if net_check:
   ip = ("192.168.137.2",50001)
 
-  update_debug(data.win,data.debug_screen,f"Connecting to {ip[0]}:{ip[1]}...")
+  msg=f"Connecting to {ip[0]}:{ip[1]}..."
+  if data.gui_check:
+    update_debug(data.win,data.debug_screen,msg,prefix="")
+  else:
+    print(msg)
   client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
   client.connect(ip)
-  update_debug(data.win,data.debug_screen,"Connected!")
+  msg="Connected!"
+  if data.gui_check:
+    update_debug(data.win,data.debug_screen,msg,prefix="")
+  else:
+    print(msg)
 else:
-  update_debug(data.win,data.debug_screen,"ignoring...")
+  msg="ignoring..."
+  if data.gui_check:
+    update_debug(data.win,data.debug_screen,msg,prefix="")
+  else:
+    print(msg)
 
 pygame.init()
 pygame.joystick.init()
 
-update_debug(data.win,data.debug_screen,"use keyboard ? (y/n)")
+msg="use keyboard ? (y/n)"
+if data.gui_check:
+  update_debug(data.win,data.debug_screen,msg,prefix="")
+else:
+  print(msg)
+
 joytest = True if input() == "n" else False
 
 if joytest:
   # joy_control
   data.joy_vars()
-  update_debug(data.win,data.debug_screen,"joystick ready",prefix="\n"*2)
 
-  update_debug(data.win,data.debug_screen,"Waiting for instructions...")
+  msg="joystick ready"
+  if data.gui_check:
+    update_debug(data.win,data.debug_screen,msg,prefix="")
+  else:
+    print(msg)
+
+  msg="Waiting for instructions..."
+  if data.gui_check:
+    update_debug(data.win,data.debug_screen,msg,prefix="")
+  else:
+    print(msg)
 
   while data.running:
-    pygame.event.get()
-    data.axes = (
-      round(data.joy.get_axis(0),2),
-      round(-data.joy.get_axis(1),2),
-      round(data.joy.get_axis(2),2),
-      round(data.joy.get_axis(3),2),
-      data.joy.get_hat(0)
-    )
-    for x in data.axes[4]:
-      x = round(x,2)
-
-    data.buttons = (
-      None,
-      data.joy.get_button(0),
-      data.joy.get_button(1),
-      data.joy.get_button(2),
-      data.joy.get_button(3),
-      data.joy.get_button(4),
-      data.joy.get_button(5),
-      data.joy.get_button(6),
-      data.joy.get_button(7),
-      data.joy.get_button(8),
-      data.joy.get_button(9),
-      data.joy.get_button(10),
-      data.joy.get_button(11)
-    )
-
-    data.pwr = {
-      "x": int( abs( round(data.axes[0],2) ) * 5),
-      "y": int( abs( round(data.axes[1],2) ) * 5),
-      "lights": int(abs(data.axes[2] - 1) * 5)
-    }
-
-    if not(data.boosted):
-      for x in ["x","y"]:
-        data.pwr[x] /= 2.5
+    update_dir(data)
 
     if data.buttons[1] == 0:
       # top
@@ -403,7 +447,11 @@ if joytest:
         time.sleep(0.5)
 
       elif data.buttons[12] == 1:
-        update_debug(data.win,data.debug_screen,"stopping transmission...")
+        msg="stopping transmission..."
+        if data.gui_check:
+          update_debug(data.win,data.debug_screen,msg)
+        else:
+          print(msg)
         data.dir["powered"] = False
         data.running = False
 
@@ -413,16 +461,21 @@ if joytest:
         data.latest = data.dir.copy()
         send(data)
 
-    update_vars(data)
+    update_tkvars(data)
 
   if net_check:
     client.send("'exit'".encode("Utf8"))
     client.close()
 
-  update_debug(data.win,data.debug_screen,"END OF PROGRAM")
+  msg="END OF PROGRAM"
+  if data.gui_check:
+    update_debug(data.win,data.debug_screen,msg)
+  else:
+    print(msg)
   time.sleep(0.5)
 
-  data.win.destroy()
+  if data.gui_check:
+    data.win.destroy()
   raise SystemExit
 
 else:
