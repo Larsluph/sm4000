@@ -1,4 +1,4 @@
-﻿#!/usr/bin/env python3
+#!/usr/bin/env python3
 #-*- coding:utf-8 -*-
 
 import os
@@ -18,12 +18,13 @@ from tkinter import BooleanVar, DoubleVar, IntVar, StringVar
 ############
 
 class Vars:
+  # class to store all variables data
   def __init__(self):
-    self.running = True
+    self.running = True # infinite loop controller
 
-    self.gui_check = False # bool to (de)activate GUI
+    self.gui_check = False # GUI activator
 
-    self.dir = {
+    self.dir = { # dict send to drone
       "powered" : False,
       "left" : 0,
       "right" : 0,
@@ -33,7 +34,7 @@ class Vars:
     }
     self.pwr = dict()
     self.pos = 100
-    self.threshold = .2
+    self.threshold = .2 # joy deadzone
     self.light_step = self.pos
 
     self.key_init = False
@@ -65,12 +66,13 @@ class Vars:
     self.win = tk.Tk()
     self.win.title("global controller GUI")
 
-    self.font_debug = ('Helvetica', 18)
-    self.font = ('Helvetica', 37)
+    self.font_debug = ('Helvetica', 18) # font used in the Text widget
+    self.font = ('Helvetica', 37) # font used elsewhere in tk
 
-    self.debug_screen = tk.Text(self.win,height=14,width=96,state=tk.DISABLED,font=self.font_debug)
+    self.debug_screen = tk.Text(self.win,height=14,width=96,state=tk.DISABLED,font=self.font_debug) # Text widget to display all debug data
     self.debug_screen.grid(row=0,column=0,columnspan=14)
 
+    # dict with all tk vars used in GUI
     self.tk_vars = {
       "left": IntVar(),
       "right": IntVar(),
@@ -159,7 +161,7 @@ def update_dir(data):
     data.joy.get_button(11)
   )
 
-  coef = 2.5 if data.boosted else 5
+  coef = 2 if data.boosted else 5
   data.pwr = {
     "x": int( abs( round(data.axes[0],2) ) * coef),
     "y": int( abs( round(data.axes[1],2) ) * coef),
@@ -169,12 +171,13 @@ def update_dir(data):
 def update_tkvars(data):
   # update all GUI labels
 
+  # skip update if gui disabled
   if not(data.gui_check):
     return
 
   ### powered,light_pow,boosted
   for x in data.tk_lbls.keys():
-    check = data.dir[x] if x in data.dir else data.boosted
+    check = data.dir[x] if x in data.dir else data.boosted # boosted is the only bool not in dir
     bg = "#00FF00" if check else "#FF0000"
     # set lbl bg color to either green or red based on vars
     data.tk_lbls[x].config(bg=bg)
@@ -186,15 +189,15 @@ def update_tkvars(data):
 
   ### axes x,z,slider
   for i in range(len(data.axes)-2):
-    data.tk_vars["axes"][i].set(data.axes[i])
+    data.tk_vars["axes"][i].set(data.axes[i]) # update all axes except joy rot & hat
   ### axe y
-  data.tk_vars["axes"][3].set(data.axes[4][1])
+  data.tk_vars["axes"][3].set(data.axes[4][1]) # only z in hat updated
 
   ### buttons
   for i in range(len(data.buttons)-1):
-    data.tk_vars["buttons"][i].set(data.buttons[i+1])
+    data.tk_vars["buttons"][i].set(data.buttons[i+1]) # update all buttons
 
-  update_window(data.win)
+  update_window(data.win) # update window to display all lbls updates
 
   return
 
@@ -325,9 +328,9 @@ def send(data):
 ## MAIN PROGRAM ##
 ##################
 
-data = Vars()
+data = Vars() # define vars storage
 if data.gui_check:
-  data.gui_setup()
+  data.gui_setup() # setup gui if enabled
 
 msg="check network : (y/n)"
 if data.gui_check:
