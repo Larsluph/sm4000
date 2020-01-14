@@ -96,6 +96,7 @@ while running:
     alti = sensor.altitude()
   else:
     print("can't read sensor data")
+    pressure=temp=depth=alti = 0
 
   data = ",".join( [ str(x) for x in [i,t,delta_t,lvl_val,lvl_volt,bat_val,bat_volt,pressure,temp,depth,alti] ] ) + "\n"
   i += 1
@@ -111,6 +112,7 @@ while running:
   except:
     print(f"{sys.exc_info()[0]} : {sys.exc_info()[1]}")
     print("error while sending data. ignoring...")
+    receiver.send("can't read probes data (server error)".encode())
 
   time.sleep(2)
 

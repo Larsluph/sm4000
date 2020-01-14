@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+﻿#!/usr/bin/env python3
 #-*- coding:utf-8 -*-
 
 import os
@@ -22,7 +22,7 @@ class Vars:
   def __init__(self):
     self.running = True # infinite loop controller
 
-    self.gui_check = False # GUI activator
+    self.gui_check = True # GUI activator
 
     self.dir = { # dict send to drone
       "powered" : False,
@@ -55,7 +55,7 @@ class Vars:
     self.joy.init()
     check_joy(self)
 
-    self.boosted = True
+    self.boosted = False
     self.latest = self.dir.copy()
     self.axes = tuple()
     self.buttons = tuple()
@@ -66,8 +66,8 @@ class Vars:
     self.win = tk.Tk()
     self.win.title("global controller GUI")
 
-    self.font_debug = ('Helvetica', 18) # font used in the Text widget
-    self.font = ('Helvetica', 37) # font used elsewhere in tk
+    self.font_debug = ('Helvetica', 11) # font used in the Text widget
+    self.font = ('Helvetica', 20) # font used elsewhere in tk
 
     self.debug_screen = tk.Text(self.win,height=14,width=96,state=tk.DISABLED,font=self.font_debug) # Text widget to display all debug data
     self.debug_screen.grid(row=0,column=0,columnspan=14)
@@ -161,11 +161,11 @@ def update_dir(data):
     data.joy.get_button(11)
   )
 
-  coef = 2 if data.boosted else 5
+  coef = 5 if data.boosted else 2
   data.pwr = {
     "x": int( abs( round(data.axes[0],2) ) * coef),
     "y": int( abs( round(data.axes[1],2) ) * coef),
-    "lights": int(abs(data.axes[2] - 1) * coef)
+    "lights": int(abs(data.axes[2] - 1) * 5)
   }
 
 def update_tkvars(data):
@@ -177,7 +177,7 @@ def update_tkvars(data):
 
   ### powered,light_pow,boosted
   for x in data.tk_lbls.keys():
-    check = data.dir[x] if x in data.dir else data.boosted # boosted is the only bool not in dir
+    check = bool(data.dir[x]) if x in data.dir else bool(data.boosted) # boosted is the only bool not in dir
     bg = "#00FF00" if check else "#FF0000"
     # set lbl bg color to either green or red based on vars
     data.tk_lbls[x].config(bg=bg)
@@ -343,20 +343,20 @@ if net_check:
 
   msg=f"Connecting to {ip[0]}:{ip[1]}..."
   if data.gui_check:
-    update_debug(data.win,data.debug_screen,msg,prefix="")
+    update_debug(data.win,data.debug_screen,msg)
   else:
     print(msg)
   client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
   client.connect(ip)
   msg="Connected!"
   if data.gui_check:
-    update_debug(data.win,data.debug_screen,msg,prefix="")
+    update_debug(data.win,data.debug_screen,msg)
   else:
     print(msg)
 else:
   msg="ignoring..."
   if data.gui_check:
-    update_debug(data.win,data.debug_screen,msg,prefix="")
+    update_debug(data.win,data.debug_screen,msg)
   else:
     print(msg)
 
@@ -365,7 +365,7 @@ pygame.joystick.init()
 
 msg="use keyboard ? (y/n)"
 if data.gui_check:
-  update_debug(data.win,data.debug_screen,msg,prefix="")
+  update_debug(data.win,data.debug_screen,msg)
 else:
   print(msg)
 
@@ -377,13 +377,13 @@ if joytest:
 
   msg="joystick ready"
   if data.gui_check:
-    update_debug(data.win,data.debug_screen,msg,prefix="")
+    update_debug(data.win,data.debug_screen,msg)
   else:
     print(msg)
 
   msg="Waiting for instructions..."
   if data.gui_check:
-    update_debug(data.win,data.debug_screen,msg,prefix="")
+    update_debug(data.win,data.debug_screen,msg)
   else:
     print(msg)
 

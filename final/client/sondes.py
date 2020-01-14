@@ -95,13 +95,18 @@ with open(vidpath,mode='w') as output_file:
   running = True
   while running:
     try:
-      data = i,t,delta_t,lvl_val,lvl_volt,bat_val,bat_volt,pressure,temp,depth,alti = client.recv(1024).decode().split(",")
+      cmd = client.recv(1024).decode()
+      if "error" in cmd:
+        data = cmd
 
-      for x in "i,t,delta_t,lvl_val,lvl_volt,bat_val,bat_volt,pressure,temp,depth,alti".split(","):
-        tk_vars[x].set(eval(x))
+      else:
+        data = i,t,delta_t,lvl_val,lvl_volt,bat_val,bat_volt,pressure,temp,depth,alti = cmd.split(",")
+
+        for x in "i,t,delta_t,lvl_val,lvl_volt,bat_val,bat_volt,pressure,temp,depth,alti".split(","):
+          tk_vars[x].set(eval(x))
 
     except:
-      data = "can't read incoming data"
+      data = "can't read incoming data (client error)"
       update_debug( win,debug_screen,str(sys.exc_info()[1]) )
 
     finally:
