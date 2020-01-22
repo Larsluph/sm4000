@@ -1,4 +1,4 @@
-﻿#!/usr/bin/env python3
+#!/usr/bin/env python3
 #-*- coding:utf-8 -*-
 
 import os
@@ -206,14 +206,19 @@ def update_window(window):
   window.update()
   return
 
-def update_debug(window,text,msg,prefix="\n"):
-  text.config(state=tk.NORMAL)
-  text.insert(tk.END, f"{prefix}{msg}")
-  text.config(state=tk.DISABLED)
-  text.see(tk.END)
+def update_debug(data,msg,prefix="\n"):
+  if data.gui_check:
+    data.debug_screen.config(state=tk.NORMAL)
+    data.debug_screen.insert(tk.END, f"{prefix}{msg}")
+    data.debug_screen.config(state=tk.DISABLED)
+    data.debug_screen.see(tk.END)
 
-  update_window(window)
-  return
+    update_window(data.window)
+    return
+
+  else:
+    print(msg)
+    return
 
 def grid(data,var,coords):
   # coords = ( (0,0,0),(0,0,0) )
@@ -251,11 +256,14 @@ def check_joy(data):
     f"hats     {str(data.joy.get_numhats())}",
     f"balls    {str(data.joy.get_numballs())}"]
   )
-  if data.gui_check:
-    update_debug(data.win,data.debug_screen,msg)
-  else:
-    print(msg)
+  update_debug(data,msg)
   time.sleep(1)
+
+def wait_button(joy,id):
+  while joy.get_button(id-1):
+    pygame.event.get()
+
+    continue
 
 def forward(data):
   data.dir["left"] += +data.pos
@@ -318,11 +326,7 @@ def send(data):
   if net_check:
     client.send(cmd.encode("Utf8"))
 
-  msg=data.dir
-  if data.gui_check:
-    update_debug(data.win,data.debug_screen,msg)
-  else:
-    print(msg)
+  update_debug(data,data.dir)
 
 ##################
 ## MAIN PROGRAM ##
@@ -332,42 +336,23 @@ data = Vars() # define vars storage
 if data.gui_check:
   data.gui_setup() # setup gui if enabled
 
-msg="check network : (y/n)"
-if data.gui_check:
-  update_debug(data.win,data.debug_screen,msg,prefix="")
-else:
-  print(msg)
+update_debug(data,"check network : (y/n)",prefix="")
+
 net_check = True if input() == "y" else False
 if net_check:
   ip = ("192.168.137.2",50001)
 
-  msg=f"Connecting to {ip[0]}:{ip[1]}..."
-  if data.gui_check:
-    update_debug(data.win,data.debug_screen,msg)
-  else:
-    print(msg)
+  update_debug(data,f"Connecting to {ip[0]}:{ip[1]}...")
   client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
   client.connect(ip)
-  msg="Connected!"
-  if data.gui_check:
-    update_debug(data.win,data.debug_screen,msg)
-  else:
-    print(msg)
+  update_debug(data,"Connected!")
 else:
-  msg="ignoring..."
-  if data.gui_check:
-    update_debug(data.win,data.debug_screen,msg)
-  else:
-    print(msg)
+  update_debug(data,"ignoring...")
 
 pygame.init()
 pygame.joystick.init()
 
-msg="use keyboard ? (y/n)"
-if data.gui_check:
-  update_debug(data.win,data.debug_screen,msg)
-else:
-  print(msg)
+update_debug(data,"use keyboard ? (y/n)")
 
 joytest = True if input() == "n" else False
 
@@ -375,17 +360,9 @@ if joytest:
   # joy_control
   data.joy_vars()
 
-  msg="joystick ready"
-  if data.gui_check:
-    update_debug(data.win,data.debug_screen,msg)
-  else:
-    print(msg)
+  update_debug(data,"joystick ready")
 
-  msg="Waiting for instructions..."
-  if data.gui_check:
-    update_debug(data.win,data.debug_screen,msg)
-  else:
-    print(msg)
+  update_debug(data,"Waiting for instructions...")
 
   while data.running:
     update_dir(data)
@@ -439,22 +416,19 @@ if joytest:
 
       if data.buttons[2] == 1:
         data.boosted = not(data.boosted)
-        time.sleep(0.5)
+        wait_button(data.joy,2)
 
       elif data.buttons[4] == 1:
         data.dir["light_pow"] = not(data.dir["light_pow"])
-        time.sleep(0.5)
+        wait_button(data.joy,4)
 
       elif data.buttons[11] == 1:
         data.dir['powered'] = not(data.dir['powered'])
-        time.sleep(0.5)
+        wait_button(data.joy,11)
 
       elif data.buttons[12] == 1:
         msg="stopping transmission..."
-        if data.gui_check:
-          update_debug(data.win,data.debug_screen,msg)
-        else:
-          print(msg)
+        update_debug(data.win,data.debug_screen,msg)
         data.dir["powered"] = False
         data.running = False
 
@@ -471,10 +445,7 @@ if joytest:
     client.close()
 
   msg="END OF PROGRAM"
-  if data.gui_check:
-    update_debug(data.win,data.debug_screen,msg)
-  else:
-    print(msg)
+  update_debug(data,msg)
   time.sleep(0.5)
 
   if data.gui_check:
