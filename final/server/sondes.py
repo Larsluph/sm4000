@@ -10,16 +10,40 @@ import time
 import board
 import busio
 import smbus
-from modules import AtlasI2C as do
-from modules import adafruit_ads1x15.ads1115 as ADS
+from modules.AtlasI2C import AtlasI2C
+from modules.adafruit_ads1x15 import ads1115 as ADS
 from modules import ms5837
 from modules.adafruit_ads1x15.analog_in import AnalogIn
+
+###########
+## FUNCs ##
+###########
+
+def print_oxygen_devices(device_list, device):
+    for i in device_list:
+        if(i == device):
+            print("--> " + i.get_device_info())
+        else:
+            print(" -- " + i.get_device_info())
+
+def get_oxygen_devices():
+  device = AtlasI2C()
+  device_address_list = device.list_i2c_devices()
+  device_list = []
+
+  for i in device_address_list:
+    device.set_i2c_address(i)
+    response = device.query("I")
+    moduletype = response.split(",")[1] 
+    response = device.query("name,?").split(",")[1]
+    device_list.append(AtlasI2C(address = i, moduletype = moduletype, name = response))
+  return device_list
 
 ##################
 ## MAIN PROGRAM ##
 ##################
 
-# setup ads
+# DONE: setup ads
 i2c = busio.I2C(board.SCL, board.SDA)
 ads_water = ADS.ADS1115(i2c,address=0x48)
 # ads_battery = ADS.ADS1115(i2c,address=0x49)
@@ -30,9 +54,6 @@ water_lvl = AnalogIn(ads_water, ADS.P0)
 # battery_cells = [AnalogIn(ads_battery, i) for i in range(4)]
 battery_cells = AnalogIn(ads_water, ADS.P3)
 
-#####
-
-# setup ads
 if not(water_lvl.value):
   print("water_lvl ads could not be initialized")
 
@@ -41,7 +62,9 @@ if not(battery_cells.value):
 
 print("ADSs check successful")
 
-# setup ms5837
+#####
+
+# DONE: setup ms5837
 sensor = ms5837.MS5837_30BA()
 if not sensor.init():
   print("Sensor could not be initialized")
@@ -55,6 +78,18 @@ print("Sensor initialized")
 
 sensor.setFluidDensity(ms5837.DENSITY_FRESHWATER)
 
+#####
+
+#TO_CHECK: setup dissolved oxygen probe
+device_list = get_oxygen_devices()
+oxygen = device_list[0]
+print_devices(device_list,oxygen)
+print("dissolved oxygen probe initialized")
+oxygen.query("i") # retrieve probe information
+
+#####
+
+# DONE: setup server
 try:
   ip = ('192.168.137.2',50003)
   server_socket = socket.socket()
