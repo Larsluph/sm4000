@@ -7,12 +7,13 @@ import socket
 import sys
 import time
 
-import adafruit_ads1x15.ads1115 as ADS
 import board
 import busio
-import ms5837
 import smbus
-from adafruit_ads1x15.analog_in import AnalogIn
+from modules import AtlasI2C as do
+from modules import adafruit_ads1x15.ads1115 as ADS
+from modules import ms5837
+from modules.adafruit_ads1x15.analog_in import AnalogIn
 
 ##################
 ## MAIN PROGRAM ##
