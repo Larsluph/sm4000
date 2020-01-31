@@ -43,16 +43,26 @@ def get_oxygen_devices():
 ## MAIN PROGRAM ##
 ##################
 
+i2c_address = {
+  "ads_water": 0x48,
+  "ads_battery": 0x49,
+  "oxygen": 0x61,
+  "pres_temp_external": 0x76,
+  "pres_temp_internal": 0x77
+}
+
+#####
+
 # DONE: setup ads
 i2c = busio.I2C(board.SCL, board.SDA)
-ads_water = ADS.ADS1115(i2c,address=0x48)
-# ads_battery = ADS.ADS1115(i2c,address=0x49)
+ads_water = ADS.ADS1115(i2c,address=i2c_address["ads_water"])
+ads_battery = ADS.ADS1115(i2c,address=i2c_address["ads_battery"])
 # 32768 limite batterie +/-
 # cap = [3.00:4.20]
 
 water_lvl = AnalogIn(ads_water, ADS.P0)
 # battery_cells = [AnalogIn(ads_battery, i) for i in range(4)]
-battery_cells = AnalogIn(ads_water, ADS.P3)
+battery_cells = AnalogIn(ads_battery, ADS.P3)
 
 if not(water_lvl.value):
   print("water_lvl ads could not be initialized")
@@ -64,28 +74,31 @@ print("ADSs check successful")
 
 #####
 
-# DONE: setup ms5837
-sensor = ms5837.MS5837_30BA()
-if not sensor.init():
-  print("Sensor could not be initialized")
+# DONE: setup ms5837 (pres_temp_external)
+ext_pres_temp_sensor = ms5837.MS5837_30BA()
+if not ext_pres_temp_sensor.init():
+  print("ext_pres_temp_sensor could not be initialized")
   raise SystemExit
 
-if not sensor.read():
-  print("Sensor read failed!")
+if not ext_pres_temp_sensor.read():
+  print("ext_pres_temp_sensor read failed!")
   raise SystemExit
 
-print("Sensor initialized")
+print("ext_pres_temp_sensor initialized")
 
-sensor.setFluidDensity(ms5837.DENSITY_FRESHWATER)
+ext_pres_temp_sensor.setFluidDensity(ms5837.DENSITY_FRESHWATER)
 
 #####
 
 #TO_CHECK: setup dissolved oxygen probe
-device_list = get_oxygen_devices()
-oxygen = device_list[0]
-print_devices(device_list,oxygen)
+oxygen = AtlasI2C(address=0x61,name="dissolved oxygen probe")
+print(oxygen.query("i")) # ask for probe information
 print("dissolved oxygen probe initialized")
-oxygen.query("i") # retrieve probe information
+
+#####
+
+#TO_DO: setup grove bme280 (pres_temp_internal)
+# int_pres_temp_sensor = 
 
 #####
 
@@ -125,11 +138,11 @@ while running:
   bat_volt = battery_cells.voltage
 
   ### pres / temp
-  if sensor.read():
-    pressure = sensor.pressure(ms5837.UNITS_mbar)
-    temp = sensor.temperature(ms5837.UNITS_Centigrade)
-    depth = sensor.depth()
-    alti = sensor.altitude()
+  if ext_pres_temp_sensor.read():
+    pressure = ext_pres_temp_sensor.pressure(ms5837.UNITS_mbar)
+    temp = ext_pres_temp_sensor.temperature(ms5837.UNITS_Centigrade)
+    depth = ext_pres_temp_sensor.depth()
+    alti = ext_pres_temp_sensor.altitude()
   else:
     print("can't read sensor data")
     pressure=temp=depth=alti = 0
