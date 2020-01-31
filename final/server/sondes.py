@@ -10,34 +10,10 @@ import time
 import board
 import busio
 import smbus
-from modules.AtlasI2C import AtlasI2C
+from modules import bme280, ms5837
 from modules.adafruit_ads1x15 import ads1115 as ADS
-from modules import ms5837
 from modules.adafruit_ads1x15.analog_in import AnalogIn
-
-###########
-## FUNCs ##
-###########
-
-def print_oxygen_devices(device_list, device):
-    for i in device_list:
-        if(i == device):
-            print("--> " + i.get_device_info())
-        else:
-            print(" -- " + i.get_device_info())
-
-def get_oxygen_devices():
-  device = AtlasI2C()
-  device_address_list = device.list_i2c_devices()
-  device_list = []
-
-  for i in device_address_list:
-    device.set_i2c_address(i)
-    response = device.query("I")
-    moduletype = response.split(",")[1] 
-    response = device.query("name,?").split(",")[1]
-    device_list.append(AtlasI2C(address = i, moduletype = moduletype, name = response))
-  return device_list
+from modules.AtlasI2C import AtlasI2C
 
 ##################
 ## MAIN PROGRAM ##
@@ -97,9 +73,17 @@ print("dissolved oxygen probe initialized")
 
 #####
 
-#TO_DO: setup grove bme280 (pres_temp_internal)
-# int_pres_temp_sensor = 
-
+#TO_CHECK: setup grove bme280 (pres_temp_internal)
+bme280.setup() # setup probe
+bme280.setReferencePressure(bme280.readFloatPressure()) # set reference for altitude calculation
+"""
+°C temp     : readTempC()
+°F temp     : readTempF()
+% humidity  : readFloatHumidity()
+Pa pressure : readFloatPressure()
+m alti      : readFloatAltitudeMeters()
+feet alti   : readFloatAltitudeFeet()
+"""
 #####
 
 # DONE: setup server
@@ -137,17 +121,23 @@ while running:
   bat_val  = battery_cells.value
   bat_volt = battery_cells.voltage
 
-  ### pres / temp
+  ### pres / temp external
   if ext_pres_temp_sensor.read():
-    pressure = ext_pres_temp_sensor.pressure(ms5837.UNITS_mbar)
-    temp = ext_pres_temp_sensor.temperature(ms5837.UNITS_Centigrade)
-    depth = ext_pres_temp_sensor.depth()
-    alti = ext_pres_temp_sensor.altitude()
+    ext_pressure = ext_pres_temp_sensor.pressure(ms5837.UNITS_mbar)
+    ext_temp = ext_pres_temp_sensor.temperature(ms5837.UNITS_Centigrade)
+    ext_depth = ext_pres_temp_sensor.depth()
+    ext_alti = ext_pres_temp_sensor.altitude()
   else:
     print("can't read sensor data")
-    pressure=temp=depth=alti = 0
+    ext_pressure=ext_temp=ext_depth=ext_alti = 0
 
-  data = ",".join( [ str(x) for x in [i,t,delta_t,lvl_val,lvl_volt,bat_val,bat_volt,pressure,temp,depth,alti] ] ) + "\n"
+  ### pres / temp internal
+  int_pressure = bme280.readFloatPressure()
+  int_temp = bme280.readTempC()
+  int_humidity = bme280.readFloatHumidity()
+  int_alti = bme280.readFloatAltitudeMeters()
+
+  data = ",".join( [ str(x) for x in [i,t,delta_t,lvl_val,lvl_volt,bat_val,bat_volt,ext_pressure,ext_temp,ext_depth,ext_alti] ] ) + "\n"
   i += 1
 
   try:
