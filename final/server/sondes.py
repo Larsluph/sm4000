@@ -174,7 +174,7 @@ while running:
 
   values["i"] = i
   values["t"] = t = round(time.perf_counter() - t0,3)
-  values["delta_t"] = t - t_last
+  values["delta_t"] = round(t - t_last,3)
   t_last = t
 
   ### niveau d'eau
@@ -196,16 +196,17 @@ while running:
     if ext_pres_temp_sensor.read():
       values["ext_pressure"] = ext_pres_temp_sensor.pressure(ms5837.UNITS_mbar)
       values["ext_temp"] = ext_pres_temp_sensor.temperature(ms5837.UNITS_Centigrade)
-      values["ext_depth"] = ext_pres_temp_sensor.depth()
-      values["ext_alti"] = ext_pres_temp_sensor.altitude()
+      values["ext_depth"] = round(ext_pres_temp_sensor.depth(),2)
+      values["ext_alti"] = round(ext_pres_temp_sensor.altitude(),2)
     else:
       print("can't read sensor data")
       values["ext_pressure"]=values["ext_pressure"]=values["ext_temp"]=values["ext_depth"]=values["ext_alti"] = 0
 
   ### dissolved oxygen
   if checks["oxygen"]:
-    # oxygen.query("T,"+str(values["ext_temp"])) # temperature compensation
-    # oxygen.query("P,"+str(ext_pres_temp_sensor.pressure(ms5837.UNITS_kPa))) # pressure compensation
+    if checks["ext_pres_temp"]
+      oxygen.query("T,"+str(values["ext_temp"])) # temperature compensation
+      oxygen.query("P,"+str(ext_pres_temp_sensor.pressure(ms5837.UNITS_kPa))) # pressure compensation
     values["dissolved_oxygen"] = "".join(oxygen.query("R").split(" ")[1:])
 
   ### pres / temp internal
@@ -213,7 +214,6 @@ while running:
     values["int_temp"] = round(bme280.readTempC(),2)
     values["int_pressure"] = round(bme280.readFloatPressure()/100,2)
     values["int_humidity"] = round(bme280.readFloatHumidity(),2)
-    values["int_alti"] = round(bme280.readFloatAltitudeMeters(),3)
 
   data = str(values)
   i += 1

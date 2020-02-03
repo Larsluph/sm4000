@@ -24,12 +24,12 @@ def update_debug(window,text,msg,prefix="\n"):
 
 def update_log(logpath,data):
   with open(logpath,mode='a') as file:
-    file.write(data+"\n")
+    file.write(str(data)+"\n")
 
 def update_vars(data):
   for x in data:
-    if "percent" in x:
-      tk_vars[x].set(f"{data[x]}%")
+    if x in ["lvl_percent","bat_percent","int_humidity"]:
+      tk_vars[x].set(str(data[x])+"%")
     else:
       tk_vars[x].set(data[x])
 
@@ -66,7 +66,7 @@ tk_vars = {
 
   "int_pressure"     : DoubleVar(),
   "int_temp"         : DoubleVar(),
-  "int_humidity"     : DoubleVar(),
+  "int_humidity"     : StringVar(),
   "dissolved_oxygen" : DoubleVar()
 }
 
@@ -97,12 +97,13 @@ grid_val = {
 for i in grid_val.keys():
   grid(win,i,grid_val[i],font)
 
-tk_vars["lvl_percent"].set("00.00%")
-tk_vars["bat_percent"].set("00.00%")
+for x in ["lvl_percent","bat_percent","int_humidity"]:
+  tk_vars[x].set("00.00%")
 update_window(win)
 
 try:
-  ip = ("192.168.137.2",50003)
+  # ip = ("192.168.137.2",50003)
+  ip = ("192.168.0.31",50001)
 
   update_debug(win,debug_screen,f"Connecting to {':'.join(map(str,ip))}...",prefix="")
   client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -129,16 +130,19 @@ running = True
 while running:
   try:
     cmd = client.recv(1024).decode()
-    if type(cmd) != dict:
-      data = cmd
-
-    else:
-      data = eval(cmd)
-      update_vars(data)
 
   except:
     data = "can't read incoming data (client error)"
     update_debug( win,debug_screen,str(sys.exc_info()[1]) )
+
+  else:
+    try:
+      eval(cmd)
+    except:
+      data = cmd
+    else:
+      data = eval(cmd)
+      update_vars(data)
 
   finally:
     update_log(log_path,data)
