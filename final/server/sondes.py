@@ -28,12 +28,12 @@ i2c_address = {
 }
 
 checks = {
-  "networking"    : True,
-  "water_lvl"     : True,
-  "battery_cells" : True,
-  "ext_pres_temp" : True,
-  "oxygen"        : True,
-  "int_pres_temp" : True
+  "networking"    : 1,
+  "water_lvl"     : 0,
+  "battery_cells" : 0,
+  "ext_pres_temp" : 0,
+  "oxygen"        : 1,
+  "int_pres_temp" : 1
 }
 
 #####
@@ -91,7 +91,7 @@ else:
 #####
 #####
 
-#TO_CHECK: setup dissolved oxygen probe
+#DONE: setup dissolved oxygen probe
 if checks["oxygen"]:
   oxygen = AtlasI2C(address=0x61,name="dissolved oxygen probe")
   oxygen.query("Plock,1") # enable protocol lock (locks device to I2C mode)
@@ -107,9 +107,10 @@ else:
 #####
 #####
 
-#TO_CHECK: setup grove bme280 (pres_temp_internal)
+#DONE: setup grove bme280 (pres_temp_internal)
 if checks["int_pres_temp"]:
   bme280.setup() # setup probe connection
+  bme280.readTempC() # needed to read pressure
   bme280.setReferencePressure(bme280.readFloatPressure()) # set reference for altitude calculation
   
   # °C temp     : bme280.readTempC()
@@ -172,7 +173,7 @@ while running:
   """
 
   values["i"] = i
-  values["t"] = t = (time.perf_counter() - t0) * 1000
+  values["t"] = t = round(time.perf_counter() - t0,3)
   values["delta_t"] = t - t_last
   t_last = t
 
@@ -180,7 +181,7 @@ while running:
   if checks["water_lvl"]:
     values["lvl_val"]  = water_lvl.value
     values["lvl_volt"] = water_lvl.voltage
-    values["lvl_percent"] = round(round(values["lvl_volt"],3)/3.0*100,2)
+    values["lvl_percent"] = round(values["lvl_volt"]/3.0*100,2)
 
   ### cellules batterie
   if checks["battery_cells"]:
@@ -203,16 +204,16 @@ while running:
 
   ### dissolved oxygen
   if checks["oxygen"]:
-    oxygen.query(f"T,{values["ext_temp"]}") # temperature compensation
-    oxygen.query(f"P,{ext_pres_temp_sensor.pressure(ms5837.UNITS_kPa)}") # pressure compensation
-    values["dissolved_oxygen"] = oxygen.query("R")
+    # oxygen.query("T,"+str(values["ext_temp"])) # temperature compensation
+    # oxygen.query("P,"+str(ext_pres_temp_sensor.pressure(ms5837.UNITS_kPa))) # pressure compensation
+    values["dissolved_oxygen"] = "".join(oxygen.query("R").split(" ")[1:])
 
   ### pres / temp internal
   if checks["int_pres_temp"]:
-    values["int_pressure"] = bme280.readFloatPressure()
-    values["int_temp"] = bme280.readTempC()
-    values["int_humidity"] = bme280.readFloatHumidity()
-    values["int_alti"] = bme280.readFloatAltitudeMeters()
+    values["int_temp"] = round(bme280.readTempC(),2)
+    values["int_pressure"] = round(bme280.readFloatPressure()/100,2)
+    values["int_humidity"] = round(bme280.readFloatHumidity(),2)
+    values["int_alti"] = round(bme280.readFloatAltitudeMeters(),3)
 
   data = str(values)
   i += 1
@@ -223,11 +224,11 @@ while running:
       print("data sent")
     except IOError:
       # broken pipe
-      print(f"unable to send data : {sys.exc_info()[1]}")
+      print("unable to send data : "+str(sys.exc_info()[1]))
       print("check socket connection")
       running = False
     except:
-      print(f"{sys.exc_info()[0]} : {sys.exc_info()[1]}")
+      print(str(sys.exc_info()[0])+" : "+str(sys.exc_info()[1]))
       print("error while sending data. ignoring...")
       receiver.send("can't read probes data (server error)".encode())
   else:

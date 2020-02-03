@@ -24,7 +24,14 @@ def update_debug(window,text,msg,prefix="\n"):
 
 def update_log(logpath,data):
   with open(logpath,mode='a') as file:
-    file.write(data)
+    file.write(data+"\n")
+
+def update_vars(data):
+  for x in data:
+    if "percent" in x:
+      tk_vars[x].set(f"{data[x]}%")
+    else:
+      tk_vars[x].set(data[x])
 
 def grid(win,var,coords,font):
   tk.Label(win,font=font, text=f"{var} :").grid(row=coords[0]+1,column=coords[1]*2,sticky=tk.E)
@@ -117,7 +124,7 @@ except:
 keyboard.add_hotkey('esc',lambda: exec("global running;running=False"),suppress=False)
 update_debug(win,debug_screen,"waiting for data...")
 
-logpath = time.strftime('sm4000_received_data\\probes_data\\sm4000_probes_data_%Y-%m-%d_%H-%M-%S.txt')
+log_path = time.strftime('sm4000_received_data\\probes_data\\sm4000_probes_data_%Y-%m-%d_%H-%M-%S.txt')
 running = True
 while running:
   try:
@@ -127,12 +134,7 @@ while running:
 
     else:
       data = eval(cmd)
-
-      for x in data:
-        if "percent" in x:
-          tk_vars[x].set(f"{data[x]}%")
-        else:
-          tk_vars[x].set(data[x])
+      update_vars(data)
 
   except:
     data = "can't read incoming data (client error)"
