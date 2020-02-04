@@ -26,16 +26,19 @@ def update_log(logpath,data):
   with open(logpath,mode='a') as file:
     file.write(str(data)+"\n")
 
-def update_vars(data):
+def update_vars(data,tk_vars):
   for x in data:
     if x in ["lvl_percent","bat_percent","int_humidity"]:
       tk_vars[x].set(str(data[x])+"%")
     else:
       tk_vars[x].set(data[x])
 
-def grid(win,var,coords,font):
-  tk.Label(win,font=font, text=f"{var} :").grid(row=coords[0]+1,column=coords[1]*2,sticky=tk.E)
-  tk.Label(win,font=font, textvariable=tk_vars[var]).grid(row=coords[0]+1,column=coords[1]*2+1,sticky=tk.W)
+def grid(win,var,font):
+  for y in range(len(var)):
+    for x in range(len(var[y])):
+      varname = list( var[y].keys() )[x] # ="i"
+      tk.Label(win,font=(font[0],font[1]*var[y][varname]), text=f"{varname} :").grid(row=x+1,column=y*2,sticky=tk.E)
+      tk.Label(win,font=(font[0],font[1]*var[y][varname]), textvariable=tk_vars[varname] ).grid(row=x+1,column=y*2+1,sticky=tk.W)
 
 win = tk.Tk()
 win.title("GUI sondes")
@@ -43,7 +46,7 @@ win.title("GUI sondes")
 font_debug = ('Helvetica', 11) # font used in the Text widget
 font = ('Helvetica', 13) # font used elsewhere in tk
 
-debug_screen = tk.Text(win,height=7,width=120,state=tk.DISABLED,font=font_debug)
+debug_screen = tk.Text(win,height=15,width=130,state=tk.DISABLED,font=font_debug)
 debug_screen.grid(row=0,column=0,columnspan=10)
 
 tk_vars = {
@@ -70,40 +73,27 @@ tk_vars = {
   "dissolved_oxygen" : DoubleVar()
 }
 
-grid_val = {
-  "i"                : (0,0),
-  "t"                : (1,0),
-  "delta_t"          : (2,0),
+grid_val = [
+  {"i":1,"t":1,"delta_t":1},
+  {"lvl_val":1,"lvl_volt":1,"lvl_percent":1},
+  {"bat_val":1,"bat_volt":1,"bat_percent":1},
+  {"ext_temp":1,"ext_depth":1,"ext_alti":1},
+  {"int_pressure":1,"int_temp":1,"int_humidity":1,"dissolved_oxygen":1}
+] # gather all vars in line then in column with their magnification factor
 
-  "lvl_val"          : (0,1),
-  "lvl_volt"         : (1,1),
-  "lvl_percent"      : (2,1),
+grid(win,grid_val,font)
 
-  "bat_val"          : (0,2),
-  "bat_volt"         : (1,2),
-  "bat_percent"      : (2,2),
-
-  "ext_pressure"     : (0,3),
-  "ext_temp"         : (1,3),
-  "ext_depth"        : (2,3),
-  "ext_alti"         : (3,3),
-
-  "int_pressure"     : (0,4),
-  "int_temp"         : (1,4),
-  "int_humidity"     : (2,4),
-  "dissolved_oxygen" : (3,4)
-}
-
-for i in grid_val.keys():
-  grid(win,i,grid_val[i],font)
+multi=4 # coef to enlarge
+var="ext_pressure" # variable to enlarge
+tk.Label(win,font=(font[0],font[1]*multi), text=f"{var} :").grid(row=4,column=0,columnspan=5,rowspan=2,sticky=tk.E)
+tk.Label(win,font=(font[0],font[1]*multi), textvariable=tk_vars[var] ).grid(row=4,column=5,columnspan=3,rowspan=2,sticky=tk.W)
 
 for x in ["lvl_percent","bat_percent","int_humidity"]:
   tk_vars[x].set("00.00%")
 update_window(win)
 
 try:
-  # ip = ("192.168.137.2",50003)
-  ip = ("192.168.0.31",50001)
+  ip = ("192.168.137.2",50003)
 
   update_debug(win,debug_screen,f"Connecting to {':'.join(map(str,ip))}...",prefix="")
   client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -142,7 +132,7 @@ while running:
       data = cmd
     else:
       data = eval(cmd)
-      update_vars(data)
+      update_vars(data,tk_vars)
 
   finally:
     update_log(log_path,data)

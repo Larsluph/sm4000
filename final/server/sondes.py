@@ -31,7 +31,7 @@ checks = {
   "networking"    : 1,
   "water_lvl"     : 0,
   "battery_cells" : 0,
-  "ext_pres_temp" : 0,
+  "ext_pres_temp" : 1,
   "oxygen"        : 1,
   "int_pres_temp" : 1
 }
@@ -93,7 +93,7 @@ else:
 
 #DONE: setup dissolved oxygen probe
 if checks["oxygen"]:
-  oxygen = AtlasI2C(address=0x61,name="dissolved oxygen probe")
+  oxygen = AtlasI2C(address=0x61)
   oxygen.query("Plock,1") # enable protocol lock (locks device to I2C mode)
   oxygen.query("L,1")
   print(oxygen.query("i")) # ask for probe information
@@ -150,27 +150,6 @@ i = 1
 running = True
 while running:
   values = dict()
-  """
-  values = {
-    "i":0,
-    "t":0,
-    "delta_t":0,
-    "lvl_val":0,
-    "lvl_volt":0,
-    "lvl_percent":0,
-    "bat_val":0,
-    "bat_volt":0,
-    "bat_percent":0,
-    "ext_pressure":0,
-    "ext_temp":0,
-    "ext_depth":0,
-    "ext_alti":0,
-    "dissolved_oxygen":0,
-    "int_pressure":0,
-    "int_temp":0,
-    "int_humidity":0
-  }
-  """
 
   values["i"] = i
   values["t"] = t = round(time.perf_counter() - t0,3)
@@ -194,20 +173,19 @@ while running:
   ### pres / temp external
   if checks["ext_pres_temp"]:
     if ext_pres_temp_sensor.read():
-      values["ext_pressure"] = ext_pres_temp_sensor.pressure(ms5837.UNITS_mbar)
-      values["ext_temp"] = ext_pres_temp_sensor.temperature(ms5837.UNITS_Centigrade)
+      values["ext_pressure"] = round(ext_pres_temp_sensor.pressure(ms5837.UNITS_mbar),2)
+      values["ext_temp"] = round(ext_pres_temp_sensor.temperature(ms5837.UNITS_Centigrade),2)
       values["ext_depth"] = round(ext_pres_temp_sensor.depth(),2)
       values["ext_alti"] = round(ext_pres_temp_sensor.altitude(),2)
     else:
-      print("can't read sensor data")
-      values["ext_pressure"]=values["ext_pressure"]=values["ext_temp"]=values["ext_depth"]=values["ext_alti"] = 0
+      print("can't read ext_pres_temp data")
 
   ### dissolved oxygen
   if checks["oxygen"]:
-    if checks["ext_pres_temp"]
-      oxygen.query("T,"+str(values["ext_temp"])) # temperature compensation
-      oxygen.query("P,"+str(ext_pres_temp_sensor.pressure(ms5837.UNITS_kPa))) # pressure compensation
-    values["dissolved_oxygen"] = "".join(oxygen.query("R").split(" ")[1:])
+    if checks["ext_pres_temp"]:
+      oxygen.query( "T," + str(ext_pres_temp_sensor.temperature(ms5837.UNITS_Centigrade)) ) # temperature compensation
+      oxygen.query( "P," + str(ext_pres_temp_sensor.pressure(ms5837.UNITS_kPa))) # pressure compensation
+    values["dissolved_oxygen"] = oxygen.query("R").rstrip("\x00").lstrip("Suces: ")
 
   ### pres / temp internal
   if checks["int_pres_temp"]:
