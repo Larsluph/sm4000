@@ -51,7 +51,6 @@ if checks["battery_cells"]:
   # battery_cells = [AnalogIn(ads_battery, i) for i in range(4)]
   battery_cells = AnalogIn(ads_battery, ADS.P3)
 
-# 32768 limite batterie +/-
 # cap = [3.00:4.20]
 # cap = round(bat,3)-3
 # cap = round(cap/1.2*100,2)
@@ -165,11 +164,10 @@ while running:
     values["lvl_volt"] = water_lvl.voltage
     values["lvl_percent"] = round(values["lvl_volt"]/3.0*100,2)
 
-  ### cellules batterie
+  ### TDS / cellules batterie
   if checks["battery_cells"]:
-    # bat_val  = [battery_cells[i].value for i in range(4)]
+    values["tds_volt"] = tds_meter.voltage
     # bat_volt = [battery_cells[i].voltage for i in range(4)]
-    values["bat_val"]  = battery_cells.value
     values["bat_volt"] = battery_cells.voltage
     values["bat_percent"] = round(round(values["bat_volt"],3)-3/1.2*100,2)
 
