@@ -2,3 +2,4 @@ __pycache__/
 .vscode/
 sm4000_received_data/
 *#
+var_sync.txt

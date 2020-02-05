@@ -9,7 +9,6 @@ from tkinter import DoubleVar, IntVar, StringVar
 
 import keyboard
 
-
 def update_window(window):
   window.update_idletasks()
   window.update()
@@ -33,18 +32,21 @@ def update_vars(data,tk_vars):
     else:
       tk_vars[x].set(data[x])
 
+def sync_vars(filepath,to_sync):
+  with open(filepath,"w") as f:
+    f.write(str(to_sync))
+
 def grid(win,var,font):
   for y in range(len(var)):
     for x in range(len(var[y])):
-      varname = list( var[y].keys() )[x] # ="i"
-      tk.Label(win,font=(font[0],font[1]*var[y][varname]), text=f"{varname} :").grid(row=x+1,column=y*2,sticky=tk.E)
-      tk.Label(win,font=(font[0],font[1]*var[y][varname]), textvariable=tk_vars[varname] ).grid(row=x+1,column=y*2+1,sticky=tk.W)
+      tk.Label(win,font=font, text=f"{var[y][x]} :").grid(row=x+1,column=y*2,sticky=tk.E)
+      tk.Label(win,font=font, textvariable=tk_vars[ var[y][x] ] ).grid(row=x+1,column=y*2+1,sticky=tk.W)
 
 win = tk.Tk()
 win.title("GUI sondes")
 
 font_debug = ('Helvetica', 11) # font used in the Text widget
-font = ('Helvetica', 13) # font used elsewhere in tk
+font = ('Helvetica', 14) # font used elsewhere in tk
 
 debug_screen = tk.Text(win,height=15,width=130,state=tk.DISABLED,font=font_debug)
 debug_screen.grid(row=0,column=0,columnspan=10)
@@ -74,19 +76,14 @@ tk_vars = {
 }
 
 grid_val = [
-  {"i":1,"t":1,"delta_t":1},
-  {"lvl_val":1,"lvl_volt":1,"lvl_percent":1},
-  {"tds_volt":1,"bat_volt":1,"bat_percent":1},
-  {"ext_temp":1,"ext_depth":1,"ext_alti":1},
-  {"int_pressure":1,"int_temp":1,"int_humidity":1,"dissolved_oxygen":1}
-] # gather all vars in line then in column with their magnification factor
+  ["i","t","delta_t"],
+  ["lvl_val","lvl_volt","lvl_percent"],
+  ["tds_volt","bat_volt","bat_percent"],
+  ["ext_pressure","ext_temp","ext_depth","ext_alti"],
+  ["int_pressure","int_temp","int_humidity","dissolved_oxygen"]
+] # gather all vars in line then in column
 
 grid(win,grid_val,font)
-
-multi=4 # coef to enlarge
-var="ext_pressure" # variable to enlarge
-tk.Label(win,font=(font[0],font[1]*multi), text=f"{var} :").grid(row=4,column=0,columnspan=5,rowspan=2,sticky=tk.E)
-tk.Label(win,font=(font[0],font[1]*multi), textvariable=tk_vars[var] ).grid(row=4,column=5,columnspan=3,rowspan=2,sticky=tk.W)
 
 for x in ["lvl_percent","bat_percent","int_humidity"]:
   tk_vars[x].set("00.00%")
@@ -133,6 +130,7 @@ while running:
     else:
       data = eval(cmd)
       update_vars(data,tk_vars)
+      sync_vars("var_sync.txt", {x:data[x] for x in ["ext_pressure","bat_percent"]} )
 
   finally:
     update_log(log_path,data)

@@ -16,6 +16,12 @@ import cv2
 
 os.system("title client_camera")
 
+def var_sync(filepath):
+  with open(filepath,"r") as f:
+    content = eval(f.readline().rstrip("\n"))
+
+  return content
+
 client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 print("Connecting...")
 ip = ('192.168.137.2', 50002)
@@ -37,24 +43,41 @@ with open("sm4000_received_data\\camera_data\\"+vidname,mode='wb') as vid_file:
 
   status=str()
   while not(status):
+    try:
+      data_hud = var_sync("var_sync.txt")
+    except:
+      var_check = False
+    else:
+      var_check = True
+
     bytes_var += stream.read(4096)
     a = bytes_var.find(b'\xff\xd8')
     b = bytes_var.find(b'\xff\xd9')
 
     if a!=-1 and b!=-1:
-      image_bytes = bytes_var[a:b + 2]
-      bytes_var = bytes_var[b + 2:]
-      vid_file.write(image_bytes)
-      vid_file.flush()
+      image_bytes = bytes_var[a:b+2]
+      bytes_var = bytes_var[b+2:]
 
       img = cv2.imdecode(numpy.frombuffer(image_bytes, dtype=numpy.uint8),1)
+      img_check = img
 
       width = int(img.shape[1] * scale / 100)
       height = int(img.shape[0] * scale / 100)
       dsize = (width,height)
 
-      img = cv2.resize(img,dsize,interpolation=cv2.INTER_AREA)
-      cv2.imshow('Image from piCamera', img)
+      # DONE: implement camera HUD
+      if var_check:
+        txt_color = (255,100,000)[::-1]
+        img_pre_process = cv2.putText(img,f"{data_hud["bat_percent"]}%",(round(img.shape[1]*.05),round(img.shape[0]*.10)),cv2.FONT_HERSHEY_SIMPLEX,2,txt_color,thickness=3) # battery percent left
+        img_pre_process = cv2.putText(img,str(data_hud["ext_pressure"]),(round(img.shape[1]*.75),round(img.shape[0]*.10)),cv2.FONT_HERSHEY_SIMPLEX,2,txt_color,thickness=3) # external pressure
+        img_check = img_pre_process
+
+      img_post_process = cv2.resize(img_check,dsize,interpolation=cv2.INTER_AREA)
+
+      cv2.imshow('Image from piCamera', img_post_process)
+      vid_file.write(cv2.imencode(".jpeg",img_pre_process)[1].tostring().encode())
+      vid_file.flush()
+
       if cv2.waitKey(1) & 0xFF == ord('q'):
         status="stop"
 

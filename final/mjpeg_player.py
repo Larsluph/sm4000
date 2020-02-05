@@ -3,7 +3,8 @@
 import cv2, numpy, time, sys
 
 vid_path = sys.argv[1]
-vid_file = open(vid_path,mode='rb')
+with open(vid_path,mode='rb') as vid_file:
+    bytes_var = vid_file.read()
 
 if len(sys.argv) < 3:
     fps = 30
@@ -13,7 +14,6 @@ else:
 frame_counter = 0
 scale = 50
 
-bytes_var = vid_file.read()
 while len(bytes_var) != 0:
     a = bytes_var.find(b'\xff\xd8')
     b = bytes_var.find(b'\xff\xd9')
@@ -45,5 +45,4 @@ while len(bytes_var) != 0:
 
 print(frame_counter,"frames")
 cv2.destroyAllWindows()
-vid_file.close()
 print('END')
