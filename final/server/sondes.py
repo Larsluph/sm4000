@@ -102,6 +102,7 @@ if checks["oxygen"]:
   print("dissolved oxygen probe initialized")
   print("Calibrating...")
   oxygen.query("Cal") # calibrate to atmospheric oxygen levels
+  oxygen.query("R") # first read to make sure reading is working
   print("Calibration complete")
 else:
   print("ignoring dissolved_oxygen...")

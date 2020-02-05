@@ -35,8 +35,8 @@ with open("sm4000_received_data\\camera_data\\"+vidname,mode='wb') as vid_file:
 
   scale = 50
 
-  running = True
-  while running:
+  status=str()
+  while not(status):
     bytes_var += stream.read(4096)
     a = bytes_var.find(b'\xff\xd8')
     b = bytes_var.find(b'\xff\xd9')
@@ -56,7 +56,7 @@ with open("sm4000_received_data\\camera_data\\"+vidname,mode='wb') as vid_file:
       img = cv2.resize(img,dsize,interpolation=cv2.INTER_AREA)
       cv2.imshow('Image from piCamera', img)
       if cv2.waitKey(1) & 0xFF == ord('q'):
-        running = False
+        status="stop"
 
 client_socket.send(status.encode())
 cv2.destroyAllWindows()
