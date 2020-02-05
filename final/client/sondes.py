@@ -58,7 +58,7 @@ tk_vars = {
   "lvl_volt"         : DoubleVar(),
   "lvl_percent"      : StringVar(),
 
-  "bat_val"          :    IntVar(),
+  "tds_volt"         :    IntVar(),
   "bat_volt"         : DoubleVar(),
   "bat_percent"      : StringVar(),
 
@@ -76,7 +76,7 @@ tk_vars = {
 grid_val = [
   {"i":1,"t":1,"delta_t":1},
   {"lvl_val":1,"lvl_volt":1,"lvl_percent":1},
-  {"bat_val":1,"bat_volt":1,"bat_percent":1},
+  {"tds_volt":1,"bat_volt":1,"bat_percent":1},
   {"ext_temp":1,"ext_depth":1,"ext_alti":1},
   {"int_pressure":1,"int_temp":1,"int_humidity":1,"dissolved_oxygen":1}
 ] # gather all vars in line then in column with their magnification factor
