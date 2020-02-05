@@ -58,7 +58,7 @@ tk_vars = {
   "lvl_volt"         : DoubleVar(),
   "lvl_percent"      : StringVar(),
 
-  "tds_volt"         :    IntVar(),
+  "tds_volt"         : DoubleVar(),
   "bat_volt"         : DoubleVar(),
   "bat_percent"      : StringVar(),
 
