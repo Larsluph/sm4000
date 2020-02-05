@@ -47,6 +47,7 @@ if checks["water_lvl"]:
 
 if checks["battery_cells"]:
   ads_battery = ADS.ADS1115(i2c,address=i2c_address["ads_battery"])
+  tds_meter = AnalogIn(ads_battery,ADS.P0)
   # battery_cells = [AnalogIn(ads_battery, i) for i in range(4)]
   battery_cells = AnalogIn(ads_battery, ADS.P3)
 
@@ -61,7 +62,9 @@ if checks["water_lvl"]:
 
 if checks["battery_cells"]:
   if not(battery_cells.value):
-    print("battery_cells ads could not be initialized")
+    print("battery_cells couldn't be initialized")
+  if not(tds_meter.value):
+    print("TDS_meter couldn't be initialized")
 
 if checks["water_lvl"] or checks["battery_cells"]:
   print("ADS check successful")
@@ -75,7 +78,7 @@ else:
 if checks["ext_pres_temp"]:
   ext_pres_temp_sensor = ms5837.MS5837_30BA()
   if not ext_pres_temp_sensor.init():
-    print("ext_pres_temp_sensor could not be initialized")
+    print("ext_pres_temp_sensor couldn't be initialized")
     raise SystemExit
 
   if not ext_pres_temp_sensor.read():
