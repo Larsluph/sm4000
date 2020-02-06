@@ -42,7 +42,7 @@ with open("sm4000_received_data\\camera_data\\"+vidname,mode='wb') as vid_file:
   scale = 50
 
   status=str()
-  while not(status):
+  while status != "stop":
     try:
       data_hud = var_sync("var_sync.txt")
     except:
@@ -69,7 +69,7 @@ with open("sm4000_received_data\\camera_data\\"+vidname,mode='wb') as vid_file:
       if var_check:
         txt_color = (255,100,000)[::-1]
         img_pre_process = cv2.putText(img,f"{data_hud["bat_percent"]}%",(round(img.shape[1]*.05),round(img.shape[0]*.10)),cv2.FONT_HERSHEY_SIMPLEX,2,txt_color,thickness=3) # battery percent left
-        img_pre_process = cv2.putText(img,str(data_hud["ext_pressure"]),(round(img.shape[1]*.75),round(img.shape[0]*.10)),cv2.FONT_HERSHEY_SIMPLEX,2,txt_color,thickness=3) # external pressure
+        img_pre_process = cv2.putText(img,f"{data_hud["ext_pressure"]}mbar",(round(img.shape[1]*.75),round(img.shape[0]*.10)),cv2.FONT_HERSHEY_SIMPLEX,2,txt_color,thickness=3) # external pressure
         img_check = img_pre_process
 
       img_post_process = cv2.resize(img_check,dsize,interpolation=cv2.INTER_AREA)
