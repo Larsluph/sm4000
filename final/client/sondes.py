@@ -130,7 +130,7 @@ while running:
     else:
       data = eval(cmd)
       update_vars(data,tk_vars)
-      sync_vars("var_sync.txt", {x:data[x] for x in ["ext_pressure","bat_percent"]} )
+      sync_vars("var_sync.txt", {x:tk_vars[x].get() for x in ["ext_pressure","bat_percent"]} )
 
   finally:
     update_log(log_path,data)
