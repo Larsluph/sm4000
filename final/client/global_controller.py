@@ -213,7 +213,7 @@ def update_debug(data,msg,prefix="\n"):
     data.debug_screen.config(state=tk.DISABLED)
     data.debug_screen.see(tk.END)
 
-    update_window(data.window)
+    update_window(data.win)
     return
 
   else:
@@ -292,11 +292,13 @@ def turn_right(data):
 #   pass
 
 def up(data):
-  data.dir["y"] += +data.pos
+  data.dir["y"] += +200
+  # data.dir["y"] += +data.pos
   send(data)
 
 def down(data):
-  data.dir["y"] += -data.pos
+  data.dir["y"] += -200
+  # data.dir["y"] += -data.pos
   send(data)
 
 def stop(data):
@@ -427,8 +429,7 @@ if joytest:
         wait_button(data.joy,11)
 
       elif data.buttons[12] == 1:
-        msg="stopping transmission..."
-        update_debug(data.win,data.debug_screen,msg)
+        update_debug(data,"stopping transmission...")
         data.dir["powered"] = False
         data.running = False
 
@@ -444,8 +445,7 @@ if joytest:
     client.send("'exit'".encode("Utf8"))
     client.close()
 
-  msg="END OF PROGRAM"
-  update_debug(data,msg)
+  update_debug(data,"END OF PROGRAM")
   time.sleep(0.5)
 
   if data.gui_check:
