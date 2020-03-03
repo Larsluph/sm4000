@@ -43,6 +43,9 @@ class Vars:
     return
 
   def key_vars(self):
+    self.gui_check = False
+    self.win.destroy()
+
     self.key_init = True
     self.joy_init = False
 
@@ -64,6 +67,7 @@ class Vars:
 
   def gui_setup(self):
     self.win = tk.Tk()
+    self.win.wm_attributes("-topmost",1)
     self.win.title("global controller GUI")
 
     self.font_debug = ('Helvetica', 11) # font used in the Text widget
@@ -136,23 +140,43 @@ class Vars:
 ###########
 
 def prompt_popup(window,title,msg):
-  global prompt_win,user_input
-    prompt_win = tk.Toplevel(master=window)
-    prompt_win.title(title)
-    prompt_win.protocol("WM_DELETE_WINDOW",lambda:pass)
-    tk.Label(prompt_win,text=msg).pack(sticky=tk.W)
-    entry = tk.Entry(prompt_win,width=27)
-    entry.pack(sticky=tk.E)
-    prompt_win.bind("<Return>",callback_prompt)
-    tk.Button(prompt_win,text="Validate!",command=callback_prompt).pack()
+  global prompt_win, user_entry, user_input
+  prompt_win = tk.Toplevel(master=window)
+  prompt_win.wm_attributes("-topmost",1)
+  prompt_win.title(title)
+  prompt_win.protocol("WM_DELETE_WINDOW",lambda:exec("pass"))
+  tk.Label(prompt_win,text=msg).grid(row=0,column=0)
+  user_entry = tk.Entry(prompt_win,width=3)
+  user_entry.grid(row=0,column=1)
+  prompt_win.bind("<Return>",callback_prompt)
+  tk.Button(prompt_win,text="Validate!",command=callback_prompt).grid(row=1,columnspan=2)
 
-    entry.focus_force()
-    prompt_win.wait_window()
-    return user_input
+  user_entry.focus_force()
+  prompt_win.wait_window()
+  try:
+    output = user_input
+  except:
+    print("Action cancelled by user\nExiting...")
+    raise SystemExit
+  del prompt_win, user_entry, user_input
+  return output
 
 def callback_prompt(*args,**kwargs):
-  global prompt_win, user_input
-  .....
+  global prompt_win, user_entry, user_input
+  user_input = user_entry.get()
+  errors = list()
+
+  if not(user_input.lower() in ["n","y","no","yes"]):
+    errors.append("invalid_data")
+    user_entry.delete(0,tk.END)
+    user_entry.insert(0,"invalid data entered (y/n)")
+
+  if errors == []:
+    if user_input.lower() in ["y","yes"]:
+      user_input = 1
+    else:
+      user_input = 0
+    prompt_win.destroy()
 
 def update_dir(data):
   pygame.event.get()
@@ -357,9 +381,9 @@ data = Vars() # define vars storage
 if data.gui_check:
   data.gui_setup() # setup gui if enabled
 
-update_debug(data,"check network : (y/n)",prefix="")
+update_debug(data,"net check",prefix="")
+net_check = bool(prompt_popup(data.win,"net check","Do you want to check network connection ? (yes/no)"))
 
-net_check = True if input() == "y" else False
 if net_check:
   ip = ("192.168.137.2",50001)
 
@@ -373,16 +397,16 @@ else:
 pygame.init()
 pygame.joystick.init()
 
-update_debug(data,"use keyboard ? (y/n)")
-
-joytest = True if input() == "n" else False
+if pygame.joystick.get_count() == 0:
+  joytest = 0
+else:
+  update_debug(data,"joystick check")
+  joytest = bool(prompt_popup(data.win,"joystick check","Do you want to use joystick ? (yes/no)"))
 
 if joytest:
   # joy_control
   data.joy_vars()
-
   update_debug(data,"joystick ready")
-
   update_debug(data,"Waiting for instructions...")
 
   while data.running:

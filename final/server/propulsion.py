@@ -88,10 +88,8 @@ with serial.Serial('/dev/ttyUSB0', 9600, timeout = 1) as com:
         print(dir)
 
         if dir == "exit":
-            for x in ["left","y","right"]:
-                dir[x] = 0
-                move(com,dir,2000)
-                light_mgmt(com,0,2000)
+            move(com,{"left":0,"y":0,"right":0},2000)
+            light_mgmt(com,0,2000)
             break
 
         elif dir["powered"] == 1:
