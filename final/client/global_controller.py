@@ -135,6 +135,25 @@ class Vars:
 ## FUNCs ##
 ###########
 
+def prompt_popup(window,title,msg):
+  global prompt_win,user_input
+    prompt_win = tk.Toplevel(master=window)
+    prompt_win.title(title)
+    prompt_win.protocol("WM_DELETE_WINDOW",lambda:pass)
+    tk.Label(prompt_win,text=msg).pack(sticky=tk.W)
+    entry = tk.Entry(prompt_win,width=27)
+    entry.pack(sticky=tk.E)
+    prompt_win.bind("<Return>",callback_prompt)
+    tk.Button(prompt_win,text="Validate!",command=callback_prompt).pack()
+
+    entry.focus_force()
+    prompt_win.wait_window()
+    return user_input
+
+def callback_prompt(*args,**kwargs):
+  global prompt_win, user_input
+  .....
+
 def update_dir(data):
   pygame.event.get()
   data.axes = (
