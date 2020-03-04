@@ -21,6 +21,20 @@ def var_sync(filepath):
     content = eval(f.readline().rstrip("\n"))
 
   return content
+  
+def disp_overlay(img,data,pos,font=cv2.FONT_HERSHEY_SIMPLEX,font_size=2,color=(0,100,255),thickness=3):
+  val1,unit1 = pos[0].split(" ")
+  val2,unit2 = pos[1].split(" ")
+  if unit1 == "%":
+    val1 = round(img.shape[0]*(val1/100))
+  elif unit1 == "px":
+    pass
+
+  if unit2 == "%":
+    val2 = round(img.shape[1]*(val2/100))
+  elif unit2 == "px":
+    pass
+  cv2.putText(img,data,(val1,val2),font,font_size,color,thickness=thickness)
 
 client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 print("Connecting...")
@@ -59,7 +73,6 @@ with open("sm4000_received_data\\camera_data\\"+vidname,mode='wb') as vid_file:
       bytes_var = bytes_var[b+2:]
 
       img = cv2.imdecode(numpy.frombuffer(image_bytes, dtype=numpy.uint8),1)
-      img_check = img
 
       width = int(img.shape[1] * scale / 100)
       height = int(img.shape[0] * scale / 100)
@@ -67,18 +80,15 @@ with open("sm4000_received_data\\camera_data\\"+vidname,mode='wb') as vid_file:
 
       # DONE: implement camera HUD
       if var_check:
-        txt_color = (255,100,000)[::-1]
-        img_pre_process = cv2.putText(img,str(data_hud['bat_percent']),(round(img.shape[1]*.05),round(img.shape[0]*.10)),cv2.FONT_HERSHEY_SIMPLEX,2,txt_color,thickness=3) # battery percent left
-        img_pre_process = cv2.putText(img,str(data_hud['ext_pressure'])+"mbar",(round(img.shape[1]*.68),round(img.shape[0]*.10)),cv2.FONT_HERSHEY_SIMPLEX,2,txt_color,thickness=3) # external pressure
-        img_check = img_pre_process
+        disp_overlay(img,str(data_hud["bat_percent"])+"%",["5 %","10 %"])
+        disp_overlay(img,str(data_hud['ext_pressure'])+"mbar",["68 %","10 %"])
 
       vid_file.write(cv2.imencode(".jpeg",img_check)[1].tostring())
       vid_file.flush()
 
-      img_post_process = cv2.resize(img_check,dsize,interpolation=cv2.INTER_AREA)
+      img_post_process = cv2.resize(img,dsize,interpolation=cv2.INTER_AREA)
 
       cv2.imshow('Image from piCamera', img_post_process)
-
 
       if cv2.waitKey(1) & 0xFF == ord('q'):
         status="stop"
