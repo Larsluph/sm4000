@@ -83,7 +83,10 @@ with serial.Serial('/dev/ttyUSB0', 9600, timeout = 1) as com:
 
     while True:
         # DONE : reception telecommande
-        cmd = telecommande.recv(128).decode()
+        try:
+            cmd = telecommande.recv(128).decode()
+        except:
+            cmd = '{"powered":True,"left":0,"right":0,"y":200,"light_pow":False}'
         dir = eval(cmd)
         print(dir)
 
