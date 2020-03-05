@@ -26,14 +26,14 @@ def disp_overlay(img,data,pos,font=cv2.FONT_HERSHEY_SIMPLEX,font_size=2,color=(0
   val1,unit1 = pos[0].split(" ")
   val2,unit2 = pos[1].split(" ")
   if unit1 == "%":
-    val1 = round(img.shape[0]*(val1/100))
+    val1 = round(img.shape[0]*int(val1)/100)
   elif unit1 == "px":
-    pass
+    val1 = int(val1)
 
   if unit2 == "%":
-    val2 = round(img.shape[1]*(val2/100))
+    val2 = round(img.shape[1]*int(val2)/100)
   elif unit2 == "px":
-    pass
+    val2 = int(val2)
   cv2.putText(img,data,(val1,val2),font,font_size,color,thickness=thickness)
 
 client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -52,7 +52,6 @@ except:
 vidname = time.strftime('sm4000_camera_output_%Y-%m-%d_%H-%M-%S.mjpeg')
 with open("sm4000_received_data\\camera_data\\"+vidname,mode='wb') as vid_file:
   bytes_var = bytes(1)
-
   scale = 50
 
   status=str()
@@ -80,10 +79,11 @@ with open("sm4000_received_data\\camera_data\\"+vidname,mode='wb') as vid_file:
 
       # DONE: implement camera HUD
       if var_check:
-        disp_overlay(img,str(data_hud["bat_percent"])+"%",["5 %","10 %"])
-        disp_overlay(img,str(data_hud['ext_pressure'])+"mbar",["68 %","10 %"])
+      disp_overlay(img,f"{data_hud['bat_percent']}%",["5 %","7 %"])
+      disp_overlay(img,f"{data_hud['ext_depth']}m",["70 %","5 %"])
+      disp_overlay(img,f"{data_hud['ext_pressure']}mbar",["110 %","7 %"])
 
-      vid_file.write(cv2.imencode(".jpeg",img_check)[1].tostring())
+      vid_file.write(cv2.imencode(".jpeg",img)[1].tostring())
       vid_file.flush()
 
       img_post_process = cv2.resize(img,dsize,interpolation=cv2.INTER_AREA)
@@ -91,7 +91,7 @@ with open("sm4000_received_data\\camera_data\\"+vidname,mode='wb') as vid_file:
       cv2.imshow('Image from piCamera', img_post_process)
 
       if cv2.waitKey(1) & 0xFF == ord('q'):
-        status="stop"
+        status = "stop"
 
 client_socket.send(status.encode())
 cv2.destroyAllWindows()

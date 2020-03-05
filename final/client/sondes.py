@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+﻿#!/usr/bin/env python3
 #-*- coding:utf-8 -*-
 
 import os
@@ -27,20 +27,20 @@ def update_log(logpath,data):
 
 def update_vars(data,tk_vars):
   for x in data:
-    if x in ["lvl_percent","bat_percent","int_humidity"]:
-      tk_vars[x].set(str(data[x])+"%")
+    if "error" in x.lower():
+      tk_vars[x]["value"].set(f"{data[x]}")
     else:
-      tk_vars[x].set(data[x])
+      tk_vars[x]["value"].set(f"{data[x]}{tk_vars[x]['unit']}")
 
 def sync_vars(filepath,to_sync):
   with open(filepath,"w") as f:
     f.write(str(to_sync))
 
-def grid(win,var,font):
+def grid(win,tkvars,var,font):
   for y in range(len(var)):
     for x in range(len(var[y])):
       tk.Label(win,font=font, text=f"{var[y][x]} :").grid(row=x+1,column=y*2,sticky=tk.E)
-      tk.Label(win,font=font, textvariable=tk_vars[ var[y][x] ] ).grid(row=x+1,column=y*2+1,sticky=tk.W)
+      tk.Label(win,font=font, textvariable=tk_vars[ var[y][x] ]["value"] ).grid(row=x+1,column=y*2+1,sticky=tk.W)
 
 win = tk.Tk()
 win.title("GUI sondes")
@@ -52,27 +52,27 @@ debug_screen = tk.Text(win,height=15,width=130,state=tk.DISABLED,font=font_debug
 debug_screen.grid(row=0,column=0,columnspan=10)
 
 tk_vars = {
-  "i"                :    IntVar(),
-  "t"                : DoubleVar(),
-  "delta_t"          : DoubleVar(),
+  "i"                : {"value":StringVar(),"unit":""},
+  "t"                : {"value":StringVar(),"unit":"sec"},
+  "delta_t"          : {"value":StringVar(),"unit":"sec"},
 
-  "lvl_val"          :    IntVar(),
-  "lvl_volt"         : DoubleVar(),
-  "lvl_percent"      : StringVar(),
+  "lvl_val"          : {"value":StringVar(),"unit":""},
+  "lvl_volt"         : {"value":StringVar(),"unit":"V"},
+  "lvl_percent"      : {"value":StringVar(),"unit":"%"},
 
-  "tds_volt"         : DoubleVar(),
-  "bat_volt"         : DoubleVar(),
-  "bat_percent"      : StringVar(),
+  "tds_volt"         : {"value":StringVar(),"unit":"V"},
+  "bat_volt"         : {"value":StringVar(),"unit":"V"},
+  "bat_percent"      : {"value":StringVar(),"unit":"%"},
 
-  "ext_pressure"     : DoubleVar(),
-  "ext_temp"         : DoubleVar(),
-  "ext_depth"        : DoubleVar(),
-  "ext_alti"         : DoubleVar(),
+  "ext_pressure"     : {"value":StringVar(),"unit":"mbar"},
+  "ext_temp"         : {"value":StringVar(),"unit":"°C"},
+  "ext_depth"        : {"value":StringVar(),"unit":"m"},
+  "ext_alti"         : {"value":StringVar(),"unit":"m"},
 
-  "int_pressure"     : DoubleVar(),
-  "int_temp"         : DoubleVar(),
-  "int_humidity"     : StringVar(),
-  "dissolved_oxygen" : DoubleVar()
+  "int_pressure"     : {"value":StringVar(),"unit":"Pa"},
+  "int_temp"         : {"value":StringVar(),"unit":"°C"},
+  "int_humidity"     : {"value":StringVar(),"unit":"%"},
+  "dissolved_oxygen" : {"value":StringVar(),"unit":"mg/L"},
 }
 
 grid_val = [
@@ -83,10 +83,10 @@ grid_val = [
   ["int_pressure","int_temp","int_humidity","dissolved_oxygen"]
 ] # gather all vars in line then in column
 
-grid(win,grid_val,font)
+grid(win,tkvars,grid_val,font)
 
 for x in ["lvl_percent","bat_percent","int_humidity"]:
-  tk_vars[x].set("00.00%")
+  tk_vars[x]["value"].set("00.00%")
 update_window(win)
 
 try:
@@ -130,12 +130,13 @@ while running:
     else:
       data = eval(cmd)
       update_vars(data,tk_vars)
-      sync_vars("var_sync.txt", {x:tk_vars[x].get() for x in ["ext_pressure","bat_percent"]} )
+      sync_vars("var_sync.txt", {x:tk_vars[x]["value"].get() for x in ["ext_pressure","ext_depth","bat_percent"]} )
 
   finally:
     update_log(log_path,data)
     update_debug(win,debug_screen,data)
 
+os.system("del var_sync.txt")
 client.close()
 update_debug(win,debug_screen,"Disconnected")
 time.sleep(1)
