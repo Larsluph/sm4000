@@ -29,8 +29,8 @@ i2c_address = {
 
 checks = {
   "networking"    : 1,
-  "water_lvl"     : 0,
-  "battery_cells" : 0,
+  "water_lvl"     : 1,
+  "battery_cells" : 1,
   "ext_pres_temp" : 1,
   "oxygen"        : 1,
   "int_pres_temp" : 1
