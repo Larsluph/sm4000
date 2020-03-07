@@ -15,6 +15,23 @@ from modules.adafruit_ads1x15 import ads1115 as ADS
 from modules.adafruit_ads1x15.analog_in import AnalogIn
 from modules.AtlasI2C import AtlasI2C
 
+#############
+### FUNCs ###
+#############
+
+def check_error(values,var_name,to_check):
+  try:
+    to_check = eval(to_check)
+  except:
+    to_check = "error"
+
+  values[var_name] = to_check
+
+  if "error" in to_check.lower():
+    return 1
+  else:
+    return 0
+
 ##################
 ## MAIN PROGRAM ##
 ##################
@@ -93,7 +110,7 @@ else:
 #####
 #####
 
-#DONE: setup dissolved oxygen probe
+# DONE: setup dissolved oxygen probe
 if checks["oxygen"]:
   oxygen = AtlasI2C(address=0x61)
   oxygen.query("Plock,1") # enable protocol lock (locks device to I2C mode)
@@ -110,7 +127,7 @@ else:
 #####
 #####
 
-#DONE: setup grove bme280 (pres_temp_internal)
+# DONE: setup grove bme280 (pres_temp_internal)
 if checks["int_pres_temp"]:
   bme280.setup() # setup probe connection
   bme280.readTempC() # needed to read pressure
@@ -144,7 +161,7 @@ if checks["networking"]:
     time.sleep(1)
     raise SystemExit
 else:
-  print("ignoring socket connection...")
+  print("ignoring networking...")
 
 t0 = time.perf_counter()
 t_last = 0
@@ -163,7 +180,7 @@ while running:
   if checks["water_lvl"]:
     values["lvl_val"]  = water_lvl.value
     values["lvl_volt"] = water_lvl.voltage
-    values["lvl_percent"] = round(values["lvl_volt"]/3.0*100,2)
+    values["lvl_percent"] = round(values["lvl_volt"]/3*100,2)
 
   ### TDS / cellules batterie
   if checks["battery_cells"]:
@@ -175,10 +192,10 @@ while running:
   ### pres / temp external
   if checks["ext_pres_temp"]:
     if ext_pres_temp_sensor.read():
-      values["ext_pressure"] = round(ext_pres_temp_sensor.pressure(ms5837.UNITS_mbar),2)
-      values["ext_temp"] = round(ext_pres_temp_sensor.temperature(ms5837.UNITS_Centigrade),2)
-      values["ext_depth"] = round(ext_pres_temp_sensor.depth(),2)
-      values["ext_alti"] = round(ext_pres_temp_sensor.altitude(),2)
+      check_error(values,"ext_pressure",'round(ext_pres_temp_sensor.pressure(ms5837.UNITS_mbar),2)')
+      check_error(values,"ext_temp",'round(ext_pres_temp_sensor.temperature(ms5837.UNITS_Centigrade),2)')
+      check_error(values,"ext_depth",'round(ext_pres_temp_sensor.depth(),2)')
+      check_error(values,"ext_alti",'round(ext_pres_temp_sensor.altitude(),2)')
     else:
       print("can't read ext_pres_temp data")
 
@@ -187,13 +204,13 @@ while running:
     if checks["ext_pres_temp"]:
       oxygen.query( "T," + str(ext_pres_temp_sensor.temperature(ms5837.UNITS_Centigrade)) ) # temperature compensation
       oxygen.query( "P," + str(ext_pres_temp_sensor.pressure(ms5837.UNITS_kPa))) # pressure compensation
-    values["dissolved_oxygen"] = oxygen.query("R").rstrip("\x00").lstrip("Suces: ")
+    check_error(values,"dissolved_oxygen",'oxygen.query("R").rstrip("\x00").lstrip("Suces: ")')
 
   ### pres / temp internal
   if checks["int_pres_temp"]:
-    values["int_temp"] = round(bme280.readTempC(),2)
-    values["int_pressure"] = round(bme280.readFloatPressure()/100,2)
-    values["int_humidity"] = round(bme280.readFloatHumidity(),2)
+    check_error(values,"int_temp",'round(bme280.readTempC(),2)')
+    check_error(values,"int_pressure",'round(bme280.readFloatPressure()/100,2)')
+    check_error(values,"int_humidity",'round(bme280.readFloatHumidity(),2)')
 
   data = str(values)
   i += 1
