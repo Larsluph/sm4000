@@ -20,18 +20,21 @@ from modules.AtlasI2C import AtlasI2C
 #############
 
 def check_error(values,var_name,to_check):
-  status_code = 0
+  status_code = -1
   i = 0
   while i < 2 and status_code:
     try:
-      to_check = eval(to_check)
-      if "error" in to_check.lower():
-        to_check,status_code = to_check.split(":")
+      checked = eval(to_check)
+      if "error" in checked.lower():
+        checked,status_code = checked.split(":")
     except Exception as e:
-      to_check = str(e)
+      checked = str(e)
       status_code = 1
+    else:
+      status_code = 0
 
-    values[var_name] = str(to_check)+":"+str(status_code)
+    values[var_name] = str(checked)+":"+str(status_code)
+    i += 1
 
   return status_code
 
