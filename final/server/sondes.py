@@ -25,13 +25,16 @@ def check_error(values,var_name,to_check):
   while i < 2 and status_code:
     try:
       checked = eval(to_check)
-      if "error" in checked.lower():
-        checked,status_code = checked.split(":")
+
     except Exception as e:
       checked = str(e)
       status_code = 1
+
     else:
-      status_code = 0
+      if "error" in checked.lower():
+        checked,status_code = checked.split(":")
+      else:
+        status_code = 0
 
     values[var_name] = str(checked)+":"+str(status_code)
     i += 1
@@ -59,8 +62,7 @@ checks = {
   "int_pres_temp" : 1
 }
 
-#####
-#####
+
 
 # DONE: setup ads
 i2c = busio.I2C(board.SCL, board.SDA)
@@ -93,8 +95,7 @@ if checks["water_lvl"] or checks["battery_cells"]:
 else:
   print("ignoring ADSs...")
 
-#####
-#####
+
 
 # DONE: setup ms5837 (pres_temp_external)
 if checks["ext_pres_temp"]:
@@ -113,8 +114,7 @@ if checks["ext_pres_temp"]:
 else:
   print("ignoring ext_pres_temp...")
 
-#####
-#####
+
 
 # DONE: setup dissolved oxygen probe
 if checks["oxygen"]:
@@ -130,8 +130,7 @@ if checks["oxygen"]:
 else:
   print("ignoring dissolved_oxygen...")
 
-#####
-#####
+
 
 # DONE: setup grove bme280 (pres_temp_internal)
 if checks["int_pres_temp"]:
@@ -148,8 +147,7 @@ if checks["int_pres_temp"]:
 else:
   print("ignoring int_pres_temp...")
 
-#####
-#####
+
 
 # DONE: setup server
 if checks["networking"]:
@@ -182,11 +180,13 @@ while running:
   values["delta_t"] = round(t - t_last,3)
   t_last = t
 
+
   ### niveau d'eau
   if checks["water_lvl"]:
     values["lvl_val"]  = water_lvl.value
     values["lvl_volt"] = water_lvl.voltage
     values["lvl_percent"] = round(values["lvl_volt"]/3*100,2)
+
 
   ### TDS / cellules batterie
   if checks["battery_cells"]:
@@ -194,6 +194,7 @@ while running:
     # bat_volt = [battery_cells[i].voltage for i in range(4)]
     values["bat_volt"] = battery_cells.voltage
     values["bat_percent"] = round(round(values["bat_volt"],3)-3/1.2*100,2)
+
 
   ### pres / temp external
   if checks["ext_pres_temp"]:
@@ -205,6 +206,7 @@ while running:
     else:
       print("can't read ext_pres_temp data")
 
+
   ### dissolved oxygen
   if checks["oxygen"]:
     if checks["ext_pres_temp"]:
@@ -212,14 +214,17 @@ while running:
       oxygen.query( "P," + str(ext_pres_temp_sensor.pressure(ms5837.UNITS_kPa))) # pressure compensation
     check_error(values,"dissolved_oxygen",'oxygen.query("R").rstrip("\x00").lstrip("Suces: ")')
 
+
   ### pres / temp internal
   if checks["int_pres_temp"]:
     check_error(values,"int_temp",'round(bme280.readTempC(),2)')
     check_error(values,"int_pressure",'round(bme280.readFloatPressure()/100,2)')
     check_error(values,"int_humidity",'round(bme280.readFloatHumidity(),2)')
 
+
   data = str(values)
   i += 1
+
 
   if checks["networking"]:
     try:
@@ -238,8 +243,10 @@ while running:
     print(data)
   time.sleep(2)
 
-oxygen.close()
 
+# END_WHILE
+
+oxygen.close()
 receiver.close()
 server_socket.close()
 raise SystemExit
