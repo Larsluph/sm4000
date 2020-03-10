@@ -8,7 +8,7 @@ import time
 
 import serial
 
-import module_servos as servo
+import modules.servos as servo
 
 ##############
 #### FUNCs ###
