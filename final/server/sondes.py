@@ -9,6 +9,7 @@ import time
 
 import board
 import busio
+import config
 import smbus
 from modules import bme280, ms5837
 from modules.adafruit_ads1x15 import ads1115 as ADS
@@ -45,24 +46,8 @@ def check_error(values,var_name,to_check):
 ## MAIN PROGRAM ##
 ##################
 
-i2c_address = {
-  "ads_water": 0x48,
-  "ads_battery": 0x49,
-  "oxygen": 0x61,
-  "pres_temp_external": 0x76,
-  "pres_temp_internal": 0x77
-}
-
-checks = {
-  "networking"    : 1,
-  "water_lvl"     : 0,
-  "battery_cells" : 1,
-  "ext_pres_temp" : 1,
-  "oxygen"        : 1,
-  "int_pres_temp" : 1
-}
-
-
+i2c_address = config.i2c_address
+checks = config.probes_check
 
 # DONE: setup ads
 i2c = busio.I2C(board.SCL, board.SDA)
@@ -124,8 +109,9 @@ if checks["oxygen"]:
   print(oxygen.query("i")) # ask for probe information
   print("dissolved oxygen probe initialized")
   print("Calibrating oxygen probe...")
-  time.sleep(3)
+  time.sleep(1.5)
   oxygen.query("Cal") # calibrate to atmospheric oxygen levels
+  time.sleep(1.5)
   if "error" in str(oxygen.query("R")).lower(): # first read to make sure reading is working
     print("error detected\ndisabling oxygen probe...")
     checks["oxygen"] = 0
@@ -156,7 +142,7 @@ else:
 # DONE: setup server
 if checks["networking"]:
   try:
-    ip = ('192.168.137.2',50003)
+    ip = config.ip["sondes"]
     server_socket = socket.socket()
     server_socket.bind(ip)
     print("server binded to '%s'" % (":".join(map(str,ip))) )

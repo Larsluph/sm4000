@@ -7,6 +7,7 @@ import time
 
 import keyboard
 
+import config
 import picamera
 
 ##################
@@ -17,18 +18,18 @@ os.system("clear")
 
 # DONE : picamera
 try:
-    print("Initializing camera...")
-    camera = picamera.PiCamera(resolution=(1296,730),framerate=30)
-    camera.rotation = 180
-    camera.start_preview(alpha=0)
-    camera.stop_preview()
-    print("Camera initialized")
+  print("Initializing camera...")
+  camera = picamera.PiCamera(resolution=(1296,730),framerate=30)
+  camera.rotation = 180
+  camera.start_preview(alpha=0)
+  camera.stop_preview()
+  print("Camera initialized")
 except picamera.exc.PiCameraError:
-    print("Camera failed to initialize\nTry rebooting the system")
-    raise SystemExit
+  print("Camera failed to initialize\nTry rebooting the system")
+  raise SystemExit
 
 # DONE : server set up
-ip = ('192.168.137.2',50002)
+ip = config.ip["camera"]
 
 server_socket = socket.socket()
 server_socket.bind(ip)
@@ -46,7 +47,7 @@ camera.start_recording(stream, 'mjpeg')
 
 stop_stream = viewer.recv(32).decode()
 while stop_stream != "stop":
-    stop_stream = viewer.recv(32).decode()
+  stop_stream = viewer.recv(32).decode()
 
 camera.stop_recording()
 stream.close()
