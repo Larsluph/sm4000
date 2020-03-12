@@ -27,7 +27,7 @@ def check_error(values,var_name,to_check):
 
   values[var_name] = to_check
 
-  if "error" in to_check.lower():
+  if "error" in str(to_check).lower():
     return 1
   else:
     return 0
@@ -46,7 +46,7 @@ i2c_address = {
 
 checks = {
   "networking"    : 1,
-  "water_lvl"     : 1,
+  "water_lvl"     : 0,
   "battery_cells" : 1,
   "ext_pres_temp" : 1,
   "oxygen"        : 1,
@@ -114,15 +114,19 @@ else:
 if checks["oxygen"]:
   oxygen = AtlasI2C(address=0x61)
   oxygen.query("Plock,1") # enable protocol lock (locks device to I2C mode)
-  oxygen.query("L,1")
+  oxygen.query("L,1") # enable built-in LED
   print(oxygen.query("i")) # ask for probe information
   print("dissolved oxygen probe initialized")
-  print("Calibrating...")
+  print("Calibrating oxygen probe...")
+  time.sleep(3)
   oxygen.query("Cal") # calibrate to atmospheric oxygen levels
-  oxygen.query("R") # first read to make sure reading is working
-  print("Calibration complete")
+  if "error" in str(oxygen.query("R")).lower(): # first read to make sure reading is working
+    print("error detected\ndisabling oxygen probe...")
+    checks["oxygen"] = 0
+  else:
+    print("Calibration complete")
 else:
-  print("ignoring dissolved_oxygen...")
+  print("ignoring oxygen probe...")
 
 #####
 #####

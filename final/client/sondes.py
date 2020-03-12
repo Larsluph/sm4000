@@ -83,7 +83,7 @@ grid_val = [
   ["int_pressure","int_temp","int_humidity","dissolved_oxygen"]
 ] # gather all vars in line then in column
 
-grid(win,tkvars,grid_val,font)
+grid(win,tk_vars,grid_val,font)
 
 for x in ["lvl_percent","bat_percent","int_humidity"]:
   tk_vars[x]["value"].set("00.00%")

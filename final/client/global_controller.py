@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+﻿#!/usr/bin/env python3
 #-*- coding:utf-8 -*-
 
 import os
@@ -457,7 +457,7 @@ if joytest:
         data.dir["left"] = 0
         data.dir["right"] = 0
 
-      data.dir["y"] = data.pos*data.axes[4][1]
+      data.dir["y"] = 300*data.axes[4][1]
 
       if data.buttons[2] == 1:
         data.boosted = not(data.boosted)

@@ -79,9 +79,9 @@ with open("sm4000_received_data\\camera_data\\"+vidname,mode='wb') as vid_file:
 
       # DONE: implement camera HUD
       if var_check:
-      disp_overlay(img,f"{data_hud['bat_percent']}%",["5 %","7 %"])
-      disp_overlay(img,f"{data_hud['ext_depth']}m",["70 %","5 %"])
-      disp_overlay(img,f"{data_hud['ext_pressure']}mbar",["110 %","7 %"])
+        disp_overlay(img,f"{data_hud['bat_percent']}%",["5 %","7 %"])
+        disp_overlay(img,f"{data_hud['ext_depth']}m",["70 %","5 %"])
+        disp_overlay(img,f"{data_hud['ext_pressure']}mbar",["110 %","7 %"])
 
       vid_file.write(cv2.imencode(".jpeg",img)[1].tostring())
       vid_file.flush()
