@@ -8,6 +8,7 @@ import time
 import keyboard
 
 import config
+import config.camera as config
 import picamera
 
 ##################
