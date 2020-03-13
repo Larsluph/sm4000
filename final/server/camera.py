@@ -8,8 +8,8 @@ import time
 import keyboard
 
 import config
-import config.camera as config
 import picamera
+from config import camera as cfg
 
 ##################
 ## MAIN PROGRAM ##
@@ -30,7 +30,7 @@ except picamera.exc.PiCameraError:
   raise SystemExit
 
 # DONE : server set up
-ip = config.ip["camera"]
+ip = cfg.ip
 
 server_socket = socket.socket()
 server_socket.bind(ip)

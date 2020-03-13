@@ -11,6 +11,7 @@ import board
 import busio
 import config
 import smbus
+from config import sondes as cfg
 from modules import bme280, ms5837
 from modules.adafruit_ads1x15 import ads1115 as ADS
 from modules.adafruit_ads1x15.analog_in import AnalogIn
@@ -46,8 +47,8 @@ def check_error(values,var_name,to_check):
 ## MAIN PROGRAM ##
 ##################
 
-i2c_address = config.i2c_address
-checks = config.probes_check
+i2c_address = cfg.i2c_address
+checks = cfg.probes_checks
 
 # DONE: setup ads
 i2c = busio.I2C(board.SCL, board.SDA)
@@ -142,7 +143,7 @@ else:
 # DONE: setup server
 if checks["networking"]:
   try:
-    ip = config.ip["sondes"]
+    ip = cfg.ip
     server_socket = socket.socket()
     server_socket.bind(ip)
     print("server binded to '%s'" % (":".join(map(str,ip))) )

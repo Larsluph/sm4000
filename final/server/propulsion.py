@@ -6,10 +6,10 @@ import socket
 import sys
 import time
 
-import serial
-
 import config
 import modules.servos as servo
+import serial
+from config import propulsion as cfg
 
 ##############
 #### FUNCs ###
@@ -50,11 +50,11 @@ os.system("clear")
 
 # DONE : servo set up
 with serial.Serial('/dev/ttyUSB0', 9600, timeout = 1) as com:
-  pin_id = config.pin_id
+  pin_id = cfg.pin_id
   test_servo(com)
 
   # DONE : server set up
-  ip = config.ip["propulsion"]
+  ip = cfg.ip
 
   server_socket = socket.socket()
   server_socket.bind(ip)
