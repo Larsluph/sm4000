@@ -38,8 +38,9 @@ def check_error(values,var_name,to_check):
       else:
         status_code = 0
 
-    values[var_name] = str(checked)+":"+str(status_code)
+    values[var_name] = str(checked)
     i += 1
+    time.sleep(.6)
 
   return status_code
 
@@ -174,17 +175,19 @@ while running:
 
   ### niveau d'eau
   if checks["water_lvl"]:
-    values["lvl_val"]  = water_lvl.value
-    values["lvl_volt"] = water_lvl.voltage
+    values["lvl_val"] = water_lvl.value
+    values["lvl_volt"] = round(water_lvl.voltage,2)
     values["lvl_percent"] = round(values["lvl_volt"]/3*100,2)
 
 
   ### TDS / cellules batterie
   if checks["battery_cells"]:
-    values["tds_volt"] = tds_meter.voltage
+    values["tds_volt"] = round(tds_meter.voltage,2)
     # bat_volt = [battery_cells[i].voltage for i in range(4)]
-    values["bat_volt"] = battery_cells.voltage
-    values["bat_percent"] = round(round(values["bat_volt"],3)-3/1.2*100,2)
+    values["bat_volt"] = round(battery_cells.voltage,2)
+    values["bat_percent"] = round(values["bat_volt"]-3/1.2*100,2)
+    if values["bat_percent"] < 0:
+      values["bat_percent"] = 0
 
 
   ### pres / temp external

@@ -27,10 +27,7 @@ def update_log(logpath,data):
 
 def update_vars(data,tk_vars):
   for x in data:
-    if "error" in x.lower():
-      tk_vars[x]["value"].set(f"{data[x]}")
-    else:
-      tk_vars[x]["value"].set(f"{data[x]}{tk_vars[x]['unit']}")
+    tk_vars[x]["value"].set(f"{data[x]}{tk_vars[x]['unit']}")
 
 def sync_vars(filepath,to_sync):
   with open(filepath,"w") as f:
@@ -86,7 +83,7 @@ grid_val = [
 grid(win,tk_vars,grid_val,font)
 
 for x in ["lvl_percent","bat_percent","int_humidity"]:
-  tk_vars[x]["value"].set("00.00%")
+  tk_vars[x]["value"].set("00.00")
 update_window(win)
 
 try:

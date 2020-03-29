@@ -365,9 +365,7 @@ def toggle_pwr(data):
   send(data)
 
 def send(data):
-  cmd = str(data.dir)
-  cmd += " " * (128-len(cmd))
-
+  cmd = "/" + str(data.dir)
   if net_check:
     client.send(cmd.encode("Utf8"))
 

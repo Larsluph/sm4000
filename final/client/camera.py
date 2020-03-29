@@ -21,7 +21,7 @@ def var_sync(filepath):
     content = eval(f.readline().rstrip("\n"))
 
   return content
-  
+
 def disp_overlay(img,data,pos,font=cv2.FONT_HERSHEY_SIMPLEX,font_size=2,color=(0,100,255),thickness=3):
   val1,unit1 = pos[0].split(" ")
   val2,unit2 = pos[1].split(" ")
@@ -36,6 +36,19 @@ def disp_overlay(img,data,pos,font=cv2.FONT_HERSHEY_SIMPLEX,font_size=2,color=(0
     val2 = int(val2)
   cv2.putText(img,data,(val1,val2),font,font_size,color,thickness=thickness)
 
+def find_all(string,substring):
+  if (type(string) != type(substring)) and not(isinstance(string,(str,bytes))):
+    raise TypeError("arguments are not of the same type (either str or bytes-like objects)")
+
+  result = []
+  current = string.find(substring)
+  while current != -1:
+    result.append(current)
+    current = string.find(substring,current+1)
+
+  return result
+
+
 client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 print("Connecting...")
 ip = ('192.168.137.2', 50002)
@@ -49,8 +62,8 @@ try:
 except:
   pass
 
-vidname = time.strftime('sm4000_camera_output_%Y-%m-%d_%H-%M-%S.mjpeg')
-with open("sm4000_received_data\\camera_data\\"+vidname,mode='wb') as vid_file:
+vidname = time.strftime('sm4000_camera_output_%Y-%m-%d_%H-%M-%S.mp4')
+with cv2.VideoWriter(f'sm4000_received_data\\camera_data\\{vidname}', cv2.VideoWriter_fourcc(*'mp4v'), 11, (1296,730)) as vid_file:
   bytes_var = bytes(1)
   scale = 50
 
@@ -64,38 +77,38 @@ with open("sm4000_received_data\\camera_data\\"+vidname,mode='wb') as vid_file:
       var_check = True
 
     bytes_var += stream.read(4096)
-    a = bytes_var.find(b'\xff\xd8')
-    b = bytes_var.find(b'\xff\xd9')
+    a = find_all(bytes_var,b'\xff\xd8')
+    b = find_all(bytes_var,b'\xff\xd9')
 
-    if a!=-1 and b!=-1:
-      image_bytes = bytes_var[a:b+2]
-      bytes_var = bytes_var[b+2:]
+    if bool(a) and bool(b):
+      for i in range( min(len(a),len(b)) ):
+        image_bytes = bytes_var[a[i]:b[i]+2]
+        bytes_var = bytes_var[b[i]+2:]
 
-      img = cv2.imdecode(numpy.frombuffer(image_bytes, dtype=numpy.uint8),1)
+        img = cv2.imdecode(numpy.frombuffer(image_bytes, dtype=numpy.uint8),1)
 
-      width = int(img.shape[1] * scale / 100)
-      height = int(img.shape[0] * scale / 100)
-      dsize = (width,height)
+        # DONE: implement camera HUD
+        if var_check:
+          disp_overlay(img,data_hud['bat_percent'],["5 %","7 %"])
+          disp_overlay(img,data_hud['ext_depth'],["70 %","5 %"])
+          disp_overlay(img,data_hud['ext_pressure'],["110 %","7 %"])
 
-      # DONE: implement camera HUD
-      if var_check:
-        disp_overlay(img,f"{data_hud['bat_percent']}%",["5 %","7 %"])
-        disp_overlay(img,f"{data_hud['ext_depth']}m",["70 %","5 %"])
-        disp_overlay(img,f"{data_hud['ext_pressure']}mbar",["110 %","7 %"])
+        vid_file.write(img)
+      else:
+        width = int(img.shape[1] * scale / 100)
+        height = int(img.shape[0] * scale / 100)
+        dsize = (width,height)
 
-      vid_file.write(cv2.imencode(".jpeg",img)[1].tostring())
-      vid_file.flush()
+        img_post_process = cv2.resize(img,dsize,interpolation=cv2.INTER_AREA)
 
-      img_post_process = cv2.resize(img,dsize,interpolation=cv2.INTER_AREA)
+        cv2.imshow('Image from piCamera', img_post_process)
 
-      cv2.imshow('Image from piCamera', img_post_process)
+        if cv2.waitKey(1) & 0xFF == ord('q'):
+          status = "stop"
 
-      if cv2.waitKey(1) & 0xFF == ord('q'):
-        status = "stop"
-
+vid_file.release()
 client_socket.send(status.encode())
 cv2.destroyAllWindows()
-time.sleep(1)
 stream.close()
 client_socket.close()
 print('client socket closed')

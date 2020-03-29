@@ -46,9 +46,8 @@ stream = viewer.makefile('wb')
 print("stream initialized")
 camera.start_recording(stream, 'mjpeg')
 
-stop_stream = viewer.recv(32).decode()
-while stop_stream != "stop":
-  stop_stream = viewer.recv(32).decode()
+while viewer.recv(32).decode() != "stop":
+  continue
 
 camera.stop_recording()
 stream.close()

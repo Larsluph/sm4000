@@ -15,14 +15,14 @@ from config import propulsion as cfg
 #### FUNCs ###
 ##############
 
-def move(com_port,dir,delay):
+def move(com_port,dir,delay=1000):
   servo.move(com_port, pin_id["left"], 1500-dir["left"], delay)
   servo.move(com_port, pin_id["right"], 1500+dir["right"], delay)
   servo.move(com_port, pin_id["y"], 1500+dir["y"], delay)
 
   return 0
 
-def light_mgmt(com_port,lights,delay):
+def light_mgmt(com_port,lights,delay=750):
   servo.move(com_port, pin_id["lights"], 1000+lights, delay)
 
   return 0
@@ -61,7 +61,7 @@ with serial.Serial('/dev/ttyUSB0', 9600, timeout = 1) as com:
   print("server binded to '%s'" % (":".join(map(str,ip))) )
   print("Waiting for remote")
   server_socket.listen(0)
-  telecommande, address1 = server_socket.accept()
+  telecommande, _ = server_socket.accept()
 
   print("Connected")
 
@@ -77,19 +77,21 @@ with serial.Serial('/dev/ttyUSB0', 9600, timeout = 1) as com:
   #   "lights" : 0
   # }
 
-  while True:
+running = True
+  while running:
     # DONE : reception telecommande
     try:
-      cmd = telecommande.recv(128).decode()
+      cmd = telecommande.recv(1024).decode().split("/")[-1]
     except:
       cmd = '{"powered":True,"left":0,"right":0,"y":200,"light_pow":False}'
     dir = eval(cmd)
     print(dir)
 
     if dir == "exit":
-      move(com,{"left":0,"y":0,"right":0},2000)
-      light_mgmt(com,0,2000)
-      break
+      move(com,{"left":0,"y":0,"right":0})
+      light_mgmt(com,0)
+      running = False
+      continue
 
     elif dir["powered"] == 1:
       pass
@@ -98,12 +100,12 @@ with serial.Serial('/dev/ttyUSB0', 9600, timeout = 1) as com:
       for x in ["left","y","right"]:
         dir[x] = 0
 
-    move(com,dir,2000)
+    move(com,dir)
 
     if dir["light_pow"]:
-      light_mgmt(com,dir["lights"],2000)
+      light_mgmt(com,dir["lights"])
     else:
-      light_mgmt(com,0,2000)
+      light_mgmt(com,0)
 
   telecommande.close()
   server_socket.close()
