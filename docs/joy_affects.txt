@@ -7,7 +7,7 @@ buttons[ 1] = blocker (hold)
 buttons[ 2] = toggle_booster
 buttons[ 4] = toggle_lights
 buttons[11] = toggle_pwr
-buttons[12] = turn_off
+buttons[12] = shutdown
 
 ##########
 

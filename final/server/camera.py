@@ -47,7 +47,7 @@ print("stream initialized")
 camera.start_recording(stream, 'mjpeg')
 
 while viewer.recv(32).decode() != "stop":
-  continue
+  pass
 
 camera.stop_recording()
 stream.close()

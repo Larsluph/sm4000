@@ -90,20 +90,7 @@ class Vars:
         DoubleVar(),
         IntVar() # hat[1]
       ),
-      "buttons": (
-        BooleanVar(),
-        BooleanVar(),
-        BooleanVar(),
-        BooleanVar(),
-        BooleanVar(),
-        BooleanVar(),
-        BooleanVar(),
-        BooleanVar(),
-        BooleanVar(),
-        BooleanVar(),
-        BooleanVar(),
-        BooleanVar()
-      )
+      "buttons": [BooleanVar() for i in range(12)]
     }
 
     self.tk_lbls = {
@@ -302,10 +289,9 @@ def check_joy(data):
   update_debug(data,msg)
   time.sleep(1)
 
-def wait_button(joy,id):
+def wait_button(joy, id):
   while joy.get_button(id-1):
     pygame.event.get()
-
     continue
 
 def forward(data):
@@ -365,7 +351,7 @@ def toggle_pwr(data):
   send(data)
 
 def send(data):
-  cmd = "/" + str(data.dir)
+  cmd = "/" + repr(data.dir)
   if net_check:
     client.send(cmd.encode("Utf8"))
 
@@ -483,7 +469,7 @@ if joytest:
     update_tkvars(data)
 
   if net_check:
-    client.send("'exit'".encode("Utf8"))
+    client.send(repr('exit').encode("Utf8"))
     client.close()
 
   update_debug(data,"END OF PROGRAM")
@@ -516,7 +502,7 @@ else:
   keyboard.clear_all_hotkeys()
 
   if net_check:
-    client.send("'exit'".encode("Utf8"))
+    client.send(repr('exit').encode("Utf8"))
     client.close()
 
   print("END OF PROGRAM")

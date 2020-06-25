@@ -57,6 +57,7 @@ with serial.Serial('/dev/ttyUSB0', 9600, timeout = 1) as com:
   ip = cfg.ip
 
   server_socket = socket.socket()
+  server_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
   server_socket.bind(ip)
   print("server binded to '%s'" % (":".join(map(str,ip))) )
   print("Waiting for remote")
@@ -83,7 +84,7 @@ running = True
     try:
       cmd = telecommande.recv(1024).decode().split("/")[-1]
     except:
-      cmd = '{"powered":True,"left":0,"right":0,"y":200,"light_pow":False}'
+      cmd = repr({"powered":True,"left":0,"right":0,"y":200,"light_pow":False})
     dir = eval(cmd)
     print(dir)
 
