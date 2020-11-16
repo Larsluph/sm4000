@@ -19,15 +19,15 @@ os.system("clear")
 
 # DONE : picamera
 try:
-  print("Initializing camera...")
-  camera = picamera.PiCamera(resolution=(1296,730),framerate=30)
-  camera.rotation = 180
-  camera.start_preview(alpha=0)
-  camera.stop_preview()
-  print("Camera initialized")
+    print("Initializing camera...")
+    camera = picamera.PiCamera(resolution=(1296,730),framerate=30)
+    camera.rotation = 180
+    camera.start_preview(alpha=0)
+    camera.stop_preview()
+    print("Camera initialized")
 except picamera.exc.PiCameraError:
-  print("Camera failed to initialize\nTry rebooting the system")
-  raise SystemExit
+    print("Camera failed to initialize\nTry rebooting the system")
+    raise SystemExit
 
 # DONE : server set up
 ip = cfg.ip
@@ -47,7 +47,7 @@ print("stream initialized")
 camera.start_recording(stream, 'mjpeg')
 
 while viewer.recv(32).decode() != "stop":
-  pass
+    pass
 
 camera.stop_recording()
 stream.close()
